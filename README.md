@@ -8,7 +8,7 @@ Looking for a simple mod to decorate? This mod adds colored water with which you
 
 ## Contributing
 
-If you would like to contribute to the mod, you can check out the [issues page](https://github.com/Cozary/colored_water/issues). If you find a problem in the code or something that could be improved, you can open an issue or make a PR.
+If you would like to contribute to the mod, you can check out the [issues page](https://github.com/Cozary/Colored-Water/issues). If you find a problem in the code or something that could be improved, you can open an issue or make a PR.
 
 If, for some reason, you think a new feature should be added and you want to contribute to it, comment first on the [Discord channel](https://discord.com/invite/eGWSpyDyty). ^^
 
