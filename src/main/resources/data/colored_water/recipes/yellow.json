@@ -1,0 +1,15 @@
+{
+  "type": "colored_water:container_shapeless_recipe_cw",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "minecraft:yellow_dye"
+    }
+  ],
+  "result": {
+    "id": "colored_water:yellow_water_bucket",
+    "Count": 1
+  }
+}

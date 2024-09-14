@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "colored_water:item/condense_lime_water_bucket"
+  }
+}
