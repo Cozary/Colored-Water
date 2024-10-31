@@ -255,5 +255,5 @@
   "fluid_type.colored_water.luminous_condense_light_blue_fluid": "Luminous Condense Light Blue Water",
   "fluid_type.colored_water.luminous_condense_orange_fluid": "Luminous Condense Orange Water",
   "fluid_type.colored_water.luminous_condense_white_fluid": "Luminous Condense White Water",
-  "tabs.colored_water.tab": "Colored Water"
+  "itemGroup.colored_water": "Colored Water"
 }

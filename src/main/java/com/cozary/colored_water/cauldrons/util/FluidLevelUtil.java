@@ -1,27 +1,29 @@
 package com.cozary.colored_water.cauldrons.util;
 
-import com.cozary.colored_water.cauldrons.block.base.AbstractLeveledCauldronBlock;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.state.BlockState;
+
+import com.cozary.colored_water.cauldrons.ColorAbstractCauldronBlock;
+import net.minecraft.block.AbstractCauldronBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.LeveledCauldronBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 
 public class FluidLevelUtil {
 
-    public static ItemStack exchangeStack(ItemStack inputStack, Player player, ItemStack outputStack) {
-        if (player.getAbilities().instabuild) {
+    public static ItemStack exchangeStack(ItemStack inputStack, PlayerEntity player, ItemStack outputStack) {
+        if (player.getAbilities().creativeMode) {
             if (!player.getInventory().contains(outputStack)) {
-                player.getInventory().add(outputStack);
+                player.getInventory().insertStack(outputStack);
             }
             return inputStack;
         } else {
-            inputStack.shrink(1);
+            inputStack.decrement(1);
             if (inputStack.isEmpty()) {
                 return outputStack;
             }
-            if (!player.getInventory().add(outputStack)) {
-                player.drop(outputStack, false);
+            if (!player.getInventory().insertStack(outputStack)) {
+                player.dropItem(outputStack, false);
             }
             return inputStack;
         }
@@ -39,22 +41,22 @@ public class FluidLevelUtil {
     }
 
     static int getFluidLevel(BlockState state) {
-        if (state.getBlock() instanceof AbstractLeveledCauldronBlock) {
-            return AbstractLeveledCauldronBlock.getFluidLevel(state);
-        } else if (state.getBlock() instanceof LayeredCauldronBlock) {
-            return state.getValue(LayeredCauldronBlock.LEVEL);
-        } else if (state.is(Blocks.CAULDRON)) {
+        if (state.getBlock() instanceof AbstractCauldronBlock) {
+            return ColorAbstractCauldronBlock.getFluidLevel(state);
+        } else if (state.getBlock() instanceof LeveledCauldronBlock) {
+            return state.get(LeveledCauldronBlock.LEVEL);
+        } else if (state.equals(Blocks.CAULDRON.getDefaultState())) {
             return 0;
         }
         return -1;
     }
 
     static int getMaxFluidLevel(BlockState state) {
-        if (state.getBlock() instanceof AbstractLeveledCauldronBlock) {
-            return AbstractLeveledCauldronBlock.getMaxLevel();
-        } else if (state.getBlock() instanceof LayeredCauldronBlock) {
+        if (state.getBlock() instanceof AbstractCauldronBlock) {
+            return ColorAbstractCauldronBlock.getMaxLevel();
+        } else if (state.getBlock() instanceof LeveledCauldronBlock) {
             return 3;
-        } else if (state.is(Blocks.CAULDRON)) {
+        } else if (state.equals(Blocks.CAULDRON.getDefaultState())) {
             return 0;
         }
         return -1;

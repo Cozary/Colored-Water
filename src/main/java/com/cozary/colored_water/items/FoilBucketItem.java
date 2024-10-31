@@ -1,19 +1,18 @@
 package com.cozary.colored_water.items;
 
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.BucketItem;
+import net.minecraft.item.ItemStack;
 
 public class FoilBucketItem extends BucketItem {
-    public FoilBucketItem(Supplier<? extends Fluid> supplier, Properties builder) {
-        super(supplier, builder);
+
+
+    public FoilBucketItem(Fluid fluid, Settings settings) {
+        super(fluid, settings);
     }
 
     @Override
-    public boolean isFoil(@NotNull ItemStack p_41453_) {
+    public boolean hasGlint(ItemStack stack) {
         return true;
     }
 }
