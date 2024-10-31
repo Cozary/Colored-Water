@@ -7,7 +7,7 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = "Colored Water-fabric-" + project.minecraft_version + "-" + project.mod_version
+    archivesName = "Colored Water-fabric-" + project.minecraft_version
 }
 //version = "forge-${minecraft_version}-${mod_version}"
 loom {
