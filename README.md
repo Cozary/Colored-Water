@@ -3,7 +3,7 @@
 Looking for a simple mod to decorate? This mod adds colored water with which you can decorate your world however you
 want. The Mod also adds Condensed Colored Water. And these two have their light variant! And Cauldrons!!
 
-# Fabric
+# NeoForge
 
 [![Versions](https://cf.way2muchnoise.eu/versions/534920.svg)](https://www.curseforge.com/minecraft/mc-mods/colored_water) [![Downloads](http://cf.way2muchnoise.eu/full_534920_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/colored_water)
 

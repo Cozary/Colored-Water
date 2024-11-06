@@ -1,21 +1,17 @@
 package com.cozary.colored_water.init;
 
+import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.recipe.ContainerCraftingRecipe;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-import static com.cozary.colored_water.ColoredWater.MOD_ID;
+import java.util.function.Supplier;
 
 public class ModRecipe {
 
-    public static final ContainerCraftingRecipe.Serializer CONTAINER_CRAFTING_RECIPE;
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(Registries.RECIPE_SERIALIZER, ColoredWater.MOD_ID);
 
-    static {
-        CONTAINER_CRAFTING_RECIPE = Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(MOD_ID, "container_shapeless_recipe_cw"), new ContainerCraftingRecipe.Serializer());
-    }
+    public static final Supplier<RecipeSerializer<ContainerCraftingRecipe>> CONTAINER_CRAFTING_RECIPE = RECIPES.register("container_shapeless_recipe_cw", ContainerCraftingRecipe.Serializer::new);
 
-    public static void loadClass() {
-
-    }
 }

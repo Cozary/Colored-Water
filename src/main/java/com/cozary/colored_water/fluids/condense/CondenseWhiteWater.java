@@ -2,64 +2,81 @@ package com.cozary.colored_water.fluids.condense;
 
 import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.init.ModItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.neoforged.neoforge.fluids.FluidType;
 
 public abstract class CondenseWhiteWater extends BaseColorWater {
+    public CondenseWhiteWater() {
+    }
+
     @Override
-    public Fluid getStill() {
-        return ModFluids.STILL_CONDENSE_WHITE_WATER;
+    public FluidType getFluidType() {
+        return ModFluidTypes.CONDENSE_WHITE_WATER_TYPE.get();
+    }
+
+    @Override
+    public Fluid getSource() {
+        return ModFluids.STILL_CONDENSE_WHITE_WATER.get();
     }
 
     @Override
     public Fluid getFlowing() {
-        return ModFluids.FLOWING_CONDENSE_WHITE_WATER;
+        return ModFluids.FLOWING_CONDENSE_WHITE_WATER.get();
     }
 
     @Override
-    public Item getBucketItem() {
-        return ModItems.CONDENSE_WHITE_WATER_BUCKET;
+    public Item getBucket() {
+        return ModItems.CONDENSE_WHITE_WATER_BUCKET.get();
     }
 
     @Override
-    protected BlockState toBlockState(FluidState fluidState) {
+    protected BlockState createLegacyBlock(FluidState pState) {
         // getBlockStateLevel converts the LEVEL_1_8 of the fluid state to the LEVEL_15 the fluid block uses
-        return ModBlocks.CONDENSE_WHITE_WATER_BLOCK.getDefaultState().with(Properties.LEVEL_15, getBlockStateLevel(fluidState));
+        return ModBlocks.CONDENSE_WHITE_WATER_BLOCK.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(pState));
     }
 
-    public static class Flowing extends CondenseWhiteWater {
-        @Override
-        protected void appendProperties(StateManager.Builder<Fluid, FluidState> builder) {
-            super.appendProperties(builder);
-            builder.add(LEVEL);
+    public static class Source extends CondenseWhiteWater {
+        public Source() {
         }
 
         @Override
-        public int getLevel(FluidState fluidState) {
-            return fluidState.get(LEVEL);
-        }
-
-        @Override
-        public boolean isStill(FluidState fluidState) {
-            return false;
-        }
-    }
-
-    public static class Still extends CondenseWhiteWater {
-        @Override
-        public int getLevel(FluidState fluidState) {
+        public int getAmount(FluidState fluidState) {
             return 8;
         }
 
         @Override
-        public boolean isStill(FluidState fluidState) {
+        public boolean isSource(FluidState fluidState) {
             return true;
+        }
+    }
+
+    public static class Flowing extends CondenseWhiteWater {
+        public Flowing() {
+        }
+
+        @Override
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> pBuilder) {
+            super.createFluidStateDefinition(pBuilder);
+            pBuilder.add(LEVEL);
+        }
+
+        @Override
+        public int getAmount(FluidState pState) {
+            return pState.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState pState) {
+            return false;
         }
     }
 }

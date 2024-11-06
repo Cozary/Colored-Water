@@ -1,87 +1,88 @@
 package com.cozary.colored_water.fluids;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 
-public abstract class BaseColorWater extends FlowableFluid {
+import javax.annotation.Nullable;
+import java.util.Optional;
 
-    /**
-     * @return whether the given fluid an instance of this fluid
-     */
+public abstract class BaseColorWater extends FlowingFluid {
+
     @Override
-    public boolean matchesType(Fluid fluid) {
-        return fluid == getStill() || fluid == getFlowing();
+    public void animateTick(Level pLevel, BlockPos pPos, FluidState pState, RandomSource pRandom) {
+        if (!pState.isSource() && !(Boolean) pState.getValue(FALLING)) {
+            if (pRandom.nextInt(64) == 0) {
+                pLevel.playLocalSound((double) pPos.getX() + 0.5, (double) pPos.getY() + 0.5, (double) pPos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, pRandom.nextFloat() * 0.25F + 0.75F, pRandom.nextFloat() + 0.5F, false);
+            }
+        } else if (pRandom.nextInt(10) == 0) {
+            pLevel.addParticle(ParticleTypes.UNDERWATER, (double) pPos.getX() + pRandom.nextDouble(), (double) pPos.getY() + pRandom.nextDouble(), (double) pPos.getZ() + pRandom.nextDouble(), 0.0, 0.0, 0.0);
+        }
+
     }
 
-    /**
-     * @return whether the fluid is infinite (which means can be infinitely created like water). In vanilla, it depends on the game rule.
-     */
     @Override
-    protected boolean isInfinite(World world) {
-        return true;
+    @Nullable
+    public ParticleOptions getDripParticle() {
+        return ParticleTypes.DRIPPING_WATER;
     }
 
-    /**
-     * Perform actions when the fluid flows into a replaceable block. Water drops
-     * the block's loot table. Lava plays the "block.lava.extinguish" sound.
-     */
     @Override
-    protected void beforeBreakingBlock(WorldAccess world, BlockPos pos, BlockState state) {
-        final BlockEntity blockEntity = state.hasBlockEntity() ? world.getBlockEntity(pos) : null;
-        Block.dropStacks(state, world, pos, blockEntity);
+    protected boolean canConvertToSource(Level pLevel) {
+        return pLevel.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION);
     }
 
-    /**
-     * Lava returns true if it's FluidState is above a certain height and the
-     * Fluid is Water.
-     *
-     * @return whether the given Fluid can flow into this FluidState
-     */
     @Override
-    protected boolean canBeReplacedWith(FluidState fluidState, BlockView blockView, BlockPos blockPos, Fluid fluid, Direction direction) {
-        return false;
+    protected void beforeDestroyingBlock(LevelAccessor pLevel, BlockPos pPos, BlockState pState) {
+        BlockEntity blockentity = pState.hasBlockEntity() ? pLevel.getBlockEntity(pPos) : null;
+        Block.dropResources(pState, pLevel, pPos, blockentity);
     }
 
-    /**
-     * Possibly related to the distance checks for flowing into nearby holes?
-     * Water returns 4. Lava returns 2 in the Overworld and 4 in the Nether.
-     */
     @Override
-    protected int getFlowSpeed(WorldView worldView) {
+    public int getSlopeFindDistance(LevelReader pLevel) {
         return 4;
     }
 
-    /**
-     * Water returns 1. Lava returns 2 in the Overworld and 1 in the Nether.
-     */
     @Override
-    protected int getLevelDecreasePerBlock(WorldView worldView) {
+    public boolean isSame(Fluid pFluid) {
+        return pFluid == getSource() || pFluid == getFlowing();
+    }
+
+    @Override
+    public int getDropOff(LevelReader pLevel) {
         return 1;
     }
 
-    /**
-     * Water returns 5. Lava returns 30 in the Overworld and 10 in the Nether.
-     */
     @Override
-    public int getTickRate(WorldView worldView) {
+    public int getTickDelay(LevelReader pLevel) {
         return 5;
     }
 
-    /**
-     * Water and Lava both return 100.0F.
-     */
     @Override
-    protected float getBlastResistance() {
+    public boolean canBeReplacedWith(FluidState pFluidState, BlockGetter pBlockReader, BlockPos pPos, Fluid pFluid, Direction pDirection) {
+        return pDirection == Direction.DOWN && !pFluid.is(FluidTags.WATER);
+    }
+
+    @Override
+    protected float getExplosionResistance() {
         return 100.0F;
+    }
+
+    @Override
+    public Optional<SoundEvent> getPickupSound() {
+        return Optional.of(SoundEvents.BUCKET_FILL);
     }
 }

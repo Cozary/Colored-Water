@@ -2,66 +2,84 @@ package com.cozary.colored_water.fluids.color;
 
 import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.init.ModItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.neoforged.neoforge.fluids.FluidType;
+
 
 public abstract class BlackWater extends BaseColorWater {
 
-    @Override
-    public net.minecraft.fluid.Fluid getStill() {
-        return ModFluids.STILL_BLACK_WATER;
+    public BlackWater() {
     }
 
     @Override
-    public net.minecraft.fluid.Fluid getFlowing() {
-        return ModFluids.FLOWING_BLACK_WATER;
+    public FluidType getFluidType() {
+        return ModFluidTypes.BLACK_WATER_TYPE.get();
     }
 
     @Override
-    public Item getBucketItem() {
-        return ModItems.BLACK_WATER_BUCKET;
+    public Fluid getSource() {
+        return ModFluids.STILL_BLACK_WATER.get();
     }
 
     @Override
-    protected BlockState toBlockState(FluidState fluidState) {
+    public Fluid getFlowing() {
+        return ModFluids.FLOWING_BLACK_WATER.get();
+    }
+
+    @Override
+    public Item getBucket() {
+        return ModItems.BLACK_WATER_BUCKET.get();
+    }
+
+    @Override
+    public BlockState createLegacyBlock(FluidState pState) {
         // getBlockStateLevel converts the LEVEL_1_8 of the fluid state to the LEVEL_15 the fluid block uses
-        return ModBlocks.BLACK_WATER_BLOCK.getDefaultState().with(Properties.LEVEL_15, getBlockStateLevel(fluidState));
+        return ModBlocks.BLACK_WATER_BLOCK.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(pState));
     }
 
-    public static class Flowing extends BlackWater {
-
-        @Override
-        protected void appendProperties(StateManager.Builder<net.minecraft.fluid.Fluid, FluidState> builder) {
-            super.appendProperties(builder);
-            builder.add(LEVEL);
+    public static class Source extends BlackWater {
+        public Source() {
         }
 
         @Override
-        public int getLevel(FluidState fluidState) {
-            return fluidState.get(LEVEL);
-        }
-
-        @Override
-        public boolean isStill(FluidState fluidState) {
-            return false;
-        }
-    }
-
-    public static class Still extends BlackWater {
-
-        @Override
-        public int getLevel(FluidState fluidState) {
+        public int getAmount(FluidState fluidState) {
             return 8;
         }
 
         @Override
-        public boolean isStill(FluidState fluidState) {
+        public boolean isSource(FluidState fluidState) {
             return true;
         }
     }
+
+    public static class Flowing extends BlackWater {
+        public Flowing() {
+        }
+
+        @Override
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> pBuilder) {
+            super.createFluidStateDefinition(pBuilder);
+            pBuilder.add(LEVEL);
+        }
+
+        @Override
+        public int getAmount(FluidState pState) {
+            return pState.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState pState) {
+            return false;
+        }
+    }
+
 }

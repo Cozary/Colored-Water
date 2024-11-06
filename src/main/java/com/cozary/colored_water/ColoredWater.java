@@ -1,61 +1,35 @@
 package com.cozary.colored_water;
 
-import com.cozary.colored_water.cauldrons.behaviour.ColorCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.CondenseCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.LuminousCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.LuminousCondenseCauldronBehavior;
-import com.cozary.colored_water.init.ModCauldrons;
-import com.cozary.colored_water.init.ModBlocks;
-import com.cozary.colored_water.init.ModFluids;
-import com.cozary.colored_water.init.ModItems;
-import com.cozary.colored_water.init.ModRecipe;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import com.cozary.colored_water.client.ColoredWaterClient;
+import com.cozary.colored_water.init.*;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.stream.Collectors;
-
-public class ColoredWater implements ModInitializer {
+@Mod(ColoredWater.MOD_ID)
+public class ColoredWater {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "colored_water";
 
-    private static final RegistryKey<ItemGroup> ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(MOD_ID, "colored_water_tab"));
+    public ColoredWater(IEventBus modEventBus) {
 
-    @Override
-    public void onInitialize() {
+        ModFluids.FLUIDS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        ModRecipe.RECIPES.register(modEventBus);
+        ModCauldrons.BLOCKS.register(modEventBus);
+        ModTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModFluidTypes.FLUID_TYPES.register(modEventBus);
 
-        Registry.register(Registries.ITEM_GROUP, ITEM_GROUP, FabricItemGroup.builder()
-                .displayName(Text.translatable("itemGroup.colored_water"))
-                .icon(() -> new ItemStack(ModItems.PINK_WATER_BUCKET))
-                .entries((displayContext, entries) -> {
-                    entries.addAll(ModItems.REGISTERED_ITEMS.stream()
-                            .map(ItemStack::new)
-                            .collect(Collectors.toList()));
-                })
-                .build()
-        );
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            modEventBus.addListener(ColoredWaterClient::doClientStuff);
+        }
 
-        ModFluids.loadClass();
-        ModBlocks.loadClass();
-        ModItems.loadClass();
-        ModRecipe.loadClass();
-        ModCauldrons.loadClass();
-
-        ColorCauldronBehavior.init();
-        CondenseCauldronBehavior.init();
-        LuminousCauldronBehavior.init();
-        LuminousCondenseCauldronBehavior.init();
-
+        modEventBus.addListener(ColoredWaterClient::setup);
     }
 
 }

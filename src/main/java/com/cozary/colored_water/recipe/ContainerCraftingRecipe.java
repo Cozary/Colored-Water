@@ -1,27 +1,25 @@
 package com.cozary.colored_water.recipe;
 
-import com.cozary.colored_water.init.ModItems;
 import com.cozary.colored_water.init.ModRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.ShapelessRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ContainerCraftingRecipe extends ShapelessRecipe {
 
     private final String group;
     private final ItemStack recipeOutput;
-    private final DefaultedList<Ingredient> recipeItems;
+    private final NonNullList<Ingredient> recipeItems;
 
-    public ContainerCraftingRecipe(String group, CraftingRecipeCategory category, ItemStack result, DefaultedList<Ingredient> ingredients) {
+    public ContainerCraftingRecipe(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients) {
         super(group, category, result, ingredients);
         this.group = group;
         this.recipeOutput = result;
@@ -31,18 +29,17 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return ModRecipe.CONTAINER_CRAFTING_RECIPE;
+        return ModRecipe.CONTAINER_CRAFTING_RECIPE.get();
     }
 
     @Override
-    public @NotNull DefaultedList<Ingredient> getIngredients() {
+    public @NotNull NonNullList<Ingredient> getIngredients() {
         return recipeItems;
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
-        return DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-
+    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
+        return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
     }
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {
@@ -51,12 +48,12 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
                 .group(
                         Codec.STRING.fieldOf("group").orElse("").forGetter(ContainerCraftingRecipe::getGroup),
                         ItemStack.CODEC.fieldOf("result").forGetter(result -> result.recipeOutput),
-                        Codec.list(Ingredient.ALLOW_EMPTY_CODEC).fieldOf("ingredients").forGetter(ContainerCraftingRecipe::getIngredients)
+                        Codec.list(Ingredient.CODEC).fieldOf("ingredients").forGetter(ContainerCraftingRecipe::getIngredients)
                 ).apply(instance, (group, result, ingredients) -> new ContainerCraftingRecipe(
                         group,
-                        CraftingRecipeCategory.MISC,
+                        CraftingBookCategory.MISC,
                         result,
-                        DefaultedList.copyOf(Ingredient.EMPTY, ingredients.toArray(new Ingredient[0]))
+                        NonNullList.of(Ingredient.EMPTY, ingredients.toArray(new Ingredient[0]))
                 ))
         );
 
@@ -66,31 +63,30 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
         }
 
         @Override
-        public ContainerCraftingRecipe read(PacketByteBuf buf) {
-            String s = buf.readString();
-            int i = buf.readVarInt();
-            DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(i, Ingredient.EMPTY);
+        public @NotNull ContainerCraftingRecipe fromNetwork(FriendlyByteBuf friendlyByteBuf) {
+            String s = friendlyByteBuf.readUtf();
+            int i = friendlyByteBuf.readVarInt();
+            NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i, Ingredient.EMPTY);
 
             for (int j = 0; j < nonnulllist.size(); ++j) {
-                nonnulllist.set(j, Ingredient.fromPacket(buf));
+                nonnulllist.set(j, Ingredient.fromNetwork(friendlyByteBuf));
             }
 
-            ItemStack itemstack = buf.readItemStack();
-            return new ContainerCraftingRecipe(s, CraftingRecipeCategory.MISC, itemstack, nonnulllist);
+            ItemStack itemstack = friendlyByteBuf.readItem();
+            return new ContainerCraftingRecipe(s, CraftingBookCategory.MISC, itemstack, nonnulllist);
         }
 
         @Override
-        public void write(PacketByteBuf buf, ContainerCraftingRecipe recipe) {
-            buf.writeString(recipe.group);
-            buf.writeVarInt(recipe.recipeItems.size());
+        public void toNetwork(FriendlyByteBuf buffer, ContainerCraftingRecipe recipe) {
+            buffer.writeUtf(recipe.group);
+            buffer.writeVarInt(recipe.recipeItems.size());
 
             for (Ingredient ingredient : recipe.recipeItems) {
-                ingredient.write(buf);
+                ingredient.toNetwork(buffer);
             }
 
-            buf.writeItemStack(recipe.recipeOutput);
+            buffer.writeItem(recipe.recipeOutput);
         }
-
     }
 
 }
