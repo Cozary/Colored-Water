@@ -2,7 +2,7 @@ package com.cozary.colored_water.init;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -33,7 +33,6 @@ public class ModFluidTypes {
     public static final Supplier<FluidType> RED_WATER_TYPE = registerColoredWaterType("red_water_type", 0xffB02E26);
     public static final Supplier<FluidType> WHITE_WATER_TYPE = registerColoredWaterType("white_water_type", 0xffF9FFFE);
     public static final Supplier<FluidType> YELLOW_WATER_TYPE = registerColoredWaterType("yellow_water_type", 0xffFED83D);
-    // Variantes "CONDENSE", "LUMINOUS" y "LUMINOUS_CONDENSE" de cada color
     public static final Supplier<FluidType> CONDENSE_BLACK_WATER_TYPE = registerColoredWaterType("condense_black_water_type", 0xff1D1D21);
     public static final Supplier<FluidType> CONDENSE_BLUE_WATER_TYPE = registerColoredWaterType("condense_blue_water_type", 0xff3C44AA);
     public static final Supplier<FluidType> CONDENSE_BROWN_WATER_TYPE = registerColoredWaterType("condense_brown_water_type", 0xff835432);
@@ -121,7 +120,7 @@ public class ModFluidTypes {
                 .canHydrate(true)
                 .canSwim(true)
                 .canDrown(true)
-                .pathType(BlockPathTypes.WATER)
+                .pathType(PathType.WATER)
                 .density(1024)
                 .viscosity(1024);
     }

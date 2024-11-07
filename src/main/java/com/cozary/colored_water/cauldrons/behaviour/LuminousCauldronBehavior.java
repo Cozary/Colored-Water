@@ -9,7 +9,7 @@ import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -55,7 +55,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -75,7 +75,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -91,9 +91,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -109,7 +109,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_PURPLE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -129,7 +129,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -145,9 +145,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -163,7 +163,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_GREEN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -183,7 +183,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -199,9 +199,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -217,7 +217,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_BLACK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -237,7 +237,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -253,9 +253,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -271,7 +271,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -291,7 +291,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -307,9 +307,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -325,7 +325,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_BROWN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -345,7 +345,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -361,9 +361,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -379,7 +379,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_CYAN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -399,7 +399,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -415,9 +415,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -433,7 +433,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -453,7 +453,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -469,9 +469,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -487,7 +487,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -507,7 +507,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -523,9 +523,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -541,7 +541,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -561,7 +561,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -577,9 +577,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -595,7 +595,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_LIME_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -615,7 +615,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -631,9 +631,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -649,7 +649,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_ORANGE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -669,7 +669,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -685,9 +685,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -703,7 +703,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_PINK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -723,7 +723,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -739,9 +739,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -757,7 +757,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_RED_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -777,7 +777,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -793,9 +793,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -811,7 +811,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_WHITE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -831,7 +831,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -847,9 +847,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -865,7 +865,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LUMINOUS_YELLOW_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -885,7 +885,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -901,9 +901,9 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 

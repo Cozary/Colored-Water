@@ -9,7 +9,7 @@ import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -55,7 +55,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         MAGENTA_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -76,7 +76,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -92,9 +92,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -110,7 +110,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         PURPLE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -131,7 +131,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -147,9 +147,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -165,7 +165,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         GREEN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -186,7 +186,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -202,9 +202,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -220,7 +220,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         BLACK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -240,7 +240,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -256,9 +256,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -274,7 +274,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         CauldronInteraction.EMPTY.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -295,7 +295,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -311,9 +311,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -329,7 +329,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         BROWN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -350,7 +350,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -366,9 +366,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -384,7 +384,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         CYAN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -405,7 +405,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -421,9 +421,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -439,7 +439,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -460,7 +460,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -476,9 +476,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -494,7 +494,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -514,7 +514,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -530,9 +530,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -548,7 +548,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -568,7 +568,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -584,9 +584,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -602,7 +602,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         LIME_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -622,7 +622,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -638,9 +638,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -656,7 +656,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         ORANGE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -676,7 +676,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -692,9 +692,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -710,7 +710,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         PINK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -730,7 +730,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -746,9 +746,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -764,7 +764,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         RED_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -784,7 +784,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -800,9 +800,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -818,7 +818,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         WHITE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -838,7 +838,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -854,9 +854,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 
@@ -872,7 +872,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         });
 
         YELLOW_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -892,7 +892,7 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
 
         });
 
@@ -908,9 +908,9 @@ public interface ColorCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             } else {
-                return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
             }
         });
 

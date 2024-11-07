@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class FoilBucketItem extends BucketItem {
 
 
-    public FoilBucketItem(Supplier<? extends Fluid> supplier, Properties builder) {
+    public FoilBucketItem(Fluid supplier, Properties builder) {
         super(supplier, builder);
     }
 
