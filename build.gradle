@@ -65,13 +65,12 @@ tasks.withType(ProcessResources).configureEach {
             mod_license : mod_license,
             mod_version : mod_version,
             mod_authors : mod_authors,
-            mod_description : mod_description,
-            pack_format_number : pack_format_number,
+            mod_description : mod_description
     ]
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 
@@ -90,4 +89,11 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }
