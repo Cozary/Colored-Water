@@ -6,6 +6,10 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.0.165'
 }
 
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
 version = "neoforge-${minecraft_version}-${mod_version}"
 group = mod_group_id
 
@@ -47,6 +51,9 @@ runs {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
 
 dependencies {
      implementation "net.neoforged:neoforge:${neo_version}"

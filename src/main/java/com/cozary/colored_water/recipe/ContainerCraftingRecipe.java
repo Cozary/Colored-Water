@@ -5,10 +5,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +36,15 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
-        return NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+        return NonNullList.withSize(input.size(), ItemStack.EMPTY);
     }
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {
 
+        public static final StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> STREAM_CODEC = StreamCodec.of(
+                ContainerCraftingRecipe.Serializer::toNetwork, ContainerCraftingRecipe.Serializer::fromNetwork
+        );
         private static final MapCodec<ContainerCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
                 .group(
                         Codec.STRING.fieldOf("group").orElse("").forGetter(ContainerCraftingRecipe::getGroup),
@@ -56,21 +57,6 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
                         NonNullList.of(Ingredient.EMPTY, ingredients.toArray(new Ingredient[0]))
                 ))
         );
-
-        public static final StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> STREAM_CODEC = StreamCodec.of(
-                ContainerCraftingRecipe.Serializer::toNetwork, ContainerCraftingRecipe.Serializer::fromNetwork
-        );
-
-        @Override
-        public MapCodec<ContainerCraftingRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
-
 
         private static ContainerCraftingRecipe fromNetwork(RegistryFriendlyByteBuf friendlyByteBuf) {
             String s = friendlyByteBuf.readUtf();
@@ -85,7 +71,6 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
             return new ContainerCraftingRecipe(s, CraftingBookCategory.MISC, itemstack, nonnulllist);
         }
 
-
         private static void toNetwork(RegistryFriendlyByteBuf buffer, ContainerCraftingRecipe recipe) {
             buffer.writeUtf(recipe.group);
             buffer.writeVarInt(recipe.recipeItems.size());
@@ -95,6 +80,16 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
             }
 
             ItemStack.STREAM_CODEC.encode(buffer, recipe.recipeOutput);
+        }
+
+        @Override
+        public MapCodec<ContainerCraftingRecipe> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> streamCodec() {
+            return STREAM_CODEC;
         }
     }
 

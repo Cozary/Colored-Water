@@ -6,7 +6,6 @@ import com.cozary.colored_water.cauldrons.behaviour.LuminousCauldronBehavior;
 import com.cozary.colored_water.cauldrons.behaviour.LuminousCondenseCauldronBehavior;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;

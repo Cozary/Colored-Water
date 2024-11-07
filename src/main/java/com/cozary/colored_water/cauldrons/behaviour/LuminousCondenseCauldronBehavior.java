@@ -15,8 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 
-import java.util.Map;
-
 import static net.minecraft.world.item.BucketItem.getEmptySuccessItem;
 import static net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL;
 

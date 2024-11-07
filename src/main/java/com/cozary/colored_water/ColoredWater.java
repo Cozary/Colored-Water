@@ -30,6 +30,7 @@ public class ColoredWater {
         }
 
         modEventBus.addListener(ColoredWaterClient::setup);
+        modEventBus.addListener(ColoredWaterClient::registerClientExtensions);
     }
 
 }
