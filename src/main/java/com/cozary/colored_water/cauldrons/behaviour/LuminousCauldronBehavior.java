@@ -24,27 +24,27 @@ import static net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL;
 
 public interface LuminousCauldronBehavior extends CauldronInteraction {
 
-    Map<Item, CauldronInteraction> LUMINOUS_BLACK_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_BLUE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_BROWN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_CYAN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_GRAY_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_GREEN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_LIME_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_ORANGE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_PINK_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_PURPLE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_RED_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_WHITE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
-    Map<Item, CauldronInteraction> LUMINOUS_YELLOW_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap();
+    InteractionMap LUMINOUS_BLACK_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_black_cauldron_behavior");
+    InteractionMap LUMINOUS_BLUE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_blue_cauldron_behavior");
+    InteractionMap LUMINOUS_BROWN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_brown_cauldron_behavior");
+    InteractionMap LUMINOUS_CYAN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_cyan_cauldron_behavior");
+    InteractionMap LUMINOUS_GRAY_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_gray_cauldron_behavior");
+    InteractionMap LUMINOUS_GREEN_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_green_cauldron_behavior");
+    InteractionMap LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_light_blue_cauldron_behavior");
+    InteractionMap LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_light_gray_cauldron_behavior");
+    InteractionMap LUMINOUS_LIME_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_lime_cauldron_behavior");
+    InteractionMap LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_magenta_cauldron_behavior");
+    InteractionMap LUMINOUS_ORANGE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_orange_cauldron_behavior");
+    InteractionMap LUMINOUS_PINK_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_pink_cauldron_behavior");
+    InteractionMap LUMINOUS_PURPLE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_purple_cauldron_behavior");
+    InteractionMap LUMINOUS_RED_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_red_cauldron_behavior");
+    InteractionMap LUMINOUS_WHITE_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_white_cauldron_behavior");
+    InteractionMap LUMINOUS_YELLOW_CAULDRON_BEHAVIOR = CauldronInteraction.newInteractionMap("luminous_yellow_cauldron_behavior");
 
     static void init() {
 
 
-        EMPTY.put(ModItems.LUMINOUS_MAGENTA_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_MAGENTA_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -58,7 +58,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_MAGENTA_WATER_BUCKET.get())));
@@ -79,7 +79,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_MAGENTA_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_MAGENTA_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_MAGENTA_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -98,7 +98,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -112,7 +112,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_PURPLE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_PURPLE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get())));
@@ -133,7 +133,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_PURPLE_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_PURPLE_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -152,7 +152,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_GREEN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_GREEN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -166,7 +166,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_GREEN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_GREEN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_GREEN_WATER_BUCKET.get())));
@@ -187,7 +187,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_GREEN_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_GREEN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_GREEN_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_GREEN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -206,7 +206,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -220,7 +220,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_BLACK_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BLACK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get())));
@@ -241,7 +241,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_BLACK_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BLACK_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -260,7 +260,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -274,7 +274,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_BLUE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_BLUE_WATER_BUCKET.get())));
@@ -295,7 +295,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_BLUE_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BLUE_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -314,7 +314,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_BROWN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_BROWN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -328,7 +328,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_BROWN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BROWN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_BROWN_WATER_BUCKET.get())));
@@ -349,7 +349,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_BROWN_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_BROWN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_BROWN_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_BROWN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -368,7 +368,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_CYAN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_CYAN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -382,7 +382,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_CYAN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_CYAN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_CYAN_WATER_BUCKET.get())));
@@ -403,7 +403,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_CYAN_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_CYAN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_CYAN_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_CYAN_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -422,7 +422,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -436,7 +436,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_GRAY_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_GRAY_WATER_BUCKET.get())));
@@ -457,7 +457,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_GRAY_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_GRAY_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -476,7 +476,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_LIGHT_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_LIGHT_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -490,7 +490,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_LIGHT_BLUE_WATER_BUCKET.get())));
@@ -511,7 +511,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_LIGHT_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_LIGHT_BLUE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -530,7 +530,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_LIGHT_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_LIGHT_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -544,7 +544,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_LIGHT_GRAY_WATER_BUCKET.get())));
@@ -565,7 +565,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_LIGHT_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_LIGHT_GRAY_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -584,7 +584,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_LIME_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_LIME_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -598,7 +598,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_LIME_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIME_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_LIME_WATER_BUCKET.get())));
@@ -619,7 +619,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_LIME_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_LIME_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_LIME_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_LIME_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -638,7 +638,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -652,7 +652,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_ORANGE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_ORANGE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get())));
@@ -673,7 +673,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_ORANGE_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_ORANGE_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -692,7 +692,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_PINK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_PINK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -706,7 +706,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_PINK_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_PINK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_PINK_WATER_BUCKET.get())));
@@ -727,7 +727,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_PINK_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_PINK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_PINK_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_PINK_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -746,7 +746,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_RED_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_RED_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -760,7 +760,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_RED_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_RED_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_RED_WATER_BUCKET.get())));
@@ -781,7 +781,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_RED_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_RED_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_RED_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_RED_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -800,7 +800,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -814,7 +814,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_WHITE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_WHITE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get())));
@@ -835,7 +835,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_WHITE_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_WHITE_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
@@ -854,7 +854,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
         });
 
 
-        EMPTY.put(ModItems.LUMINOUS_YELLOW_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        CauldronInteraction.EMPTY.map().put(ModItems.LUMINOUS_YELLOW_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
@@ -868,7 +868,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
             return InteractionResult.sidedSuccess(world.isClientSide);
         });
 
-        LUMINOUS_YELLOW_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_YELLOW_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClientSide) {
                 Item item = stack.getItem();
                 player.setItemInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.LUMINOUS_YELLOW_WATER_BUCKET.get())));
@@ -889,7 +889,7 @@ public interface LuminousCauldronBehavior extends CauldronInteraction {
 
         });
 
-        LUMINOUS_YELLOW_CAULDRON_BEHAVIOR.put(ModItems.LUMINOUS_YELLOW_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
+        LUMINOUS_YELLOW_CAULDRON_BEHAVIOR.map().put(ModItems.LUMINOUS_YELLOW_WATER_BUCKET.get(), (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClientSide) {
                     Item item = stack.getItem();
