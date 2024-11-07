@@ -33,7 +33,6 @@ public class ModFluidTypes {
     public static final Supplier<FluidType> RED_WATER_TYPE = registerColoredWaterType("red_water_type", 0xffB02E26);
     public static final Supplier<FluidType> WHITE_WATER_TYPE = registerColoredWaterType("white_water_type", 0xffF9FFFE);
     public static final Supplier<FluidType> YELLOW_WATER_TYPE = registerColoredWaterType("yellow_water_type", 0xffFED83D);
-    // Variantes "CONDENSE", "LUMINOUS" y "LUMINOUS_CONDENSE" de cada color
     public static final Supplier<FluidType> CONDENSE_BLACK_WATER_TYPE = registerColoredWaterType("condense_black_water_type", 0xff1D1D21);
     public static final Supplier<FluidType> CONDENSE_BLUE_WATER_TYPE = registerColoredWaterType("condense_blue_water_type", 0xff3C44AA);
     public static final Supplier<FluidType> CONDENSE_BROWN_WATER_TYPE = registerColoredWaterType("condense_brown_water_type", 0xff835432);
