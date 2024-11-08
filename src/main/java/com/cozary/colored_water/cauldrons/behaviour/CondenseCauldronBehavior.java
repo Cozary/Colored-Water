@@ -24,27 +24,27 @@ import static net.minecraft.item.BucketItem.getEmptiedStack;
 
 public interface CondenseCauldronBehavior extends CauldronBehavior {
 
-    Map<Item, CauldronBehavior> CONDENSE_BLACK_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_BLUE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_BROWN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_CYAN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_GRAY_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_GREEN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_LIME_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_MAGENTA_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_ORANGE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_PINK_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_PURPLE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_RED_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_WHITE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
-    Map<Item, CauldronBehavior> CONDENSE_YELLOW_CAULDRON_BEHAVIOR = CauldronBehavior.createMap();
+    CauldronBehaviorMap CONDENSE_BLACK_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_black_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_BLUE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_blue_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_BROWN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_brown_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_CYAN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_cyan_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_GRAY_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_gray_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_GREEN_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_green_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_light_blue_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_light_gray_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_LIME_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_lime_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_MAGENTA_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_magenta_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_ORANGE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_orange_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_PINK_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_pink_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_PURPLE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_purple_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_RED_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_red_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_WHITE_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_white_cauldron_behavior");
+    CauldronBehaviorMap CONDENSE_YELLOW_CAULDRON_BEHAVIOR = CauldronBehavior.createMap("condense_yellow_cauldron_behavior");
 
     static void init() {
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_MAGENTA_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_MAGENTA_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -58,7 +58,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_MAGENTA_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_MAGENTA_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_MAGENTA_WATER_BUCKET)));
@@ -80,7 +80,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_MAGENTA_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_MAGENTA_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_MAGENTA_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_MAGENTA_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -99,7 +99,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_PURPLE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_PURPLE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -113,7 +113,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_PURPLE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_PURPLE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_PURPLE_WATER_BUCKET)));
@@ -135,7 +135,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_PURPLE_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_PURPLE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_PURPLE_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_PURPLE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -154,7 +154,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_GREEN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_GREEN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -168,7 +168,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_GREEN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_GREEN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_GREEN_WATER_BUCKET)));
@@ -190,7 +190,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_GREEN_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_GREEN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_GREEN_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_GREEN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -209,7 +209,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BLACK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BLACK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -223,7 +223,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_BLACK_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BLACK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_BLACK_WATER_BUCKET)));
@@ -245,7 +245,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_BLACK_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BLACK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BLACK_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BLACK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -264,7 +264,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -278,7 +278,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_BLUE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_BLUE_WATER_BUCKET)));
@@ -299,7 +299,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_BLUE_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BLUE_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -318,7 +318,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BROWN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BROWN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -332,7 +332,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_BROWN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BROWN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_BROWN_WATER_BUCKET)));
@@ -353,7 +353,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_BROWN_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_BROWN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_BROWN_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_BROWN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -372,7 +372,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_CYAN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_CYAN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -386,7 +386,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_CYAN_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_CYAN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_CYAN_WATER_BUCKET)));
@@ -407,7 +407,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_CYAN_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_CYAN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_CYAN_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_CYAN_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -426,7 +426,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -440,7 +440,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_GRAY_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_GRAY_WATER_BUCKET)));
@@ -461,7 +461,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_GRAY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_GRAY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -480,7 +480,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIGHT_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIGHT_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -494,7 +494,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_LIGHT_BLUE_WATER_BUCKET)));
@@ -515,7 +515,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIGHT_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIGHT_BLUE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -534,7 +534,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIGHT_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIGHT_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -548,7 +548,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_LIGHT_GRAY_WATER_BUCKET)));
@@ -569,7 +569,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIGHT_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIGHT_GRAY_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -588,7 +588,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIME_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIME_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -602,7 +602,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_LIME_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIME_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_LIME_WATER_BUCKET)));
@@ -623,7 +623,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_LIME_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_LIME_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_LIME_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_LIME_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -642,7 +642,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_ORANGE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_ORANGE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -656,7 +656,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_ORANGE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_ORANGE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_ORANGE_WATER_BUCKET)));
@@ -678,7 +678,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_ORANGE_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_ORANGE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_ORANGE_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_ORANGE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -697,7 +697,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_PINK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_PINK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -711,7 +711,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_PINK_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_PINK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_PINK_WATER_BUCKET)));
@@ -732,7 +732,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_PINK_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_PINK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_PINK_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_PINK_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -751,7 +751,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_RED_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_RED_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -765,7 +765,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_RED_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_RED_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_RED_WATER_BUCKET)));
@@ -786,7 +786,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_RED_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_RED_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_RED_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_RED_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -805,7 +805,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_WHITE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_WHITE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -819,7 +819,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_WHITE_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_WHITE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_WHITE_WATER_BUCKET)));
@@ -840,7 +840,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_WHITE_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_WHITE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_WHITE_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_WHITE_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();
@@ -859,7 +859,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
         });
 
 
-        EMPTY_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_YELLOW_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CauldronBehavior.EMPTY_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_YELLOW_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, getEmptiedStack(stack, player));
@@ -873,7 +873,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
             return ActionResult.success(world.isClient);
         });
 
-        CONDENSE_YELLOW_CAULDRON_BEHAVIOR.put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_YELLOW_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
             if (!world.isClient) {
                 Item item = stack.getItem();
                 player.setStackInHand(hand, FluidLevelUtil.exchangeStack(stack, player, new ItemStack(ModItems.CONDENSE_YELLOW_WATER_BUCKET)));
@@ -894,7 +894,7 @@ public interface CondenseCauldronBehavior extends CauldronBehavior {
 
         });
 
-        CONDENSE_YELLOW_CAULDRON_BEHAVIOR.put(ModItems.CONDENSE_YELLOW_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
+        CONDENSE_YELLOW_CAULDRON_BEHAVIOR.map().put(ModItems.CONDENSE_YELLOW_WATER_BUCKET, (state, world, pos, player, hand, stack) -> {
             if (FluidLevelUtil.canIncrementFluidLevel(state)) {
                 if (!world.isClient) {
                     Item item = stack.getItem();

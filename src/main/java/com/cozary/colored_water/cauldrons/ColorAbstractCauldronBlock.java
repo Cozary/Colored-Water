@@ -14,7 +14,7 @@ import java.util.Map;
 import static net.minecraft.block.LeveledCauldronBlock.LEVEL;
 
 public abstract class ColorAbstractCauldronBlock extends AbstractCauldronBlock {
-    public ColorAbstractCauldronBlock(Settings settings, Map<Item, CauldronBehavior> behaviorMap) {
+    public ColorAbstractCauldronBlock(Settings settings, CauldronBehavior.CauldronBehaviorMap behaviorMap) {
         super(settings, behaviorMap);
     }
 
