@@ -3,10 +3,13 @@ package com.cozary.colored_water.recipe;
 import com.cozary.colored_water.init.ModItems;
 import com.cozary.colored_water.init.ModRecipe;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapelessRecipe;
@@ -47,7 +50,10 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {
 
-        public static final Codec<ContainerCraftingRecipe> CODEC = RecordCodecBuilder.create(instance -> instance
+        public Serializer() {
+        }
+
+        public static final MapCodec<ContainerCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
                 .group(
                         Codec.STRING.fieldOf("group").orElse("").forGetter(ContainerCraftingRecipe::getGroup),
                         ItemStack.CODEC.fieldOf("result").forGetter(result -> result.recipeOutput),
@@ -60,35 +66,42 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
                 ))
         );
 
+
+        public static final PacketCodec<RegistryByteBuf, ContainerCraftingRecipe> PACKET_CODEC = PacketCodec.ofStatic(ContainerCraftingRecipe.Serializer::write, ContainerCraftingRecipe.Serializer::read);
+
+
         @Override
-        public @NotNull Codec<ContainerCraftingRecipe> codec() {
+        public @NotNull MapCodec<ContainerCraftingRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public ContainerCraftingRecipe read(PacketByteBuf buf) {
+        public PacketCodec<RegistryByteBuf, ContainerCraftingRecipe> packetCodec() {
+            return PACKET_CODEC;
+        }
+
+        private static ContainerCraftingRecipe read(RegistryByteBuf buf) {
             String s = buf.readString();
             int i = buf.readVarInt();
             DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(i, Ingredient.EMPTY);
 
             for (int j = 0; j < nonnulllist.size(); ++j) {
-                nonnulllist.set(j, Ingredient.fromPacket(buf));
+                nonnulllist.set(j, Ingredient.PACKET_CODEC.decode(buf));
             }
 
-            ItemStack itemstack = buf.readItemStack();
+            ItemStack itemstack =  ItemStack.PACKET_CODEC.decode(buf);
             return new ContainerCraftingRecipe(s, CraftingRecipeCategory.MISC, itemstack, nonnulllist);
         }
 
-        @Override
-        public void write(PacketByteBuf buf, ContainerCraftingRecipe recipe) {
+        private static void write(RegistryByteBuf buf, ContainerCraftingRecipe recipe) {
             buf.writeString(recipe.group);
             buf.writeVarInt(recipe.recipeItems.size());
 
             for (Ingredient ingredient : recipe.recipeItems) {
-                ingredient.write(buf);
+                Ingredient.PACKET_CODEC.encode(buf, ingredient);
             }
 
-            buf.writeItemStack(recipe.recipeOutput);
+            ItemStack.PACKET_CODEC.encode(buf, recipe.recipeOutput);
         }
 
     }
