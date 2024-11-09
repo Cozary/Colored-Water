@@ -14,6 +14,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,9 +44,8 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
     }
 
     @Override
-    public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
-        return DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-
+    public DefaultedList<ItemStack> getRemainder(CraftingRecipeInput input) {
+        return DefaultedList.ofSize(input.getSize(), ItemStack.EMPTY);
     }
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {

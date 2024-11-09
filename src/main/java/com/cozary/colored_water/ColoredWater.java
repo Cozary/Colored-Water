@@ -29,7 +29,7 @@ public class ColoredWater implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "colored_water";
 
-    private static final RegistryKey<ItemGroup> ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(MOD_ID, "colored_water_tab"));
+    private static final RegistryKey<ItemGroup> ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(MOD_ID, "colored_water_tab"));
 
     @Override
     public void onInitialize() {

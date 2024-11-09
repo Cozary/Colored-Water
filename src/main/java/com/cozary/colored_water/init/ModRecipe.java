@@ -12,7 +12,7 @@ public class ModRecipe {
     public static final ContainerCraftingRecipe.Serializer CONTAINER_CRAFTING_RECIPE;
 
     static {
-        CONTAINER_CRAFTING_RECIPE = Registry.register(Registries.RECIPE_SERIALIZER, new Identifier(MOD_ID, "container_shapeless_recipe_cw"), new ContainerCraftingRecipe.Serializer());
+        CONTAINER_CRAFTING_RECIPE = Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of(MOD_ID, "container_shapeless_recipe_cw"), new ContainerCraftingRecipe.Serializer());
     }
 
     public static void loadClass() {
