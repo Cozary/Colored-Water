@@ -9,7 +9,7 @@ group = project.maven_group
 base {
     archivesName = "Colored Water-fabric-" + project.minecraft_version
 }
-//version = "forge-${minecraft_version}-${mod_version}"
+
 loom {
     accessWidenerPath = file("src/main/resources/colored_water.accesswidener")
 }
