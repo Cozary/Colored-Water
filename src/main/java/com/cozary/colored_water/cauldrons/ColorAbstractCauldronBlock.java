@@ -16,7 +16,7 @@ import static net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL;
 public abstract class ColorAbstractCauldronBlock extends AbstractCauldronBlock {
 
     public ColorAbstractCauldronBlock(
-            Properties settings, Map<Item, CauldronInteraction> behaviorMap) {
+            Properties settings, CauldronInteraction.InteractionMap behaviorMap) {
         super(settings, behaviorMap);
     }
 
