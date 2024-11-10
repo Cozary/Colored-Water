@@ -1,6 +1,6 @@
 package com.cozary.colored_water.cauldrons.util;
 
-import com.cozary.colored_water.cauldrons.block.base.AbstractLeveledCauldronBlock;
+import com.cozary.colored_water.cauldrons.ColorAbstractCauldronBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -39,8 +39,8 @@ public class FluidLevelUtil {
     }
 
     static int getFluidLevel(BlockState state) {
-        if (state.getBlock() instanceof AbstractLeveledCauldronBlock) {
-            return AbstractLeveledCauldronBlock.getFluidLevel(state);
+        if (state.getBlock() instanceof ColorAbstractCauldronBlock) {
+            return ColorAbstractCauldronBlock.getFluidLevel(state);
         } else if (state.getBlock() instanceof LayeredCauldronBlock) {
             return state.getValue(LayeredCauldronBlock.LEVEL);
         } else if (state.is(Blocks.CAULDRON)) {
@@ -50,8 +50,8 @@ public class FluidLevelUtil {
     }
 
     static int getMaxFluidLevel(BlockState state) {
-        if (state.getBlock() instanceof AbstractLeveledCauldronBlock) {
-            return AbstractLeveledCauldronBlock.getMaxLevel();
+        if (state.getBlock() instanceof ColorAbstractCauldronBlock) {
+            return ColorAbstractCauldronBlock.getMaxLevel();
         } else if (state.getBlock() instanceof LayeredCauldronBlock) {
             return 3;
         } else if (state.is(Blocks.CAULDRON)) {

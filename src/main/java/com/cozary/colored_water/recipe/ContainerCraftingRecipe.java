@@ -1,6 +1,7 @@
 package com.cozary.colored_water.recipe;
 
-import com.cozary.colored_water.items.ModItems;
+import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.init.ModRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
@@ -29,7 +30,7 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
-        return ModItems.CONTAINER_CRAFTING_RECIPE.get();
+        return ModRecipe.CONTAINER_CRAFTING_RECIPE.get();
     }
 
     @Override
