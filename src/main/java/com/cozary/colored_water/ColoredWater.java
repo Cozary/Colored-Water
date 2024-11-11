@@ -18,21 +18,21 @@ public class ColoredWater {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MOD_ID = "colored_water";
 
-    public ColoredWater() {
-        final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public ColoredWater(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
 
-        ModFluids.FLUIDS.register(eventBus);
-        ModBlocks.BLOCKS.register(eventBus);
-        ModItems.ITEMS.register(eventBus);
-        ModRecipe.RECIPES.register(eventBus);
-        ModCauldrons.BLOCKS.register(eventBus);
-        ModTabs.CREATIVE_MODE_TABS.register(eventBus);
-        ModFluidTypes.FLUID_TYPES.register(eventBus);
+        ModFluids.FLUIDS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
+        ModRecipe.RECIPES.register(modEventBus);
+        ModCauldrons.BLOCKS.register(modEventBus);
+        ModTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModFluidTypes.FLUID_TYPES.register(modEventBus);
 
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            eventBus.addListener(ColoredWaterClient::doClientStuff);
-        }        eventBus.addListener(ColoredWaterClient::setup);
+            modEventBus.addListener(ColoredWaterClient::doClientStuff);
+        }        modEventBus.addListener(ColoredWaterClient::setup);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
