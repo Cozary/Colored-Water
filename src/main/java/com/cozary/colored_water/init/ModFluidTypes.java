@@ -9,7 +9,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.fluids.FluidType;
@@ -128,7 +128,7 @@ public class ModFluidTypes {
                 .canHydrate(true)
                 .canSwim(true)
                 .canDrown(true)
-                .pathType(BlockPathTypes.WATER)
+                .pathType(PathType.WATER)
                 .density(1024)
                 .viscosity(1024);
     }
