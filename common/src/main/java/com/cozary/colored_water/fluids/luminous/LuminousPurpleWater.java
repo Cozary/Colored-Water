@@ -1,0 +1,87 @@
+package com.cozary.colored_water.fluids.luminous;
+
+import com.cozary.colored_water.fluids.BaseColorWater;
+import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.particles.SparkleParticleOptions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+
+public abstract class LuminousPurpleWater extends BaseColorWater {
+    public LuminousPurpleWater() {
+    }
+
+    @Override
+    public void animateTick(Level level, BlockPos blockPos, FluidState fluidState, RandomSource random) {
+        super.animateTick(level, blockPos, fluidState, random);
+        if (level.random.nextFloat() < 0.4F) {
+            level.addParticle(new SparkleParticleOptions(0x8932B8), (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.01, 0.01, 0.01);
+        }
+    }
+
+    @Override
+    public Fluid getSource() {
+        return ModFluids.STILL_LUMINOUS_PURPLE_WATER.get();
+    }
+
+    @Override
+    public Fluid getFlowing() {
+        return ModFluids.FLOWING_LUMINOUS_PURPLE_WATER.get();
+    }
+
+    @Override
+    public Item getBucket() {
+        return ModItems.LUMINOUS_PURPLE_WATER_BUCKET.get();
+    }
+
+    @Override
+    protected BlockState createLegacyBlock(FluidState pState) {
+
+        return ModBlocks.LUMINOUS_PURPLE_WATER_BLOCK.get().defaultBlockState().setValue(LiquidBlock.LEVEL, FlowingFluid.getLegacyLevel(pState));
+    }
+
+    public static class Source extends LuminousPurpleWater {
+        public Source() {
+        }
+
+        @Override
+        public int getAmount(FluidState fluidState) {
+            return 8;
+        }
+
+        @Override
+        public boolean isSource(FluidState fluidState) {
+            return true;
+        }
+    }
+
+    public static class Flowing extends LuminousPurpleWater {
+        public Flowing() {
+        }
+
+        @Override
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> pBuilder) {
+            super.createFluidStateDefinition(pBuilder);
+            pBuilder.add(FlowingFluid.LEVEL);
+        }
+
+        @Override
+        public int getAmount(FluidState pState) {
+            return pState.getValue(FlowingFluid.LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState pState) {
+            return false;
+        }
+    }
+}

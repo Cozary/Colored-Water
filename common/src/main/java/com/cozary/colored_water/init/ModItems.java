@@ -1,0 +1,111 @@
+package com.cozary.colored_water.init;
+
+import com.cozary.colored_water.ColoredWater;
+import com.google.common.collect.Sets;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+
+import java.util.LinkedHashSet;
+import java.util.function.Supplier;
+
+import static com.cozary.colored_water.init.ModFluids.*;
+import static net.minecraft.world.item.Items.BUCKET;
+
+public class ModItems {
+
+    public static final RegistrationProvider<Item> ITEMS = RegistrationProvider.get(Registries.ITEM, ColoredWater.MOD_ID);
+
+    public static LinkedHashSet<Supplier<Item>> REGISTERED_ITEMS = Sets.newLinkedHashSet();
+
+    public static final Supplier<Item> WHITE_WATER_BUCKET = registerWithSet("white_water_bucket", () -> new BucketItem(STILL_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_WHITE_WATER_BUCKET = registerWithSet("condense_white_water_bucket", () -> new BucketItem(STILL_CONDENSE_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_WHITE_WATER_BUCKET = registerWithSet("luminous_white_water_bucket", () -> new BucketItem(STILL_LUMINOUS_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_WHITE_WATER_BUCKET = registerWithSet("luminous_condense_white_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> ORANGE_WATER_BUCKET = registerWithSet("orange_water_bucket", () -> new BucketItem(STILL_ORANGE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_ORANGE_WATER_BUCKET = registerWithSet("condense_orange_water_bucket", () -> new BucketItem(STILL_CONDENSE_ORANGE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_ORANGE_WATER_BUCKET = registerWithSet("luminous_orange_water_bucket", () -> new BucketItem(STILL_LUMINOUS_ORANGE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET = registerWithSet("luminous_condense_orange_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_ORANGE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> MAGENTA_WATER_BUCKET = registerWithSet("magenta_water_bucket", () -> new BucketItem(STILL_MAGENTA_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_MAGENTA_WATER_BUCKET = registerWithSet("condense_magenta_water_bucket", () -> new BucketItem(STILL_CONDENSE_MAGENTA_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_MAGENTA_WATER_BUCKET = registerWithSet("luminous_magenta_water_bucket", () -> new BucketItem(STILL_LUMINOUS_MAGENTA_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_MAGENTA_WATER_BUCKET = registerWithSet("luminous_condense_magenta_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_MAGENTA_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> LIGHT_BLUE_WATER_BUCKET = registerWithSet("light_blue_water_bucket", () -> new BucketItem(STILL_LIGHT_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_LIGHT_BLUE_WATER_BUCKET = registerWithSet("condense_light_blue_water_bucket", () -> new BucketItem(STILL_CONDENSE_LIGHT_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_LIGHT_BLUE_WATER_BUCKET = registerWithSet("luminous_light_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_LIGHT_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_LIGHT_BLUE_WATER_BUCKET = registerWithSet("luminous_condense_light_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_LIGHT_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> YELLOW_WATER_BUCKET = registerWithSet("yellow_water_bucket", () -> new BucketItem(STILL_YELLOW_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_YELLOW_WATER_BUCKET = registerWithSet("condense_yellow_water_bucket", () -> new BucketItem(STILL_CONDENSE_YELLOW_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_YELLOW_WATER_BUCKET = registerWithSet("luminous_yellow_water_bucket", () -> new BucketItem(STILL_LUMINOUS_YELLOW_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_YELLOW_WATER_BUCKET = registerWithSet("luminous_condense_yellow_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_YELLOW_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> LIME_WATER_BUCKET = registerWithSet("lime_water_bucket", () -> new BucketItem(STILL_LIME_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_LIME_WATER_BUCKET = registerWithSet("condense_lime_water_bucket", () -> new BucketItem(STILL_CONDENSE_LIME_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_LIME_WATER_BUCKET = registerWithSet("luminous_lime_water_bucket", () -> new BucketItem(STILL_LUMINOUS_LIME_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_LIME_WATER_BUCKET = registerWithSet("luminous_condense_lime_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_LIME_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> PINK_WATER_BUCKET = registerWithSet("pink_water_bucket", () -> new BucketItem(STILL_PINK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_PINK_WATER_BUCKET = registerWithSet("condense_pink_water_bucket", () -> new BucketItem(STILL_CONDENSE_PINK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_PINK_WATER_BUCKET = registerWithSet("luminous_pink_water_bucket", () -> new BucketItem(STILL_LUMINOUS_PINK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_PINK_WATER_BUCKET = registerWithSet("luminous_condense_pink_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_PINK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> GRAY_WATER_BUCKET = registerWithSet("gray_water_bucket", () -> new BucketItem(STILL_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_GRAY_WATER_BUCKET = registerWithSet("condense_gray_water_bucket", () -> new BucketItem(STILL_CONDENSE_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_GRAY_WATER_BUCKET = registerWithSet("luminous_gray_water_bucket", () -> new BucketItem(STILL_LUMINOUS_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_GRAY_WATER_BUCKET = registerWithSet("luminous_condense_gray_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> LIGHT_GRAY_WATER_BUCKET = registerWithSet("light_gray_water_bucket", () -> new BucketItem(STILL_LIGHT_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_LIGHT_GRAY_WATER_BUCKET = registerWithSet("condense_light_gray_water_bucket", () -> new BucketItem(STILL_CONDENSE_LIGHT_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_LIGHT_GRAY_WATER_BUCKET = registerWithSet("luminous_light_gray_water_bucket", () -> new BucketItem(STILL_LUMINOUS_LIGHT_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_LIGHT_GRAY_WATER_BUCKET = registerWithSet("luminous_condense_light_gray_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_LIGHT_GRAY_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> CYAN_WATER_BUCKET = registerWithSet("cyan_water_bucket", () -> new BucketItem(STILL_CYAN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_CYAN_WATER_BUCKET = registerWithSet("condense_cyan_water_bucket", () -> new BucketItem(STILL_CONDENSE_CYAN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_CYAN_WATER_BUCKET = registerWithSet("luminous_cyan_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CYAN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_CYAN_WATER_BUCKET = registerWithSet("luminous_condense_cyan_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_CYAN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> PURPLE_WATER_BUCKET = registerWithSet("purple_water_bucket", () -> new BucketItem(STILL_PURPLE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_PURPLE_WATER_BUCKET = registerWithSet("condense_purple_water_bucket", () -> new BucketItem(STILL_CONDENSE_PURPLE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_PURPLE_WATER_BUCKET = registerWithSet("luminous_purple_water_bucket", () -> new BucketItem(STILL_LUMINOUS_PURPLE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_PURPLE_WATER_BUCKET = registerWithSet("luminous_condense_purple_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_PURPLE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> BLUE_WATER_BUCKET = registerWithSet("blue_water_bucket", () -> new BucketItem(STILL_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_BLUE_WATER_BUCKET = registerWithSet("condense_blue_water_bucket", () -> new BucketItem(STILL_CONDENSE_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_BLUE_WATER_BUCKET = registerWithSet("luminous_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_BLUE_WATER_BUCKET = registerWithSet("luminous_condense_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> BROWN_WATER_BUCKET = registerWithSet("brown_water_bucket", () -> new BucketItem(STILL_BROWN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_BROWN_WATER_BUCKET = registerWithSet("condense_brown_water_bucket", () -> new BucketItem(STILL_CONDENSE_BROWN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_BROWN_WATER_BUCKET = registerWithSet("luminous_brown_water_bucket", () -> new BucketItem(STILL_LUMINOUS_BROWN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_BROWN_WATER_BUCKET = registerWithSet("luminous_condense_brown_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_BROWN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> GREEN_WATER_BUCKET = registerWithSet("green_water_bucket", () -> new BucketItem(STILL_GREEN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_GREEN_WATER_BUCKET = registerWithSet("condense_green_water_bucket", () -> new BucketItem(STILL_CONDENSE_GREEN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_GREEN_WATER_BUCKET = registerWithSet("luminous_green_water_bucket", () -> new BucketItem(STILL_LUMINOUS_GREEN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_GREEN_WATER_BUCKET = registerWithSet("luminous_condense_green_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_GREEN_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> RED_WATER_BUCKET = registerWithSet("red_water_bucket", () -> new BucketItem(STILL_RED_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_RED_WATER_BUCKET = registerWithSet("condense_red_water_bucket", () -> new BucketItem(STILL_CONDENSE_RED_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_RED_WATER_BUCKET = registerWithSet("luminous_red_water_bucket", () -> new BucketItem(STILL_LUMINOUS_RED_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_RED_WATER_BUCKET = registerWithSet("luminous_condense_red_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_RED_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static final Supplier<Item> BLACK_WATER_BUCKET = registerWithSet("black_water_bucket", () -> new BucketItem(STILL_BLACK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> CONDENSE_BLACK_WATER_BUCKET = registerWithSet("condense_black_water_bucket", () -> new BucketItem(STILL_CONDENSE_BLACK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1)));
+    public static final Supplier<Item> LUMINOUS_BLACK_WATER_BUCKET = registerWithSet("luminous_black_water_bucket", () -> new BucketItem(STILL_LUMINOUS_BLACK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final Supplier<Item> LUMINOUS_CONDENSE_BLACK_WATER_BUCKET = registerWithSet("luminous_condense_black_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_BLACK_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    public static Supplier<Item> registerWithSet(final String name, final Supplier<? extends Item> supplier) {
+        Supplier<Item> item = ITEMS.register(name, supplier);
+        REGISTERED_ITEMS.add(item);
+        return item;
+    }
+
+    public static void loadClass() {
+    }
+
+}
