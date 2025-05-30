@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "colored_water:item/condense_white_water_bucket"
+  }
+}

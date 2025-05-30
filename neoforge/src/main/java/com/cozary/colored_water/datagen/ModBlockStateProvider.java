@@ -1,3 +1,4 @@
+/*
 package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
@@ -109,3 +110,4 @@ public class ModBlockStateProvider extends BlockStateProvider {
         });
     }
 }
+*/

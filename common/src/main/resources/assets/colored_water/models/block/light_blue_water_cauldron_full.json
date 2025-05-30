@@ -1,6 +1,5 @@
 {
   "parent": "minecraft:block/template_cauldron_full",
-  "render_type": "minecraft:translucent",
   "textures": {
     "bottom": "minecraft:block/cauldron_bottom",
     "content": "colored_water:block/light_blue_water_still",

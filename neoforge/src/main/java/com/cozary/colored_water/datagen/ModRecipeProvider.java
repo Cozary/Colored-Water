@@ -1,6 +1,5 @@
 package com.cozary.colored_water.datagen;
 
-
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.init.ModItems;
 import com.cozary.colored_water.recipe.ContainerCraftingRecipeBuilder;
@@ -18,12 +17,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
+public class ModRecipeProvider extends RecipeProvider {
 
 
     protected ModRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {

@@ -1,14 +1,14 @@
+/*
 package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.init.ModItems;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
 
 public class ModItemModelProvider extends ItemModelProvider {
-    public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, ColoredWater.MOD_ID, existingFileHelper);
+    public ModItemModelProvider(PackOutput output) {
+        super(output, ColoredWater.MOD_ID);
     }
 
     @Override
@@ -79,3 +79,4 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.LUMINOUS_CONDENSE_BLACK_WATER_BUCKET.get());
     }
 }
+*/
