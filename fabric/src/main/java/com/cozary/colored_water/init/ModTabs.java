@@ -18,7 +18,7 @@ public class ModTabs {
     public static void loadClass() {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ITEM_GROUP, FabricItemGroup.builder()
                 .title(Component.translatable("itemGroup.colored_water"))
-                .icon(() -> new ItemStack(ModBlocks.PINK_WATER_BLOCK.get()))
+                .icon(() -> new ItemStack(ModItems.PINK_WATER_BUCKET.get()))
                 .displayItems((parameters, output) -> ModItems.REGISTERED_ITEMS.forEach((item) -> output.accept(item.get())))
                 .build()
         );
