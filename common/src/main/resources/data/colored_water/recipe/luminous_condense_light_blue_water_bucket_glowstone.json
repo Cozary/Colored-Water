@@ -1,19 +1,11 @@
 {
   "type": "colored_water:container_shapeless_recipe_cw",
-  "group": "",
+  "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:water_bucket"
-    },
-    {
-      "item": "minecraft:light_blue_dye"
-    },
-    {
-      "item": "minecraft:light_blue_dye"
-    },
-    {
-      "item": "minecraft:glowstone_dust"
-    }
+    "minecraft:water_bucket",
+    "minecraft:light_blue_dye",
+    "minecraft:light_blue_dye",
+    "minecraft:glowstone_dust"
   ],
   "result": {
     "count": 1,
