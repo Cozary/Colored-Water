@@ -19,15 +19,9 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         generator.addProvider(true, new ModRecipeProvider.Runner(packOutput, lookupProvider));
-
         generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
-
         generator.addProvider(true, new ModFluidTagProvider(packOutput, lookupProvider));
-
-        //generator.addProvider(true, new ModItemModelProvider(packOutput));
         generator.addProvider(true, new ModModelProvider(packOutput));
-
-        //generator.addProvider(true, new ModBlockStateProvider(packOutput));
     }
 
     @SubscribeEvent
@@ -37,14 +31,8 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         generator.addProvider(true, new ModRecipeProvider.Runner(packOutput, lookupProvider));
-
         generator.addProvider(true, new ModBlockTagProvider(packOutput, lookupProvider));
-
         generator.addProvider(true, new ModFluidTagProvider(packOutput, lookupProvider));
-
-        //generator.addProvider(true, new ModItemModelProvider(packOutput));
         generator.addProvider(true, new ModModelProvider(packOutput));
-
-        //generator.addProvider(true, new ModBlockStateProvider(packOutput));
     }
 }

@@ -229,15 +229,14 @@ public class ModModelProvider extends ModelProvider {
             throw new IllegalStateException("Block not registered: " + block);
         }
 
-        String name = id.getPath(); // ej: "magenta_water_cauldron"
-        String color = extractColorFromName(name); // método propio para extraer "magenta"
+        String name = id.getPath();
+        String color = extractColorFromName(name);
         String fluid = color + "_water_still";
 
         TextureMapping textures = TextureMapping.cauldron(
                 ResourceLocation.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/" + fluid)
         );
 
-        // Crear blockstate con variantes según nivel del cauldron
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(block).with(
                         PropertyDispatch.property(LayeredCauldronBlock.LEVEL)
@@ -252,11 +251,6 @@ public class ModModelProvider extends ModelProvider {
                                                 ModelTemplates.CAULDRON_FULL.createWithSuffix(block, "_full", textures, blockModels.modelOutput)))
                 )
         );
-
-        // Crear modelo base (opcional)
-        /*ModelTemplates.CAULDRON_LEVEL1.create(block, textures, blockModels.modelOutput);
-        ModelTemplates.CAULDRON_LEVEL2.create(block, textures, blockModels.modelOutput);
-        ModelTemplates.CAULDRON_FULL.create(block, textures, blockModels.modelOutput);*/
     }
 
 
