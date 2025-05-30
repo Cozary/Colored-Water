@@ -9,7 +9,7 @@ import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,7 +53,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_MAGENTA_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -66,7 +66,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -78,7 +78,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -94,9 +94,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -112,7 +112,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_PURPLE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -125,7 +125,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -137,7 +137,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -153,9 +153,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -171,7 +171,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_GREEN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -184,7 +184,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -196,7 +196,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -212,9 +212,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -230,7 +230,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_BLACK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -243,7 +243,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -255,7 +255,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -271,9 +271,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -289,7 +289,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -302,7 +302,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -313,7 +313,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -329,9 +329,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -347,7 +347,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_BROWN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -360,7 +360,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -371,7 +371,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -387,9 +387,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -405,7 +405,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_CYAN_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -418,7 +418,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -429,7 +429,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -445,9 +445,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -463,7 +463,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -476,7 +476,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -487,7 +487,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -503,9 +503,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -521,7 +521,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_LIGHT_BLUE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -534,7 +534,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -545,7 +545,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -561,9 +561,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -579,7 +579,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_LIGHT_GRAY_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -592,7 +592,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -603,7 +603,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -619,9 +619,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -637,7 +637,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_LIME_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -650,7 +650,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -661,7 +661,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -677,9 +677,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -695,7 +695,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_ORANGE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -708,7 +708,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -720,7 +720,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
 
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -736,9 +736,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -754,7 +754,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_PINK_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -767,7 +767,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -778,7 +778,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -794,9 +794,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -812,7 +812,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_RED_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -825,7 +825,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -836,7 +836,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -852,9 +852,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -870,7 +870,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_WHITE_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -883,7 +883,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -894,7 +894,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -910,9 +910,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 
@@ -928,7 +928,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
         });
 
         CONDENSE_YELLOW_CAULDRON_BEHAVIOR.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> {
@@ -941,7 +941,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 
                 if (!state.hasProperty(LEVEL)) {
-                    return ItemInteractionResult.FAIL;
+                    return InteractionResult.FAIL;
                 }
 
                 int currentLevel = state.getValue(LEVEL);
@@ -952,7 +952,7 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                 }
             }
 
-            return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            return InteractionResult.SUCCESS;
 
         });
 
@@ -968,9 +968,9 @@ public interface CondenseCauldronBehavior extends CauldronInteraction {
                     world.gameEvent(null, GameEvent.FLUID_PLACE, pos);
                 }
 
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         });
 

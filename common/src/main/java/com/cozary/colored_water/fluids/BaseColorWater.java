@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -38,8 +39,8 @@ public abstract class BaseColorWater extends FlowingFluid {
     }
 
     @Override
-    protected boolean canConvertToSource(Level pLevel) {
-        return pLevel.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION);
+    protected boolean canConvertToSource(ServerLevel level) {
+        return level.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION);
     }
 
     @Override
