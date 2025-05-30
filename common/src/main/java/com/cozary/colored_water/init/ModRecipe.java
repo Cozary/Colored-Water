@@ -4,7 +4,6 @@ import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.recipe.ContainerCraftingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 public class ModRecipe {
 

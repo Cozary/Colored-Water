@@ -16,8 +16,8 @@ import java.util.List;
 
 public class ContainerCraftingRecipe extends ShapelessRecipe {
 
-    private final String group;
     final CraftingBookCategory category;
+    private final String group;
     private final ItemStack recipeOutput;
     private final List<Ingredient> recipeItems;
 
@@ -42,6 +42,7 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
     }
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {
+        public static final StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> STREAM_CODEC;
         private static final MapCodec<ContainerCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec((instance) -> {
             return instance.group(
                     Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
@@ -52,7 +53,19 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
             );
         });
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> STREAM_CODEC;
+        static {
+            STREAM_CODEC = StreamCodec.composite(
+                    ByteBufCodecs.STRING_UTF8, (recipe) -> {
+                        return recipe.group;
+                    }, CraftingBookCategory.STREAM_CODEC, (recipe) -> {
+                        return recipe.category;
+                    }, ItemStack.STREAM_CODEC, (recipe) -> {
+                        return recipe.recipeOutput;
+                    }, Ingredient.CONTENTS_STREAM_CODEC.apply(
+                            ByteBufCodecs.list()), (recipe) -> {
+                        return recipe.recipeItems;
+                    }, ContainerCraftingRecipe::new);
+        }
 
         public Serializer() {
         }
@@ -65,21 +78,6 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, ContainerCraftingRecipe> streamCodec() {
             return STREAM_CODEC;
-        }
-
-
-        static {
-            STREAM_CODEC = StreamCodec.composite(
-                    ByteBufCodecs.STRING_UTF8, (recipe) -> {
-                return recipe.group;
-            }, CraftingBookCategory.STREAM_CODEC, (recipe) -> {
-                return recipe.category;
-            }, ItemStack.STREAM_CODEC, (recipe) -> {
-                return recipe.recipeOutput;
-            }, Ingredient.CONTENTS_STREAM_CODEC.apply(
-                    ByteBufCodecs.list()), (recipe) -> {
-                return recipe.recipeItems;
-            }, ContainerCraftingRecipe::new);
         }
     }
 }
