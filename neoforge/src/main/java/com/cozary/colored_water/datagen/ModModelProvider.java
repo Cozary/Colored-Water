@@ -9,8 +9,6 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +16,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+
+import static net.minecraft.client.data.models.BlockModelGenerators.plainVariant;
 
 public class ModModelProvider extends ModelProvider {
     public ModModelProvider(PackOutput output) {
@@ -238,17 +238,14 @@ public class ModModelProvider extends ModelProvider {
         );
 
         blockModels.blockStateOutput.accept(
-                MultiVariantGenerator.multiVariant(block).with(
-                        PropertyDispatch.property(LayeredCauldronBlock.LEVEL)
-                                .select(1, Variant.variant()
-                                        .with(VariantProperties.MODEL,
-                                                ModelTemplates.CAULDRON_LEVEL1.createWithSuffix(block, "_level1", textures, blockModels.modelOutput)))
-                                .select(2, Variant.variant()
-                                        .with(VariantProperties.MODEL,
-                                                ModelTemplates.CAULDRON_LEVEL2.createWithSuffix(block, "_level2", textures, blockModels.modelOutput)))
-                                .select(3, Variant.variant()
-                                        .with(VariantProperties.MODEL,
-                                                ModelTemplates.CAULDRON_FULL.createWithSuffix(block, "_full", textures, blockModels.modelOutput)))
+                MultiVariantGenerator.dispatch(block).with(
+                        PropertyDispatch.initial(LayeredCauldronBlock.LEVEL)
+                                .select(1, plainVariant(
+                                        ModelTemplates.CAULDRON_LEVEL1.createWithSuffix(block, "_level1", textures, blockModels.modelOutput)))
+                                .select(2, plainVariant(
+                                        ModelTemplates.CAULDRON_LEVEL2.createWithSuffix(block, "_level2", textures, blockModels.modelOutput)))
+                                .select(3, plainVariant(
+                                        ModelTemplates.CAULDRON_FULL.createWithSuffix(block, "_full", textures, blockModels.modelOutput)))
                 )
         );
     }
