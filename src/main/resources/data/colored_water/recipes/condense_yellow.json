@@ -12,7 +12,7 @@
     }
   ],
   "result": {
-    "id": "colored_water:condense_yellow_water_bucket",
-    "Count": 1
+    "item": "colored_water:condense_yellow_water_bucket",
+    "count": 1
   }
 }

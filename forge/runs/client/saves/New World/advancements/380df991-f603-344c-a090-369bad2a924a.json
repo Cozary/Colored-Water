@@ -1,0 +1,603 @@
+{
+  "minecraft:recipes/decorations/crafting_table": {
+    "criteria": {
+      "unlock_right_away": "2025-05-30 13:09:33 +0200"
+    },
+    "done": true
+  },
+  "minecraft:adventure/adventuring_time": {
+    "criteria": {
+      "minecraft:plains": "2025-05-30 13:09:34 +0200"
+    },
+    "done": false
+  },
+  "minecraft:story/root": {
+    "criteria": {
+      "crafting_table": "2025-05-30 21:09:30 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_white_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_yellow_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_light_gray_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_black_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_black_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_red_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_light_gray_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_green_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_white_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_cyan_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_light_blue_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_magenta_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_pink_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_white_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/lime_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_lime_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_gray_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_light_blue_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_gray_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_red_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_green_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_lime_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_lime_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/purple_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_pink_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_magenta_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_yellow_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_cyan_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_cyan_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_light_blue_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/pink_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_purple_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_yellow_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_brown_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_white_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/blue_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_blue_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_magenta_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_lime_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/magenta_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_light_gray_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_yellow_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_purple_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_red_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/yellow_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_green_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_purple_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_black_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/light_gray_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_black_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_blue_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_pink_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_brown_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_light_blue_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_purple_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_brown_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/gray_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_gray_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/brown_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/light_blue_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_magenta_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_cyan_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/white_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_gray_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_gray_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_cyan_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_magenta_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_lime_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_pink_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_red_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_pink_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_light_blue_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_blue_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_brown_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/green_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_green_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_black_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_yellow_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_white_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_brown_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_blue_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_light_gray_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/cyan_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_light_gray_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/red_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_purple_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_red_water_bucket_glowstone": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/brewing/cauldron": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/luminous_condense_green_water_bucket_ink": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/black_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "colored_water:recipes/misc/condense_blue_water_bucket": {
+    "criteria": {
+      "has_water_bucket": "2025-05-30 21:09:33 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/tools/light_gray_bundle": {
+    "criteria": {
+      "has_light_gray_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/dye_light_gray_carpet": {
+    "criteria": {
+      "has_needed_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/dye_light_gray_bed": {
+    "criteria": {
+      "has_needed_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/building_blocks/dye_light_gray_wool": {
+    "criteria": {
+      "has_needed_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/light_gray_stained_glass_pane_from_glass_pane": {
+    "criteria": {
+      "has_light_gray_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "minecraft:recipes/decorations/light_gray_candle": {
+    "criteria": {
+      "has_light_gray_dye": "2025-05-30 21:09:35 +0200"
+    },
+    "done": true
+  },
+  "DataVersion": 4325
+}

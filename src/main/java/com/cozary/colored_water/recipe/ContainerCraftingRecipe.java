@@ -1,19 +1,21 @@
 package com.cozary.colored_water.recipe;
 
-import com.cozary.colored_water.init.ModItems;
 import com.cozary.colored_water.init.ModRecipe;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ContainerCraftingRecipe extends ShapelessRecipe {
 
@@ -21,13 +23,12 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
     private final ItemStack recipeOutput;
     private final DefaultedList<Ingredient> recipeItems;
 
-    public ContainerCraftingRecipe(String group, CraftingRecipeCategory category, ItemStack result, DefaultedList<Ingredient> ingredients) {
-        super(group, category, result, ingredients);
+    public ContainerCraftingRecipe(Identifier id, String group, CraftingRecipeCategory category, ItemStack result, DefaultedList<Ingredient> ingredients) {
+        super(id, group, category, result, ingredients);
         this.group = group;
         this.recipeOutput = result;
         this.recipeItems = ingredients;
     }
-
 
     @Override
     public @NotNull RecipeSerializer<?> getSerializer() {
@@ -42,41 +43,51 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
     @Override
     public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
         return DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-
     }
 
     public static class Serializer implements RecipeSerializer<ContainerCraftingRecipe> {
 
-        public static final Codec<ContainerCraftingRecipe> CODEC = RecordCodecBuilder.create(instance -> instance
-                .group(
-                        Codec.STRING.fieldOf("group").orElse("").forGetter(ContainerCraftingRecipe::getGroup),
-                        ItemStack.CODEC.fieldOf("result").forGetter(result -> result.recipeOutput),
-                        Codec.list(Ingredient.ALLOW_EMPTY_CODEC).fieldOf("ingredients").forGetter(ContainerCraftingRecipe::getIngredients)
-                ).apply(instance, (group, result, ingredients) -> new ContainerCraftingRecipe(
-                        group,
-                        CraftingRecipeCategory.MISC,
-                        result,
-                        DefaultedList.copyOf(Ingredient.EMPTY, ingredients.toArray(new Ingredient[0]))
-                ))
-        );
+        private static DefaultedList<Ingredient> readIngredients(JsonArray jsonArray) {
+            DefaultedList<Ingredient> ingredients = DefaultedList.of();
 
-        @Override
-        public @NotNull Codec<ContainerCraftingRecipe> codec() {
-            return CODEC;
+            for (int i = 0; i < jsonArray.size(); ++i) {
+                Ingredient ingredient = Ingredient.fromJson(jsonArray.get(i));
+                if (!ingredient.isEmpty()) {
+                    ingredients.add(ingredient);
+                }
+            }
+
+            return ingredients;
         }
 
         @Override
-        public ContainerCraftingRecipe read(PacketByteBuf buf) {
-            String s = buf.readString();
-            int i = buf.readVarInt();
-            DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(i, Ingredient.EMPTY);
+        public ContainerCraftingRecipe read(Identifier id, JsonObject json) {
 
-            for (int j = 0; j < nonnulllist.size(); ++j) {
-                nonnulllist.set(j, Ingredient.fromPacket(buf));
+            String group = JsonHelper.getString(json, "group", "");
+            DefaultedList<Ingredient> ingredients = readIngredients(json.getAsJsonArray("ingredients"));
+
+            if (ingredients.isEmpty()) {
+                throw new JsonParseException("No ingredients for recipe " + id);
             }
 
-            ItemStack itemstack = buf.readItemStack();
-            return new ContainerCraftingRecipe(s, CraftingRecipeCategory.MISC, itemstack, nonnulllist);
+            JsonObject resultObject = JsonHelper.getObject(json, "result");
+            ItemStack result = ShapedRecipe.outputFromJson(resultObject);
+
+            return new ContainerCraftingRecipe(id, group, CraftingRecipeCategory.MISC, result, ingredients);
+        }
+
+        @Override
+        public ContainerCraftingRecipe read(Identifier id, PacketByteBuf buf) {
+            String group = buf.readString();
+            int count = buf.readVarInt();
+
+            DefaultedList<Ingredient> ingredients = DefaultedList.ofSize(count, Ingredient.EMPTY);
+            for (int i = 0; i < count; ++i) {
+                ingredients.set(i, Ingredient.fromPacket(buf));
+            }
+
+            ItemStack result = buf.readItemStack();
+            return new ContainerCraftingRecipe(id, group, CraftingRecipeCategory.MISC, result, ingredients);
         }
 
         @Override
@@ -90,7 +101,5 @@ public class ContainerCraftingRecipe extends ShapelessRecipe {
 
             buf.writeItemStack(recipe.recipeOutput);
         }
-
     }
-
 }

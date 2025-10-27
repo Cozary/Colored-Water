@@ -1,0 +1,18 @@
+{
+  "stats": {
+    "minecraft:custom": {
+      "minecraft:jump": 1,
+      "minecraft:time_since_rest": 598,
+      "minecraft:play_time": 598,
+      "minecraft:time_since_death": 598,
+      "minecraft:walk_one_cm": 217,
+      "minecraft:total_world_time": 3110,
+      "minecraft:use_cauldron": 3
+    },
+    "minecraft:used": {
+      "minecraft:cauldron": 1,
+      "colored_water:white_water_bucket": 3
+    }
+  },
+  "DataVersion": 3953
+}

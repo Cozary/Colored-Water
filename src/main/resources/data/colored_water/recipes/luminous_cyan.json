@@ -12,7 +12,7 @@
     }
   ],
   "result": {
-    "id": "colored_water:luminous_cyan_water_bucket",
-    "Count": 1
+    "item": "colored_water:luminous_cyan_water_bucket",
+    "count": 1
   }
 }
