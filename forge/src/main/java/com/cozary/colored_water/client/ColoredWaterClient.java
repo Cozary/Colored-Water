@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -31,8 +32,8 @@ public class ColoredWaterClient {
 
     public static void doClientStuff(final FMLClientSetupEvent event) {
 
-        final Map<Fluid, RenderType> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (map) -> {
-            final RenderType translucent = RenderType.translucent();
+        final Map<Fluid, ChunkSectionLayer> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (map) -> {
+            final ChunkSectionLayer translucent = ChunkSectionLayer.TRANSLUCENT;
 
             map.put(ModFluids.STILL_MAGENTA_WATER.get(), translucent);
             map.put(ModFluids.FLOWING_MAGENTA_WATER.get(), translucent);
