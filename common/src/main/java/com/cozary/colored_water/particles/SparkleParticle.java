@@ -1,17 +1,16 @@
 package com.cozary.colored_water.particles;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.*;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.Nullable;
 
-public class SparkleParticle extends TextureSheetParticle {
-    private final SpriteSet sprites;
+public class SparkleParticle extends SingleQuadParticle {
 
-    public SparkleParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, SpriteSet sprites) {
-        super(level, x, y, z);
-        this.sprites = sprites;
+    public SparkleParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, TextureAtlasSprite sprite) {
+        super(level, x, y, z, dx, dy, dz, sprite);
         this.gravity = -0.01F;
         this.friction = 0.95F;
 
@@ -21,7 +20,7 @@ public class SparkleParticle extends TextureSheetParticle {
 
         this.quadSize = 0.1F + random.nextFloat() * 0.1F;
         this.lifetime = 80 + random.nextInt(40);
-        this.setSpriteFromAge(sprites);
+        this.setSprite(sprite);
     }
 
     public void setColor(int hex) {
@@ -35,12 +34,9 @@ public class SparkleParticle extends TextureSheetParticle {
         this.bCol = b + (1.0F - b) * lighten;
     }
 
-
     @Override
     public void tick() {
         super.tick();
-        this.setSpriteFromAge(sprites);
-
         this.alpha = 0.5F + 0.5F * Mth.sin(this.age / 4.0F);
 
         if (this.age > this.lifetime - 10) {
@@ -49,7 +45,24 @@ public class SparkleParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected Layer getLayer() {
+        return Layer.TRANSLUCENT;
+    }
+
+    public static class Factory implements ParticleProvider<SparkleParticleOptions> {
+        private final SpriteSet spriteSet;
+
+        public Factory(SpriteSet sprite) {
+            this.spriteSet = sprite;
+        }
+
+        @Nullable
+        @Override
+        public Particle createParticle(SparkleParticleOptions options, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
+            TextureAtlasSprite sprite = this.spriteSet.get(random);
+            SparkleParticle particle = new SparkleParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, sprite);
+            particle.setColor(options.color());
+            return particle;
+        }
     }
 }

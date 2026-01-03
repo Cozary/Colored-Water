@@ -19,7 +19,7 @@ public class ColoredWaterNeoForge {
         ModFluidTypes.FLUID_TYPES.register(eventBus);
         ModTabs.CREATIVE_MODE_TABS.register(eventBus);
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             eventBus.addListener(ColoredWaterClient::doClientStuff);
         }
 
