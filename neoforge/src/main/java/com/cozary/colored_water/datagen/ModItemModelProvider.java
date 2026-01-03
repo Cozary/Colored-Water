@@ -78,4 +78,5 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get());
         basicItem(ModItems.LUMINOUS_CONDENSE_BLACK_WATER_BUCKET.get());
     }
+
 }
