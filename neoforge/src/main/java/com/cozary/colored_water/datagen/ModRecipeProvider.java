@@ -132,6 +132,13 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         addColoredWaterRecipe(output, List.of(Items.RED_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_RED_WATER_BUCKET.get(), "ink");
         addColoredWaterRecipe(output, List.of(Items.RED_DYE, Items.RED_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_CONDENSE_RED_WATER_BUCKET.get(), "glowstone");
         addColoredWaterRecipe(output, List.of(Items.RED_DYE, Items.RED_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_CONDENSE_RED_WATER_BUCKET.get(), "ink");
+
+        addColoredWaterRecipe(output, Items.ORANGE_DYE, ModItems.ORANGE_WATER_BUCKET.get());
+        addColoredWaterRecipe(output, List.of(Items.ORANGE_DYE, Items.ORANGE_DYE), ModItems.CONDENSE_RED_WATER_BUCKET.get());
+        addColoredWaterRecipe(output, List.of(Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "glowstone");
+        addColoredWaterRecipe(output, List.of(Items.ORANGE_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "ink");
+        addColoredWaterRecipe(output, List.of(Items.ORANGE_DYE, Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET.get(), "glowstone");
+        addColoredWaterRecipe(output, List.of(Items.ORANGE_DYE, Items.ORANGE_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET.get(), "ink");
     }
 
     private void addColoredWaterRecipe(RecipeOutput output, ItemLike singleDye, ItemLike resultItem) {
