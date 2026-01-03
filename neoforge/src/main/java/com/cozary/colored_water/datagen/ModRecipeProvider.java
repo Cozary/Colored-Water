@@ -134,6 +134,13 @@ public class ModRecipeProvider extends RecipeProvider {
         addColoredWaterRecipe(List.of(Items.RED_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_RED_WATER_BUCKET.get(), "ink");
         addColoredWaterRecipe(List.of(Items.RED_DYE, Items.RED_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_CONDENSE_RED_WATER_BUCKET.get(), "glowstone");
         addColoredWaterRecipe(List.of(Items.RED_DYE, Items.RED_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_CONDENSE_RED_WATER_BUCKET.get(), "ink");
+
+        addColoredWaterRecipe(Items.ORANGE_DYE, ModItems.ORANGE_WATER_BUCKET.get());
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE), ModItems.CONDENSE_RED_WATER_BUCKET.get());
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "glowstone");
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "ink");
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET.get(), "glowstone");
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET.get(), "ink");
     }
 
     private void addColoredWaterRecipe(ItemLike singleDye, ItemLike resultItem) {
