@@ -12,7 +12,6 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 @EventBusSubscriber(modid = ColoredWater.MOD_ID,value = Dist.CLIENT)
 public class ParticleRegister {
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void registerFactories(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.SPARKLE.get(), SparkleParticleProvider::new);
