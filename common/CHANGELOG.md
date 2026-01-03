@@ -1,10 +1,5 @@
-# Changelog 1.21.5
-
-### Added
-
-- Spanish Lang
-- Portuguese Lang
+# Changelog 1.21.6 port
 
 ### Fixed
 
-- All Orange Water recipes not existing.
+- All langs
