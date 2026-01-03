@@ -1,16 +1,10 @@
-# Changelog 1.21.5 Port
+# Changelog 1.21.5
 
 ### Added
 
-- Particles for glow variants.
-- Multiloader.
-- DataGen.
-
-### Removed
-
-- FoilBucketItem subclass of BucketItem that has DataComponents.ENCHANTMENT_GLINT_OVERRIDE. This caused issues with
-  other mods like FramedBlocks.
+- Spanish Lang
+- Portuguese Lang
 
 ### Fixed
 
-- Right-clicking a bucket with a bucket on an empty cauldron would give you a bucket of blue water.
+- All Orange Water recipes not existing.
