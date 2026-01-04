@@ -1,7 +1,7 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -103,8 +103,8 @@ public class ModFluidTypes {
     }
 
     public static class FluidClientExtensions implements IClientFluidTypeExtensions {
-        private static final ResourceLocation STILL_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "block/water_still");
-        private static final ResourceLocation FLOWING_TEXTURE = ResourceLocation.fromNamespaceAndPath("minecraft", "block/water_flow");
+        private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_still");
+        private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_flow");
         private final int color;
 
         public FluidClientExtensions(int color) {
@@ -112,12 +112,12 @@ public class ModFluidTypes {
         }
 
         @Override
-        public ResourceLocation getStillTexture() {
+        public Identifier getStillTexture() {
             return STILL_TEXTURE;
         }
 
         @Override
-        public ResourceLocation getFlowingTexture() {
+        public Identifier getFlowingTexture() {
             return FLOWING_TEXTURE;
         }
 

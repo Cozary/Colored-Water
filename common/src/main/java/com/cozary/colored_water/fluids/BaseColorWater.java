@@ -14,6 +14,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -40,7 +41,7 @@ public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
     protected boolean canConvertToSource(ServerLevel level) {
-        return level.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION);
+        return level.getGameRules().get(GameRules.WATER_SOURCE_CONVERSION);
     }
 
     @Override

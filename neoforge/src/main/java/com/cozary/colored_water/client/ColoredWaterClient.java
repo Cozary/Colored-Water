@@ -7,10 +7,9 @@ import com.cozary.colored_water.cauldrons.behaviour.LuminousCondenseCauldronBeha
 import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModFluids;
 import com.google.common.collect.Maps;
-import net.minecraft.Util;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;

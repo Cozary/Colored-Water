@@ -13,7 +13,7 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 
@@ -224,7 +224,7 @@ public class ModModelProvider extends ModelProvider {
 
 
     public void generateLayeredCauldronModels(BlockModelGenerators blockModels, Block block) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         if (id == null) {
             throw new IllegalStateException("Block not registered: " + block);
         }
@@ -234,7 +234,7 @@ public class ModModelProvider extends ModelProvider {
         String fluid = color + "_water_still";
 
         TextureMapping textures = TextureMapping.cauldron(
-                ResourceLocation.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/" + fluid)
+                Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/" + fluid)
         );
 
         blockModels.blockStateOutput.accept(

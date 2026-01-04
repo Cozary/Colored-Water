@@ -4,7 +4,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -99,12 +99,12 @@ public class ContainerCraftingRecipeBuilder implements RecipeBuilder {
                 this.ingredients
         );
 
-        output.accept(recipeId, recipe, advancement.build(recipeId.location().withPrefix("recipes/" + this.category.getFolderName() + "/")));
+        output.accept(recipeId, recipe, advancement.build(recipeId.identifier().withPrefix("recipes/" + this.category.getFolderName() + "/")));
     }
 
     private void ensureValid(ResourceKey<Recipe<?>> id) {
         if (this.criteria.isEmpty()) {
-            throw new IllegalStateException("No way of obtaining recipe " + id.location());
+            throw new IllegalStateException("No way of obtaining recipe " + id.identifier());
         }
     }
 }

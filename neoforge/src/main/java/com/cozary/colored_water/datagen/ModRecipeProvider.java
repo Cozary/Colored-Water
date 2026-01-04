@@ -12,7 +12,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -156,14 +156,14 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     private void addColoredWaterRecipe(List<ItemLike> extraIngredients, ItemLike resultItem, int count, String suffix) {
-        ResourceLocation resultId = BuiltInRegistries.ITEM.getKey(resultItem.asItem());
+        Identifier resultId = BuiltInRegistries.ITEM.getKey(resultItem.asItem());
         if (resultId == null) throw new IllegalStateException("Unregistered result item: " + resultItem.asItem());
 
         String path = resultId.getPath();
         if (suffix != null && !suffix.isEmpty()) {
             path += "_" + suffix;
         }
-        ResourceLocation recipeId = ResourceLocation.fromNamespaceAndPath(ColoredWater.MOD_ID, path);
+        Identifier recipeId = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, path);
 
         HolderGetter<Item> itemGetter = this.registries
                 .lookup(Registries.ITEM)
