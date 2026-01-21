@@ -24,4 +24,4 @@ run
 runs
 
 neoforge/src/generated
-/common/src/main/resources/.cache/*
+common/src/main/resources/.cache/
