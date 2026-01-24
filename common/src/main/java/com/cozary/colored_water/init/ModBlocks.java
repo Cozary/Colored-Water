@@ -1,6 +1,7 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
+import com.cozary.colored_water.block.ColoredWaterBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -16,6 +17,8 @@ import static com.cozary.colored_water.init.ModFluids.*;
 
 public class ModBlocks {
     public static final RegistrationProvider<Block> BLOCKS = RegistrationProvider.get(Registries.BLOCK, ColoredWater.MOD_ID);
+
+    public static Supplier<Block> COLORED_WATER_BLOCK = BLOCKS.register("colored_water_block", () -> new ColoredWaterBlock(STILL_COLORED_WATER, BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "colored_water_block")))));
 
     public static Supplier<Block> WHITE_WATER_BLOCK = BLOCKS.register("white_water_block", () -> new LiquidBlock(STILL_WHITE_WATER.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "white_water_block")))));
     public static Supplier<Block> CONDENSE_WHITE_WATER_BLOCK = BLOCKS.register("condense_white_water_block", () -> new LiquidBlock(STILL_CONDENSE_WHITE_WATER.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "condense_white_water_block")))));

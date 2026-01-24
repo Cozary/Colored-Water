@@ -1,13 +1,15 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
+import com.cozary.colored_water.item.ColoredWaterBucketItem;
 import com.google.common.collect.Sets;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.DyedItemColor;
 
 import java.util.LinkedHashSet;
 import java.util.function.Supplier;
@@ -20,6 +22,9 @@ public class ModItems {
     public static final RegistrationProvider<Item> ITEMS = RegistrationProvider.get(Registries.ITEM, ColoredWater.MOD_ID);
 
     public static LinkedHashSet<Supplier<Item>> REGISTERED_ITEMS = Sets.newLinkedHashSet();
+
+
+    public static final Supplier<Item> COLORED_WATER_BUCKET = registerWithSet("colored_water_bucket", () -> new ColoredWaterBucketItem(new Item.Properties().stacksTo(1).component(DataComponents.DYED_COLOR, new DyedItemColor(0x3F76E4)).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "colored_water_bucket")))));
 
     public static final Supplier<Item> WHITE_WATER_BUCKET = registerWithSet("white_water_bucket", () -> new BucketItem(STILL_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "white_water_bucket")))));
     public static final Supplier<Item> CONDENSE_WHITE_WATER_BUCKET = registerWithSet("condense_white_water_bucket", () -> new BucketItem(STILL_CONDENSE_WHITE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "condense_white_water_bucket")))));
@@ -77,7 +82,7 @@ public class ModItems {
     public static final Supplier<Item> LUMINOUS_CONDENSE_PURPLE_WATER_BUCKET = registerWithSet("luminous_condense_purple_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_PURPLE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "luminous_condense_purple_water_bucket")))));
 
     public static final Supplier<Item> BLUE_WATER_BUCKET = registerWithSet("blue_water_bucket", () -> new BucketItem(STILL_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "blue_water_bucket")))));
-    public static final Supplier<Item> CONDENSE_BLUE_WATER_BUCKET = registerWithSet("condense_blue_water_bucket", () -> new BucketItem(STILL_CONDENSE_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "condense_blue_water_bucket")))));
+    public static final Supplier<Item> CONDENSE_BLUE_WATER_BUCKET = registerWithSet("condense_blue_water_bucket", () -> new BucketItem(STILL_CONDENSE_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "condense_blue_water_bucket")))));
     public static final Supplier<Item> LUMINOUS_BLUE_WATER_BUCKET = registerWithSet("luminous_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "luminous_blue_water_bucket")))));
     public static final Supplier<Item> LUMINOUS_CONDENSE_BLUE_WATER_BUCKET = registerWithSet("luminous_condense_blue_water_bucket", () -> new BucketItem(STILL_LUMINOUS_CONDENSE_BLUE_WATER.get(), new Item.Properties().craftRemainder(BUCKET).stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true).setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "luminous_condense_blue_water_bucket")))));
 

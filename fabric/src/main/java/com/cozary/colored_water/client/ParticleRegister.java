@@ -2,7 +2,6 @@ package com.cozary.colored_water.client;
 
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.SparkleParticle;
-import com.cozary.colored_water.particles.SparkleParticleProvider;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 

@@ -17,6 +17,9 @@ public class ModFluidTagProvider extends FluidTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(FluidTags.WATER)
+                .add(ModFluids.STILL_COLORED_WATER.get())
+                .add(ModFluids.FLOWING_COLORED_WATER.get())
+
                 .add(ModFluids.STILL_WHITE_WATER.get())
                 .add(ModFluids.FLOWING_WHITE_WATER.get())
                 .add(ModFluids.STILL_CONDENSE_WHITE_WATER.get())

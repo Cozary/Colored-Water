@@ -6,6 +6,7 @@ import com.cozary.colored_water.cauldrons.behaviour.LuminousCauldronBehavior;
 import com.cozary.colored_water.cauldrons.behaviour.LuminousCondenseCauldronBehavior;
 import com.cozary.colored_water.init.ModTabs;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 public class ColoredWaterFabric implements ModInitializer {
 
@@ -19,5 +20,9 @@ public class ColoredWaterFabric implements ModInitializer {
         CondenseCauldronBehavior.init();
         LuminousCauldronBehavior.init();
         LuminousCondenseCauldronBehavior.init();
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            ColoredWater.registerCommands(dispatcher);
+        });
     }
 }

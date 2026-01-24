@@ -1,8 +1,15 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
+import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundActions;
@@ -10,6 +17,7 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+import java.time.Duration;
 import java.util.function.Supplier;
 
 public class ModFluidTypes {
@@ -81,6 +89,8 @@ public class ModFluidTypes {
     public static final Supplier<FluidType> LUMINOUS_CONDENSE_WHITE_WATER_TYPE = registerColoredWaterType("luminous_condense_white_water_type");
     public static final Supplier<FluidType> LUMINOUS_CONDENSE_YELLOW_WATER_TYPE = registerColoredWaterType("luminous_condense_yellow_water_type");
 
+    public static final Supplier<FluidType> COLORED_WATER_TYPE = registerColoredWaterType("colored_water_type");
+
     private static Supplier<FluidType> registerColoredWaterType(String name) {
         return FLUID_TYPES.register(name, () -> new FluidType(createFluidTypeProperties()));
     }
@@ -100,6 +110,40 @@ public class ModFluidTypes {
                 .density(1024)
                 .viscosity(1024)
                 ;
+    }
+
+    public static class FluidClientExtensionsSpecial implements IClientFluidTypeExtensions {
+        private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_still");
+        private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_flow");
+
+        // Cache found colors to prevent flickering when BE is syncing
+        private static final Cache<BlockPos, Integer> COLOR_CACHE = CacheBuilder.newBuilder()
+                .expireAfterWrite(Duration.ofSeconds(5))
+                .build();
+
+        public FluidClientExtensionsSpecial() {
+        }
+
+        @Override
+        public Identifier getStillTexture() {
+            return STILL_TEXTURE;
+        }
+
+        @Override
+        public Identifier getFlowingTexture() {
+            return FLOWING_TEXTURE;
+        }
+
+        @Override
+        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
+            if (getter != null && pos != null) {
+                BlockEntity be = getter.getBlockEntity(pos);
+                if (be instanceof ColoredWaterBlockEntity) {
+                    return ((ColoredWaterBlockEntity) be).getColor() | 0xFF000000;
+                }
+            }
+            return 0x3F76E4 | 0xFF000000;
+        }
     }
 
     public static class FluidClientExtensions implements IClientFluidTypeExtensions {

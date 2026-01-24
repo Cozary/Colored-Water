@@ -36,6 +36,9 @@ public class ColoredWaterClient {
         final Map<Fluid, ChunkSectionLayer> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (map) -> {
             final ChunkSectionLayer translucent = ChunkSectionLayer.TRANSLUCENT;
 
+            map.put(ModFluids.STILL_COLORED_WATER.get(), translucent);
+            map.put(ModFluids.FLOWING_COLORED_WATER.get(), translucent);
+
             map.put(ModFluids.STILL_MAGENTA_WATER.get(), translucent);
             map.put(ModFluids.FLOWING_MAGENTA_WATER.get(), translucent);
             map.put(ModFluids.STILL_PURPLE_WATER.get(), translucent);
@@ -108,6 +111,8 @@ public class ColoredWaterClient {
     }
 
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+
+        event.registerFluidType(new ModFluidTypes.FluidClientExtensionsSpecial(), ModFluidTypes.COLORED_WATER_TYPE.get());
 
         event.registerFluidType(new ModFluidTypes.FluidClientExtensions(0xff1D1D21), ModFluidTypes.BLACK_WATER_TYPE.get());
         event.registerFluidType(new ModFluidTypes.FluidClientExtensions(0xff3C44AA), ModFluidTypes.BLUE_WATER_TYPE.get());

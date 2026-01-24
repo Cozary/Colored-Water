@@ -2,6 +2,7 @@ package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.recipe.ColoredWaterBucketDyeRecipe;
 import com.cozary.colored_water.recipe.ContainerCraftingRecipeBuilder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
@@ -11,8 +12,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,6 +32,10 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes() {
+
+        SpecialRecipeBuilder.special(ColoredWaterBucketDyeRecipe::new).save(this.output, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "colored_water_bucket_dye").toString());
+
+
         addColoredWaterRecipe(Items.BLACK_DYE, ModItems.BLACK_WATER_BUCKET.get());
         addColoredWaterRecipe(List.of(Items.BLACK_DYE, Items.BLACK_DYE), ModItems.CONDENSE_BLACK_WATER_BUCKET.get());
         addColoredWaterRecipe(List.of(Items.BLACK_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), "glowstone");
@@ -136,7 +142,7 @@ public class ModRecipeProvider extends RecipeProvider {
         addColoredWaterRecipe(List.of(Items.RED_DYE, Items.RED_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_CONDENSE_RED_WATER_BUCKET.get(), "ink");
 
         addColoredWaterRecipe(Items.ORANGE_DYE, ModItems.ORANGE_WATER_BUCKET.get());
-        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE), ModItems.CONDENSE_RED_WATER_BUCKET.get());
+        addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE), ModItems.CONDENSE_ORANGE_WATER_BUCKET.get());
         addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "glowstone");
         addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.GLOW_INK_SAC), ModItems.LUMINOUS_ORANGE_WATER_BUCKET.get(), "ink");
         addColoredWaterRecipe(List.of(Items.ORANGE_DYE, Items.ORANGE_DYE, Items.GLOWSTONE_DUST), ModItems.LUMINOUS_CONDENSE_ORANGE_WATER_BUCKET.get(), "glowstone");

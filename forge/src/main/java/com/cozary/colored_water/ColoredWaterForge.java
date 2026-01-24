@@ -4,6 +4,8 @@ import com.cozary.colored_water.client.ColoredWaterClient;
 import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModTabs;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -26,5 +28,11 @@ public class ColoredWaterForge {
 
         FMLCommonSetupEvent.getBus(eventBus).addListener(ColoredWaterClient::setup);
 
+        RegisterCommandsEvent.BUS.addListener(this::registerCommands);
+    }
+
+    @SubscribeEvent
+    private void registerCommands(RegisterCommandsEvent event) {
+        ColoredWater.registerCommands(event.getDispatcher());
     }
 }

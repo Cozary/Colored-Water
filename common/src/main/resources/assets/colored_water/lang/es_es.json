@@ -319,5 +319,9 @@
   "block.colored_water.luminous_condense_light_blue_water_block": "Agua azul claro condensada luminosa",
   "block.colored_water.luminous_condense_orange_water_block": "Agua naranja condensada luminosa",
   "block.colored_water.luminous_condense_white_water_block": "Agua blanca condensada luminosa",
-  "itemGroup.colored_water": "Agua coloreada"
+  "itemGroup.colored_water": "Colored Water",
+  "item.colored_water.colored_water_bucket": "Cubo de agua coloreada",
+  "fluid.colored_water.colored_water_fluid": "Fluido de agua coloreada",
+  "fluid_type.colored_water.colored_water_fluid": "Agua Coloreada",
+  "block.colored_water.colored_water_block": "Agua Coloreada"
 }

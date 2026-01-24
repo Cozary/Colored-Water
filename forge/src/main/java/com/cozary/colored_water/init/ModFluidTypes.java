@@ -1,8 +1,13 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
+import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.SoundActions;
@@ -81,6 +86,47 @@ public class ModFluidTypes {
     public static final RegistryObject<FluidType> LUMINOUS_CONDENSE_RED_WATER_TYPE = registerColoredWaterType("luminous_condense_red_water_type", 0xffB02E26);
     public static final RegistryObject<FluidType> LUMINOUS_CONDENSE_WHITE_WATER_TYPE = registerColoredWaterType("luminous_condense_white_water_type", 0xffF9FFFE);
     public static final RegistryObject<FluidType> LUMINOUS_CONDENSE_YELLOW_WATER_TYPE = registerColoredWaterType("luminous_condense_yellow_water_type", 0xffFED83D);
+
+    public static final RegistryObject<FluidType> COLORED_WATER_TYPE = registerColoredWaterTypeSpecial("colored_water_type");
+
+
+    private static RegistryObject<FluidType> registerColoredWaterTypeSpecial(String name) {
+        return FLUID_TYPES.register(name, () -> new FluidType(createFluidTypeProperties()) {
+            @Override
+            public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                consumer.accept(new IClientFluidTypeExtensions() {
+                    private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_still");
+                    private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "block/water_flow");
+
+                    @Override
+                    public Identifier getStillTexture() {
+                        return STILL_TEXTURE;
+                    }
+
+                    @Override
+                    public Identifier getFlowingTexture() {
+                        return FLOWING_TEXTURE;
+                    }
+
+                    @Override
+                    public int getTintColor() {
+                        return 0x3F76E4;
+                    }
+
+                    @Override
+                    public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
+                        if (getter != null && pos != null) {
+                            BlockEntity be = getter.getBlockEntity(pos);
+                            if (be instanceof ColoredWaterBlockEntity) {
+                                return ((ColoredWaterBlockEntity) be).getColor() | 0xFF000000;
+                            }
+                        }
+                        return 0x3F76E4 | 0xFF000000;
+                    }
+                });
+            }
+        });
+    }
 
     private static RegistryObject<FluidType> registerColoredWaterType(String name, int color) {
         return FLUID_TYPES.register(name, () -> new FluidType(createFluidTypeProperties()) {

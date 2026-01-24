@@ -4,13 +4,17 @@ import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModItems;
+import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
@@ -26,6 +30,7 @@ public class ModModelProvider extends ModelProvider {
 
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+
         generateLayeredCauldronModels(blockModels, ModCauldrons.MAGENTA_WATER_CAULDRON.get());
         generateLayeredCauldronModels(blockModels, ModCauldrons.PURPLE_WATER_CAULDRON.get());
         generateLayeredCauldronModels(blockModels, ModCauldrons.GREEN_WATER_CAULDRON.get());
@@ -90,6 +95,7 @@ public class ModModelProvider extends ModelProvider {
         generateLayeredCauldronModels(blockModels, ModCauldrons.LUMINOUS_CONDENSE_LIGHT_BLUE_WATER_CAULDRON.get());
         generateLayeredCauldronModels(blockModels, ModCauldrons.LUMINOUS_CONDENSE_ORANGE_WATER_CAULDRON.get());
         generateLayeredCauldronModels(blockModels, ModCauldrons.LUMINOUS_CONDENSE_WHITE_WATER_CAULDRON.get());
+
 
         blockModels.createTrivialCube(ModBlocks.WHITE_WATER_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.CONDENSE_WHITE_WATER_BLOCK.get());
@@ -156,6 +162,7 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createTrivialCube(ModBlocks.LUMINOUS_BROWN_WATER_BLOCK.get());
         blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_BROWN_WATER_BLOCK.get());
 
+
         itemModels.generateFlatItem(ModItems.WHITE_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.CONDENSE_WHITE_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.LUMINOUS_WHITE_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
@@ -220,6 +227,25 @@ public class ModModelProvider extends ModelProvider {
         itemModels.generateFlatItem(ModItems.CONDENSE_BLACK_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.LUMINOUS_BLACK_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.LUMINOUS_CONDENSE_BLACK_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
+
+
+        //Can be in a separate function
+        Identifier bucketBase = Identifier.fromNamespaceAndPath("minecraft", "item/bucket");
+        Identifier bucketOverlay = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "item/colored_water_bucket_overlay");
+        Identifier modelLocation = ModelLocationUtils.getModelLocation(ModItems.COLORED_WATER_BUCKET.get());
+
+        ModelTemplates.TWO_LAYERED_ITEM.create(modelLocation, TextureMapping.layered(bucketBase, bucketOverlay), itemModels.modelOutput);
+
+        itemModels.itemModelOutput.accept(
+                ModItems.COLORED_WATER_BUCKET.get(),
+                ItemModelUtils.conditional(
+                        ItemModelUtils.hasComponent(DataComponents.DYED_COLOR),
+                        ItemModelUtils.tintedModel(modelLocation, ItemModelGenerators.BLANK_LAYER, new Dye(0x3F76E4)),
+                        ItemModelUtils.plainModel(modelLocation)
+                )
+        );
+
+        blockModels.createTrivialCube(ModBlocks.COLORED_WATER_BLOCK.get());
     }
 
 

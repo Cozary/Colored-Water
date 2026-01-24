@@ -34,6 +34,9 @@ public class ColoredWaterClient {
         final Map<Fluid, ChunkSectionLayer> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (map) -> {
             final ChunkSectionLayer translucent = ChunkSectionLayer.TRANSLUCENT;
 
+            map.put(ModFluids.STILL_COLORED_WATER.get(), translucent);
+            map.put(ModFluids.FLOWING_COLORED_WATER.get(), translucent);
+
             map.put(ModFluids.STILL_MAGENTA_WATER.get(), translucent);
             map.put(ModFluids.FLOWING_MAGENTA_WATER.get(), translucent);
             map.put(ModFluids.STILL_PURPLE_WATER.get(), translucent);

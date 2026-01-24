@@ -1,5 +1,6 @@
 package com.cozary.colored_water.client;
 
+import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
 import net.fabricmc.api.ClientModInitializer;
@@ -9,13 +10,43 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class ColoredWaterClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
+        // Colored Water Rendering
+        FluidRenderHandlerRegistry.INSTANCE.register(
+                ModFluids.STILL_COLORED_WATER.get(),
+                ModFluids.FLOWING_COLORED_WATER.get(),
+                new SimpleFluidRenderHandler(
+                        Identifier.fromNamespaceAndPath("minecraft", "block/water_still"),
+                        Identifier.fromNamespaceAndPath("minecraft", "block/water_flow"),
+                        0x3F76E4
+                ) {
+                    @Override
+                    public int getFluidColor(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
+                        if (view != null && pos != null) {
+                            BlockEntity be = view.getBlockEntity(pos);
+                            if (be instanceof ColoredWaterBlockEntity) {
+                                return ((ColoredWaterBlockEntity) be).getColor() | 0xFF000000;
+                            }
+                        }
+                        return -1;
+                    }
+                }
+        );
+
+        BlockRenderLayerMap.putFluids(ChunkSectionLayer.TRANSLUCENT, ModFluids.STILL_COLORED_WATER.get(), ModFluids.FLOWING_COLORED_WATER.get());
+
 
         FluidRenderHandlerRegistry.INSTANCE.register(
                 ModFluids.STILL_BLACK_WATER.get(),

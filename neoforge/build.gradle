@@ -53,7 +53,7 @@ def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', Strin
     }
 }
 sourceSets.configureEach {
-    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant->
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
         configurations.named("$variant") {
             attributes {
                 attribute(loaderAttribute, 'neoforge')
@@ -89,12 +89,12 @@ publishMods {
 tasks.register('moveGeneratedResources', Copy) {
     group = mod_id
     description = "Moves generated resources to common module, overwriting duplicates."
-    from 'src/generated/resources'
+    from 'src/generated'
     into rootProject.project(':common').file('src/main/resources')
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doLast {
-        file('src/generated/resources').deleteDir()
+        file('src/generated').deleteDir()
     }
 }
 

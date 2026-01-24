@@ -4,6 +4,7 @@
   "package": "com.cozary.colored_water.mixin",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
+    "ColoredWaterMixin",
     "color.BlackWaterMixin",
     "color.BlueWaterMixin",
     "color.BrownWaterMixin",

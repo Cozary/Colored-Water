@@ -1,5 +1,7 @@
 {
   "values": [
+    "colored_water:colored_water",
+    "colored_water:flowing_colored_water",
     "colored_water:white_water",
     "colored_water:flowing_white_water",
     "colored_water:condense_white_water",
