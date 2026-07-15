@@ -1,5 +1,7 @@
 # Colored Water
 
+### **[Check out the wiki!](https://cozarycore.com/wiki/colored-water/)**
+
 Looking for a simple mod to decorate? This mod adds colored water with which you can decorate your world however you want. The Mod also adds Condensed Colored Water. And these two have their light variant! And Cauldrons!!
 
 # NeoForge - Fabric - Forge
