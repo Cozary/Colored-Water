@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "colored_water:block/light_blue_water_block"
-  }
-}

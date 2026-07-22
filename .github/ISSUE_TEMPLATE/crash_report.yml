@@ -1,6 +1,6 @@
 name: Crash Report
 description: Report a crash
-labels: ["type: bug"]
+labels: [ "type: bug" ]
 body:
   - type: dropdown
     id: loader

@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug in the mod
-labels: ["type: bug"]
+labels: [ "type: bug" ]
 body:
   - type: dropdown
     id: loader

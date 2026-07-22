@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class ModBlockEntities {
+
     public static final RegistrationProvider<BlockEntityType<?>> BLOCK_ENTITIES = RegistrationProvider.get(Registries.BLOCK_ENTITY_TYPE, ColoredWater.MOD_ID);
+
+    public static final Supplier<BlockEntityType<ColoredWaterBlockEntity>> COLORED_WATER_BE = BLOCK_ENTITIES.register("colored_water_be",
+            () -> new BlockEntityType<>(ColoredWaterBlockEntity::new, Set.of(ModBlocks.COLORED_WATER_BLOCK.get())));
 
     public static void loadClass() {
     }
-
-    public static final Supplier<BlockEntityType<ColoredWaterBlockEntity>> COLORED_WATER_BE = BLOCK_ENTITIES.register("colored_water_be", () -> new BlockEntityType<>(ColoredWaterBlockEntity::new, Set.of(ModBlocks.COLORED_WATER_BLOCK.get())));
-
-
 }

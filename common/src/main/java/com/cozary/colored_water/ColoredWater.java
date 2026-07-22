@@ -14,11 +14,9 @@ public class ColoredWater {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
     public static void init() {
-
         ModBlocks.loadClass();
         ModCauldrons.loadClass();
         ModFluids.loadClass();
-        ModItems.loadClass();
         ModItems.loadClass();
         ModRecipe.loadClass();
         ModParticles.loadClass();
@@ -28,5 +26,4 @@ public class ColoredWater {
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         ColoredWaterCommand.register(dispatcher);
     }
-
 }

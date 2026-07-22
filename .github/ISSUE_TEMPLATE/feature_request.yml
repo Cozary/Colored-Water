@@ -1,6 +1,6 @@
 name: Feature Request
 description: Suggest a new feature
-labels: ["type: feature request"]
+labels: [ "type: feature request" ]
 body:
   - type: textarea
     id: idea

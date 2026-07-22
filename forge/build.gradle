@@ -6,7 +6,7 @@ plugins {
     id 'idea'
 }
 base {
-    archivesName = "${mod_name}-forge-${minecraft_version}"
+    archivesName = "${mod_name}-forge-${minecraft_version}-${version_forge}"
 }
 mixin {
     config("${mod_id}.mixins.json")

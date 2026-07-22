@@ -34,9 +34,10 @@ import org.jetbrains.annotations.Nullable;
 public class ColoredWaterBlockEntity extends BlockEntity {
 
     private static final int UPDATE_DELAY = 3; // Delay in ticks before processing a scheduled update to allow neighbors to settle.
-    private static final float LERP_SPEED = 0.5F; // Speed at which the color interpolates towards the target color (0.0 to 1.0).
     private static final int DEFAULT_COLOR = 0x3F76E4;
     private int color = -1;
+    private int luminosity = -1;
+    private boolean condensed = false;
     private int lastClientColor = -1;
     private boolean isPlacedByBucket = false;
     private BlockPos sourcePos = null;
@@ -47,6 +48,111 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         super(ModBlockEntities.COLORED_WATER_BE.get(), pos, blockState);
     }
 
+    public BlockPos getSourcePos() {
+        if (level != null && !isSourceBlock(getBlockState())) {
+            if (this.sourcePos == null || !isValidSource(this.sourcePos)) {
+                this.sourcePos = findUpstreamSourcePos();
+            }
+        }
+        return this.sourcePos;
+    }
+
+    private BlockPos findUpstreamSourcePos() {
+        if (level == null) return null;
+
+        // 1. Check UP first (water falling from above)
+        BlockPos upPos = worldPosition.above();
+        BlockState upState = level.getBlockState(upPos);
+        if (upState.getBlock() == getBlockState().getBlock()) {
+            BlockEntity upBe = level.getBlockEntity(upPos);
+            if (upBe instanceof ColoredWaterBlockEntity coloredUpBe) {
+                BlockPos upSource = coloredUpBe.getSourcePos();
+                return upSource != null ? upSource : upPos;
+            }
+            return upPos;
+        }
+
+        // 2. Check 4 horizontal directions for lowest LEVEL (highest fluid height)
+        int myLevel = getBlockState().hasProperty(LiquidBlock.LEVEL) ? getBlockState().getValue(LiquidBlock.LEVEL) : 7;
+        BlockPos bestParent = null;
+        int minLevel = myLevel;
+
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos nPos = worldPosition.relative(dir);
+            BlockState nState = level.getBlockState(nPos);
+            if (nState.getBlock() == getBlockState().getBlock() && nState.hasProperty(LiquidBlock.LEVEL)) {
+                int nLvl = nState.getValue(LiquidBlock.LEVEL);
+                if (nLvl < minLevel) {
+                    minLevel = nLvl;
+                    bestParent = nPos;
+                }
+            }
+        }
+
+        if (bestParent != null) {
+            BlockEntity parentBe = level.getBlockEntity(bestParent);
+            if (parentBe instanceof ColoredWaterBlockEntity coloredParentBe) {
+                BlockPos root = coloredParentBe.getSourcePos();
+                return root != null ? root : bestParent;
+            }
+            return bestParent;
+        }
+
+        return null;
+    }
+
+    public int getLuminosity() {
+        if (level != null && !isSourceBlock(getBlockState())) {
+            BlockPos src = getSourcePos();
+            if (src != null) {
+                BlockEntity sBe = level.getBlockEntity(src);
+                if (sBe instanceof ColoredWaterBlockEntity coloredSBe) {
+                    return coloredSBe.getLuminosity();
+                }
+            }
+        }
+        return this.luminosity != -1 ? this.luminosity : 0;
+    }
+
+    public void setLuminosity(int luminosity) {
+        int clamped = Mth.clamp(luminosity, 0, 15);
+        if (this.luminosity != clamped) {
+            this.luminosity = clamped;
+            updateBlockStateProps();
+            markUpdated();
+        }
+    }
+
+    public boolean isCondensed() {
+        if (this.color != -1) {
+            int a = (this.color >>> 24) & 0xFF;
+            if (a > 0) return a >= 220;
+        }
+        return condensed;
+    }
+
+    public void setCondensed(boolean condensed) {
+        this.condensed = condensed;
+        int alpha = condensed ? 255 : 180;
+        int currentRgb = this.color == -1 ? (DEFAULT_COLOR & 0x00FFFFFF) : (this.color & 0x00FFFFFF);
+        this.color = (alpha << 24) | currentRgb;
+        markUpdated();
+    }
+
+    public void updateBlockStateProps() {
+        if (level != null && !level.isClientSide()) {
+            BlockState currentState = getBlockState();
+            if (currentState.hasProperty(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL)) {
+                int targetLight = getLuminosity();
+                int stateLight = currentState.getValue(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL);
+                if (stateLight != targetLight) {
+                    BlockState newState = currentState.setValue(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL, targetLight);
+                    level.setBlock(worldPosition, newState, 3);
+                }
+            }
+        }
+    }
+
     /**
      * Retrieves the current color of the water.
      * <p>
@@ -55,26 +161,35 @@ public class ColoredWaterBlockEntity extends BlockEntity {
      *
      * @return The integer RGB color.
      */
+    public int getStoredColor() {
+        if (this.color != -1) return this.color;
+        int defaultAlpha = condensed ? 255 : 180;
+        return (defaultAlpha << 24) | (DEFAULT_COLOR & 0x00FFFFFF);
+    }
+
     public int getColor() {
         if (level == null) return color;
 
         BlockState state = getBlockState();
         boolean isSource = isSourceBlock(state);
+
         // Recalculate if not set, or if it's a natural source that hasn't mixed yet.
         boolean needsCalculation = (color == -1) || (isSource && !isPlacedByBucket && !mixedAsSource);
 
         if (needsCalculation) {
-            if (isCalculating) return -1; // Prevent recursion
+            if (isCalculating) return getStoredColor(); // Prevent recursive calculation dropouts
             isCalculating = true;
             try {
                 int target = calculateTargetColor(level, worldPosition, state);
-                int result = target == -1 ? DEFAULT_COLOR : target;
+                int result = target == -1 ? getStoredColor() : target;
 
                 if (isSource && !isPlacedByBucket) {
                     if (this.color != result) {
                         this.color = result;
                     }
                     this.mixedAsSource = true;
+                } else if (!isSource && result != -1) {
+                    this.color = result;
                 }
                 return result;
             } finally {
@@ -95,10 +210,6 @@ public class ColoredWaterBlockEntity extends BlockEntity {
 
     public boolean isInitialized() {
         return color != -1;
-    }
-
-    public BlockPos getSourcePos() {
-        return sourcePos;
     }
 
     public void markAsPlacedByBucket() {
@@ -147,164 +258,49 @@ public class ColoredWaterBlockEntity extends BlockEntity {
      *
      * @param color          The proposed new color.
      * @param incomingSource The source of this color change.
-     * @param force          If true, overrides checks like small color differences or bucket locks.
+     * @param force          If true, overrides bucket locks.
      */
-    public void setColor(int color, BlockPos incomingSource, boolean force) {
+    public void setColor(int color, @Nullable BlockPos incomingSource, boolean force) {
         if (level == null) return;
 
         boolean isSource = isSourceBlock(getBlockState());
 
-        // Reset mixing flag if we are no longer a source or if our source parent changed
-        if (!isSource) {
-            mixedAsSource = false;
-        } else if (!isPlacedByBucket && incomingSource != null && sourcePos != null && !sourcePos.equals(incomingSource)) {
-            if (mixedAsSource) {
-                mixedAsSource = false;
-                level.scheduleTick(worldPosition, getBlockState().getFluidState().getType(), UPDATE_DELAY);
-            }
+        // Bucket-placed source blocks cannot be overridden by neighbor flow unless forced
+        if (isSource && isPlacedByBucket && !force) {
+            return;
         }
 
-        boolean acceptChange = shouldAcceptChange(incomingSource, force);
         boolean colorChanged = false;
 
-        if (acceptChange) {
-            boolean needsMixing = (this.color == -1) || (isSource && !isPlacedByBucket);
-
-            if (needsMixing) {
-                // Natural sources mix colors from surroundings
-                if (isSource && !isPlacedByBucket) {
-                    int target = calculateTargetColor(level, worldPosition, getBlockState());
-                    int newColor = (target != -1) ? target : color;
-                    if (this.color != newColor) {
-                        this.color = newColor;
-                        colorChanged = true;
-                    }
-                    mixedAsSource = true;
-                } else if (this.color != color) {
-                    // Flowing blocks just take the color
-                    this.color = color;
-                    colorChanged = true;
-                }
-            } else if (isPlacedByBucket) {
-                // Bucket sources only change if explicitly set (usually via force=true)
-                if (this.color != color) {
-                    this.color = color;
-                    colorChanged = true;
-                }
-            } else {
-                // Ignore negligible color differences to prevent constant updates
-                if (force || isColorDiffSmall(this.color, color)) {
-                    if (this.color != color) {
-                        this.color = color;
-                        colorChanged = true;
-                    }
-                } else {
-                    // Even if color didn't change enough, ensure we tick to keep flow alive. TODO idk if rly necessary
-                    level.scheduleTick(worldPosition, getBlockState().getFluidState().getType(), UPDATE_DELAY);
-                }
+        if (this.color == -1 || force || isColorDiffSignificant(this.color, color)) {
+            if (this.color != color) {
+                this.color = color;
+                colorChanged = true;
             }
         }
 
-        // If the color changed, or we accepted a new source hierarchy, propagate to neighbors
-        if (colorChanged || acceptChange || force) {
+        if (colorChanged) {
             markUpdated();
             propagateToNeighbors();
         }
     }
 
     /**
-     * Determines if this block should accept a color/state change from the given source.
-     * <p>
-     * Also handles "adopting" a new source parent if the current one is missing or invalid.
+     * Checks if the difference between two ARGB colors is significant enough to warrant an update.
      */
-    private boolean shouldAcceptChange(BlockPos incomingSource, boolean force) {
-        if (force) {
-            // Force updates can re-parent the block
-            if (!isPlacedByBucket && incomingSource != null) {
-                if (sourcePos == null || !sourcePos.equals(incomingSource)) {
-                    sourcePos = incomingSource;
-                    return true; // Adopted
-                }
-            }
-            return true;
-        }
-
-        // Bucket sources don't accept changes from neighbors
-        if (isPlacedByBucket) {
-            return incomingSource == null;
-        }
-
-        if (incomingSource != null) {
-            if (sourcePos == null) {
-                sourcePos = incomingSource;
-                return true; // Adopted (was orphan)
-            } else if (sourcePos.equals(incomingSource)) {
-                return true; // Update from current parent
-            } else if (!isValidSource(sourcePos)) {
-                sourcePos = incomingSource;
-                return true; // Adopted (old parent invalid)
-            }
-        } else {
-            // Internal update or no specific source
-            if (sourcePos == null || !isValidSource(sourcePos)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the difference between two colors is small enough to be ignored.
-     */
-    private boolean isColorDiffSmall(int c1, int c2) {
+    private boolean isColorDiffSignificant(int c1, int c2) {
+        int aDiff = Math.abs(((c1 >>> 24) & 0xFF) - ((c2 >>> 24) & 0xFF));
         int rDiff = Math.abs(((c1 >> 16) & 0xFF) - ((c2 >> 16) & 0xFF));
         int gDiff = Math.abs(((c1 >> 8) & 0xFF) - ((c2 >> 8) & 0xFF));
         int bDiff = Math.abs((c1 & 0xFF) - (c2 & 0xFF));
-        return (rDiff + gDiff + bDiff) < 100;
+        return (aDiff + rDiff + gDiff + bDiff) >= 3;
     }
 
     /**
-     * Pushes the current color state to valid neighboring water blocks.
-     * <p>
-     * Follows fluid physics: flows down, and flows horizontally if level permits.
+     * Pushes the current color state to valid neighboring water blocks by scheduling fluid ticks.
      */
     private void propagateToNeighbors() {
-        if (level == null) return;
-        level.scheduleTick(worldPosition, getBlockState().getFluidState().getType(), UPDATE_DELAY);
-
-        int myLevel = getBlockState().getValue(LiquidBlock.LEVEL);
-        // If I am a source (level 0), I am the parent. Otherwise, pass my parent along.
-        BlockPos parentToPass = (myLevel == 0) ? worldPosition : this.sourcePos;
-
-        for (Direction dir : Direction.values()) {
-            BlockPos neighborPos = worldPosition.relative(dir);
-            BlockState neighborState = level.getBlockState(neighborPos);
-
-            if (neighborState.getBlock() == getBlockState().getBlock()) {
-                int neighborLevel = neighborState.getValue(LiquidBlock.LEVEL);
-                if (neighborLevel == 0) continue; // Don't overwrite other source blocks
-
-                // Determine if fluid physically flows to this neighbor
-                boolean shouldPush = (myLevel == 0 || myLevel == 8) || // Source or falling full block
-                        (dir == Direction.DOWN) ||        // Gravity
-                        (neighborLevel > myLevel);        // Flowing downhill (higher level value = lower fluid height)
-
-                if (shouldPush) {
-                    BlockEntity be = level.getBlockEntity(neighborPos);
-                    if (be instanceof ColoredWaterBlockEntity coloredWaterBE) {
-                        if (myLevel == 0) {
-                            // Source pushing to neighbor: update color if different or if hierarchy needs fixing
-                            if (coloredWaterBE.color != this.color || (coloredWaterBE.sourcePos != null && !coloredWaterBE.sourcePos.equals(parentToPass))) {
-                                coloredWaterBE.setColor(this.color, parentToPass, false);
-                            }
-                        } else {
-                            // Flowing block pushing: just notify
-                            coloredWaterBE.handleUpdateFrom(parentToPass);
-                        }
-                    }
-                }
-            }
-        }
+        if (level == null || level.isClientSide()) return;
         notifyNeighborsToTick();
     }
 
@@ -336,6 +332,7 @@ public class ColoredWaterBlockEntity extends BlockEntity {
 
     /**
      * Public entry point to trigger color propagation/mixing from the block class.
+     * Smoothly interpolates towards the calculated target color until fully converged.
      */
     public void propagateColor() {
         if (level != null && !level.isClientSide()) {
@@ -344,42 +341,56 @@ public class ColoredWaterBlockEntity extends BlockEntity {
             if (this.color == -1) {
                 // First time initialization
                 if (targetColor == -1 && isSourceBlock(getBlockState())) {
-                    targetColor = DEFAULT_COLOR;
+                    targetColor = getStoredColor();
                 }
                 if (targetColor != -1) {
-                    this.setColor(targetColor);
+                    this.setColor(targetColor, null, true);
                 }
                 return;
             }
 
-            // Smoothly transition to new target color
-            if (this.color != targetColor) {
-                int rNew = (int) Mth.lerp(LERP_SPEED, (this.color >> 16) & 0xFF, (targetColor >> 16) & 0xFF);
-                int gNew = (int) Mth.lerp(LERP_SPEED, (this.color >> 8) & 0xFF, (targetColor >> 8) & 0xFF);
-                int bNew = (int) Mth.lerp(LERP_SPEED, this.color & 0xFF, targetColor & 0xFF);
-                this.setColor((rNew << 16) | (gNew << 8) | bNew);
+            if (targetColor != -1 && isColorDiffSignificant(this.color, targetColor)) {
+                int nextColor = getNextColor(targetColor);
+                this.setColor(nextColor, null, false);
+
+                // Schedule next tick if still interpolating towards target color
+                if (isColorDiffSignificant(nextColor, targetColor)) {
+                    level.scheduleTick(worldPosition, getBlockState().getFluidState().getType(), UPDATE_DELAY);
+                }
             }
         }
     }
 
+    private int getNextColor(int targetColor) {
+        int aCur = (this.color >>> 24) & 0xFF;
+        int rCur = (this.color >> 16) & 0xFF;
+        int gCur = (this.color >> 8) & 0xFF;
+        int bCur = this.color & 0xFF;
+
+        int aTgt = (targetColor >>> 24) & 0xFF;
+        int rTgt = (targetColor >> 16) & 0xFF;
+        int gTgt = (targetColor >> 8) & 0xFF;
+        int bTgt = targetColor & 0xFF;
+
+        float step = 0.35F;
+
+        int aNew = Math.abs(aCur - aTgt) <= 2 ? aTgt : (int) Mth.lerp(step, aCur, aTgt);
+        int rNew = Math.abs(rCur - rTgt) <= 2 ? rTgt : (int) Mth.lerp(step, rCur, rTgt);
+        int gNew = Math.abs(gCur - gTgt) <= 2 ? gTgt : (int) Mth.lerp(step, gCur, gTgt);
+        int bNew = Math.abs(bCur - bTgt) <= 2 ? bTgt : (int) Mth.lerp(step, bCur, bTgt);
+
+        int nextColor = (aNew << 24) | (rNew << 16) | (gNew << 8) | bNew;
+        return nextColor;
+    }
+
     /**
      * Calculates the weighted average color based on surrounding blocks.
-     * <p>
-     * Weights:
-     * <ul>
-     *     <li>Up (Falling water): High weight (1000)</li>
-     *     <li>Down (Source below): Medium weight (200)</li>
-     *     <li>Sides: Variable weight based on flow direction</li>
-     * </ul>
-     *
-     * @return The calculated target color, or -1 if no colored neighbors found.
      */
     private int calculateTargetColor(Level level, BlockPos pos, BlockState state) {
         boolean isSource = isSourceBlock(state);
-        // If we are a bucket source and already have a color, stick to it.
         if (isSource && isPlacedByBucket && this.color != -1) return this.color;
 
-        long rSum = 0, gSum = 0, bSum = 0, totalWeight = 0;
+        long rSum = 0, gSum = 0, bSum = 0, aSum = 0, totalWeight = 0;
         boolean hasUp = false;
 
         // 1. Check UP (Water falling into this block)
@@ -390,7 +401,10 @@ public class ColoredWaterBlockEntity extends BlockEntity {
                 int upColor = getBlockColor(level, upPos, upState);
                 if (upColor != -1) {
                     hasUp = true;
+                    int a = (upColor >>> 24) & 0xFF;
+                    if (a == 0) a = isCondensed() ? 255 : 180;
                     totalWeight += 1000;
+                    aSum += a * 1000L;
                     rSum += ((upColor >> 16) & 0xFF) * 1000L;
                     gSum += ((upColor >> 8) & 0xFF) * 1000L;
                     bSum += (upColor & 0xFF) * 1000L;
@@ -399,13 +413,16 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         }
 
         // 2. Check DOWN (Mixing with water below)
-        if (!isSource) {
+        if (!isSource && !hasUp) {
             BlockPos downPos = pos.below();
             BlockState downState = level.getBlockState(downPos);
-            if (isCompatibleFluid(downState) && downState.getFluidState().isSource()) {
+            if (isCompatibleFluid(downState) && isSourceBlock(downState)) {
                 int downColor = getBlockColor(level, downPos, downState);
                 if (downColor != -1) {
+                    int a = (downColor >>> 24) & 0xFF;
+                    if (a == 0) a = isCondensed() ? 255 : 180;
                     totalWeight += 200;
+                    aSum += a * 200L;
                     rSum += ((downColor >> 16) & 0xFF) * 200L;
                     gSum += ((downColor >> 8) & 0xFF) * 200L;
                     bSum += (downColor & 0xFF) * 200L;
@@ -414,21 +431,23 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         }
 
         // 3. Check SIDES (Horizontal mixing)
-        // Only mix sides if not being dominated by water from above
         if (!hasUp) {
-            int myLevel = state.getValue(LiquidBlock.LEVEL);
+            int myLevel = state.hasProperty(LiquidBlock.LEVEL) ? state.getValue(LiquidBlock.LEVEL) : 0;
             for (Direction dir : Direction.Plane.HORIZONTAL) {
                 BlockPos neighborPos = pos.relative(dir);
                 BlockState neighborState = level.getBlockState(neighborPos);
 
                 if (isCompatibleFluid(neighborState)) {
                     int neighborLevel = getEffectiveLevel(level, neighborPos, neighborState);
-                    int neighborColor = getBlockColor(level, neighborPos, neighborState);
+                    int weight = calculateSideWeight(isSource, myLevel, neighborLevel);
 
-                    if (neighborColor != -1) {
-                        int weight = calculateSideWeight(isSource, myLevel, neighborLevel);
-                        if (weight > 0) {
+                    if (weight > 0) {
+                        int neighborColor = getBlockColor(level, neighborPos, neighborState);
+                        if (neighborColor != -1) {
+                            int a = (neighborColor >>> 24) & 0xFF;
+                            if (a == 0) a = isCondensed() ? 255 : 180;
                             totalWeight += weight;
+                            aSum += a * (long) weight;
                             rSum += ((neighborColor >> 16) & 0xFF) * (long) weight;
                             gSum += ((neighborColor >> 8) & 0xFF) * (long) weight;
                             bSum += (neighborColor & 0xFF) * (long) weight;
@@ -439,10 +458,20 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         }
 
         if (totalWeight > 0) {
-            return (int) ((rSum / totalWeight) << 16 | (gSum / totalWeight) << 8 | (bSum / totalWeight));
+            int aRes = (int) (aSum / totalWeight);
+            int rRes = (int) (rSum / totalWeight);
+            int gRes = (int) (gSum / totalWeight);
+            int bRes = (int) (bSum / totalWeight);
+            return ((aRes & 0xFF) << 24) | ((rRes & 0xFF) << 16) | ((gRes & 0xFF) << 8) | (bRes & 0xFF);
         }
 
-        return this.color != -1 ? this.color : DEFAULT_COLOR;
+        // Retain existing color while draining or isolated, avoiding instant reset to uncolored water
+        if (this.color != -1) {
+            return this.color;
+        }
+
+        int defaultAlpha = isCondensed() ? 255 : 180;
+        return (defaultAlpha << 24) | (DEFAULT_COLOR & 0x00FFFFFF);
     }
 
     private boolean isCompatibleFluid(BlockState state) {
@@ -471,19 +500,19 @@ public class ColoredWaterBlockEntity extends BlockEntity {
 
     private int calculateSideWeight(boolean isSource, int myLevel, int neighborLevel) {
         if (isSource) {
-            // Sources only care about other sources
+            // Sources only mix with other source blocks
             return neighborLevel == 0 ? 200 : 0;
         }
-        if (neighborLevel == 0) return 200; // Strong pull from sources
-        if (neighborLevel < myLevel) return (8 - neighborLevel) * 20; // Upstream (lower level value = higher fluid)
+        if (neighborLevel == 0) return 300; // Strong pull from source blocks
+        if (neighborLevel < myLevel) return (8 - neighborLevel) * 40; // Upstream (lower level value = higher fluid)
         if (neighborLevel == myLevel) return (8 - neighborLevel) * 10; // Parallel flow
-        return 0;
+        return 0; // Downstream neighbor does not push color backwards
     }
 
     private int getBlockColor(Level level, BlockPos pos, BlockState state) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ColoredWaterBlockEntity coloredWaterBE) {
-            return coloredWaterBE.getColor();
+            return coloredWaterBE.getStoredColor();
         }
         return state.getFluidState().is(FluidTags.WATER) ? DEFAULT_COLOR : -1;
     }
@@ -492,6 +521,8 @@ public class ColoredWaterBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.color = input.getIntOr("Color", -1);
+        this.luminosity = input.getIntOr("Luminosity", -1);
+        this.condensed = input.getBooleanOr("Condensed", false);
         this.isPlacedByBucket = input.getBooleanOr("PlacedByBucket", false);
         this.mixedAsSource = input.getBooleanOr("MixedAsSource", false);
 
@@ -512,6 +543,8 @@ public class ColoredWaterBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putInt("Color", color);
+        output.putInt("Luminosity", luminosity);
+        output.putBoolean("Condensed", condensed);
         output.putBoolean("PlacedByBucket", isPlacedByBucket);
         output.putBoolean("MixedAsSource", mixedAsSource);
         if (sourcePos != null) {

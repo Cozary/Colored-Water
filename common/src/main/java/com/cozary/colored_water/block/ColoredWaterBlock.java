@@ -13,25 +13,45 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 /**
- * The block implementation for Colored Water.
- * <p>
- * Extends {@link LiquidBlock} to behave like water but implements {@link EntityBlock}
- * to attach a {@link ColoredWaterBlockEntity} for storing color data.
+ * Inherits from LiquidBlock for water physics and adds a BlockEntity to store the color and more.
  */
 public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
+
+    public static final BooleanProperty CONDENSED = BooleanProperty.create("condensed");
+    public static final IntegerProperty LIGHT_LEVEL = IntegerProperty.create("luminosity", 0, 15);
 
     private final Supplier<? extends FlowingFluid> fluidSupplier;
 
     public ColoredWaterBlock(Supplier<? extends FlowingFluid> fluid, Properties properties) {
         super(fluid.get(), properties);
         this.fluidSupplier = fluid;
+        this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, 0).setValue(CONDENSED, false).setValue(LIGHT_LEVEL, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(CONDENSED, LIGHT_LEVEL);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        FluidState fluidState = super.getFluidState(state);
+        if (fluidState.hasProperty(CONDENSED) && state.hasProperty(CONDENSED)) {
+            return fluidState.setValue(CONDENSED, state.getValue(CONDENSED));
+        }
+        return fluidState;
     }
 
     @Nullable
@@ -97,19 +117,35 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         }
 
         int color = -1;
+        boolean condensed = false;
+        int luminosity = 0;
+        int alpha = 0;
+
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ColoredWaterBlockEntity coloredWaterBE) {
             color = coloredWaterBE.getColor();
+            condensed = coloredWaterBE.isCondensed();
+            luminosity = coloredWaterBE.getLuminosity();
+            alpha = (color >> 24) & 0xFF;
         }
 
         // Remove the block
         level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 11);
 
-        // Create the bucket item with the correct color
+        // Create the bucket item with the correct color and properties
         ItemStack stack = new ItemStack(this.fluidSupplier.get().getBucket());
         if (color != -1) {
             stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color));
         }
+
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putBoolean("Condensed", condensed);
+        tag.putInt("Luminosity", luminosity);
+        if (alpha > 0) {
+            tag.putInt("Alpha", alpha);
+        }
+        stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
+
         return stack;
     }
 }
