@@ -7,6 +7,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -14,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -95,7 +97,7 @@ public class ColoredWaterBucketItem extends BucketItem {
             } else {
                 BlockState blockstate = level.getBlockState(blockpos);
                 BlockPos blockpos2 = canBlockContainFluid(player, level, blockpos, blockstate) ? blockpos : blockpos1;
-                if (this.emptyContents(player, level, blockpos2, blockhitresult)) { // Note: emptyContents signature in BucketItem doesn't take itemstack in some versions, checking super
+                if (this.emptyContents(player, level, blockpos2, blockhitresult)) {
                     this.checkExtraContent(player, level, itemstack, blockpos2);
                     if (player instanceof ServerPlayer) {
                         CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, blockpos2, itemstack);
@@ -136,7 +138,7 @@ public class ColoredWaterBucketItem extends BucketItem {
             return result != null && this.emptyContents(player, level, result.getBlockPos().relative(result.getDirection()), null);
         }
 
-        if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos) && fluid.is(net.minecraft.tags.FluidTags.WATER)) {
+        if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos) && fluid.is(FluidTags.WATER)) {
             playEvaporationEffects(level, pos, player);
             return true;
         }
@@ -161,7 +163,6 @@ public class ColoredWaterBucketItem extends BucketItem {
 
         return true;
     }
-
 
     private boolean tryRepaintSource(@Nullable LivingEntity player, Level level, BlockPos pos, BlockState state, Fluid fluid) {
         if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().getType().isSame(fluid)) {
@@ -191,7 +192,7 @@ public class ColoredWaterBucketItem extends BucketItem {
             coloredBe.markAsPlacedByBucket();
 
             DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
-            net.minecraft.world.item.component.CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
+            CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
 
             int rgb = dyedColor != null ? dyedColor.rgb() : 0x3F76E4;
             boolean condensed = false;
@@ -199,7 +200,7 @@ public class ColoredWaterBucketItem extends BucketItem {
             int alpha = 0;
 
             if (customData != null) {
-                net.minecraft.nbt.CompoundTag tag = customData.copyTag();
+                CompoundTag tag = customData.copyTag();
                 condensed = tag.getBooleanOr("Condensed", false);
                 luminosity = tag.getIntOr("Luminosity", 0);
                 alpha = tag.getIntOr("Alpha", 0);
@@ -229,7 +230,7 @@ public class ColoredWaterBucketItem extends BucketItem {
         int k = pos.getZ();
         level.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
         for (int l = 0; l < 8; ++l) {
-            level.addParticle(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, (double) i + Math.random(), (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
+            level.addParticle(ParticleTypes.LARGE_SMOKE, (double) i + Math.random(), (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 

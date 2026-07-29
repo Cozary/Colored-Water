@@ -3,12 +3,15 @@ package com.cozary.colored_water.block;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -130,7 +133,7 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         }
 
         // Remove the block
-        level.setBlock(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 11);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
 
         // Create the bucket item with the correct color and properties
         ItemStack stack = new ItemStack(this.fluidSupplier.get().getBucket());
@@ -138,13 +141,13 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
             stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color));
         }
 
-        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        CompoundTag tag = new CompoundTag();
         tag.putBoolean("Condensed", condensed);
         tag.putInt("Luminosity", luminosity);
         if (alpha > 0) {
             tag.putInt("Alpha", alpha);
         }
-        stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
         return stack;
     }

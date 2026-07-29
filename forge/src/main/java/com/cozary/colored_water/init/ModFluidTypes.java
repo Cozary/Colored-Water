@@ -29,8 +29,8 @@ public class ModFluidTypes {
                 @Override
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
                     consumer.accept(new IClientFluidTypeExtensions() {
-                        private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(com.cozary.colored_water.ColoredWater.MOD_ID, "block/water_still");
-                        private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(com.cozary.colored_water.ColoredWater.MOD_ID, "block/water_flowing");
+                        private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still");
+                        private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_flowing");
 
                         @Override
                         public Identifier getStillTexture() {

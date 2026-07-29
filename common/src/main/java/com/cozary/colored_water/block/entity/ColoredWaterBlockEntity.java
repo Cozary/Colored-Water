@@ -1,5 +1,6 @@
 package com.cozary.colored_water.block.entity;
 
+import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.init.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -142,11 +143,11 @@ public class ColoredWaterBlockEntity extends BlockEntity {
     public void updateBlockStateProps() {
         if (level != null && !level.isClientSide()) {
             BlockState currentState = getBlockState();
-            if (currentState.hasProperty(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL)) {
+            if (currentState.hasProperty(ColoredWaterBlock.LIGHT_LEVEL)) {
                 int targetLight = getLuminosity();
-                int stateLight = currentState.getValue(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL);
+                int stateLight = currentState.getValue(ColoredWaterBlock.LIGHT_LEVEL);
                 if (stateLight != targetLight) {
-                    BlockState newState = currentState.setValue(com.cozary.colored_water.block.ColoredWaterBlock.LIGHT_LEVEL, targetLight);
+                    BlockState newState = currentState.setValue(ColoredWaterBlock.LIGHT_LEVEL, targetLight);
                     level.setBlock(worldPosition, newState, 3);
                 }
             }

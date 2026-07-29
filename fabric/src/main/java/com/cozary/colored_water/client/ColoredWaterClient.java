@@ -1,6 +1,8 @@
 package com.cozary.colored_water.client;
 
+import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModFluids;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -19,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 @Environment(EnvType.CLIENT)
 public class ColoredWaterClient implements ClientModInitializer {
 
-    private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(com.cozary.colored_water.ColoredWater.MOD_ID, "block/water_still");
-    private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(com.cozary.colored_water.ColoredWater.MOD_ID, "block/water_flowing");
+    private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still");
+    private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_flowing");
 
     @Override
     public void onInitializeClient() {
@@ -47,7 +49,7 @@ public class ColoredWaterClient implements ClientModInitializer {
                 }
         );
 
-        BlockRenderLayerMap.putBlocks(ChunkSectionLayer.TRANSLUCENT, com.cozary.colored_water.init.ModBlocks.COLORED_WATER_BLOCK.get());
+        BlockRenderLayerMap.putBlocks(ChunkSectionLayer.TRANSLUCENT, ModBlocks.COLORED_WATER_BLOCK.get());
         BlockRenderLayerMap.putFluids(ChunkSectionLayer.TRANSLUCENT, ModFluids.STILL_COLORED_WATER.get(), ModFluids.FLOWING_COLORED_WATER.get());
     }
 }

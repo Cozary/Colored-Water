@@ -6,10 +6,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -22,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO need to test if this recipe and the other one in truly necessary.
+ * Custom recipe handling dyeing and modifying colored water buckets.
  */
 public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
 
@@ -39,10 +43,10 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         for (int i = 0; i < input.size(); ++i) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.is(net.minecraft.world.item.Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
+                if (stack.is(Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
                     if (!bucket.isEmpty()) return false;
                     bucket = stack;
-                } else if (stack.getItem() instanceof DyeItem || stack.is(net.minecraft.world.item.Items.REDSTONE) || stack.is(net.minecraft.world.item.Items.GLOWSTONE_DUST)) {
+                } else if (stack.getItem() instanceof DyeItem || stack.is(Items.REDSTONE) || stack.is(Items.GLOWSTONE_DUST)) {
                     hasModifierOrDye = true;
                 } else {
                     return false;
@@ -63,15 +67,15 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         for (int i = 0; i < input.size(); ++i) {
             ItemStack stack = input.getItem(i);
             if (!stack.isEmpty()) {
-                if (stack.is(net.minecraft.world.item.Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
+                if (stack.is(Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
                     if (!bucketInput.isEmpty()) return ItemStack.EMPTY;
                     bucketInput = stack;
                 } else if (stack.getItem() instanceof DyeItem dye) {
                     dyes.add(dye);
-                } else if (stack.is(net.minecraft.world.item.Items.REDSTONE)) {
+                } else if (stack.is(Items.REDSTONE)) {
                     if (addRedstone) return ItemStack.EMPTY;
                     addRedstone = true;
-                } else if (stack.is(net.minecraft.world.item.Items.GLOWSTONE_DUST)) {
+                } else if (stack.is(Items.GLOWSTONE_DUST)) {
                     if (addGlowstone) return ItemStack.EMPTY;
                     addGlowstone = true;
                 }
@@ -83,25 +87,26 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         }
 
         ItemStack resultStack;
-        if (bucketInput.is(net.minecraft.world.item.Items.WATER_BUCKET)) {
+        if (bucketInput.is(Items.WATER_BUCKET)) {
             resultStack = new ItemStack(ModItems.COLORED_WATER_BUCKET.get());
+            resultStack.remove(DataComponents.DYED_COLOR);
         } else {
             resultStack = bucketInput.copy();
         }
 
         if (!dyes.isEmpty()) {
             resultStack = DyedItemColor.applyDyes(resultStack, dyes);
-        } else if (bucketInput.is(net.minecraft.world.item.Items.WATER_BUCKET)) {
-            resultStack.set(net.minecraft.core.component.DataComponents.DYED_COLOR, new DyedItemColor(0x3F76E4));
+        } else if (bucketInput.is(Items.WATER_BUCKET)) {
+            resultStack.set(DataComponents.DYED_COLOR, new DyedItemColor(0x3F76E4));
         }
 
         boolean isCondensed = false;
         int luminosity = 0;
         int alpha = 0;
 
-        net.minecraft.world.item.component.CustomData customData = resultStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        CustomData customData = resultStack.get(DataComponents.CUSTOM_DATA);
         if (customData != null) {
-            net.minecraft.nbt.CompoundTag tag = customData.copyTag();
+            CompoundTag tag = customData.copyTag();
             isCondensed = tag.getBooleanOr("Condensed", false);
             luminosity = tag.getIntOr("Luminosity", 0);
             alpha = tag.getIntOr("Alpha", 0);
@@ -114,12 +119,12 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
             alpha = isCondensed ? 255 : 180;
         }
 
-        net.minecraft.nbt.CompoundTag newTag = new net.minecraft.nbt.CompoundTag();
+        CompoundTag newTag = new CompoundTag();
         newTag.putBoolean("Condensed", isCondensed);
         newTag.putInt("Luminosity", luminosity);
         newTag.putInt("Alpha", alpha);
 
-        resultStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(newTag));
+        resultStack.set(DataComponents.CUSTOM_DATA, CustomData.of(newTag));
 
         return resultStack;
     }
