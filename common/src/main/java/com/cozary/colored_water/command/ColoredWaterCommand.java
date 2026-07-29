@@ -33,14 +33,15 @@ import java.util.Locale;
 
 public class ColoredWaterCommand {
 
-    private static final SimpleCommandExceptionType ERROR_INVALID_COLOR =
-            new SimpleCommandExceptionType(Component.literal("Invalid Hex Color. Format: #RRGGBB or #AARRGGBB"));
+    private static final SimpleCommandExceptionType ERROR_INVALID_COLOR = new SimpleCommandExceptionType(
+            Component.literal("Invalid Hex Color. Format: #RRGGBB or #AARRGGBB"));
 
-    private static final SimpleCommandExceptionType ERROR_INVALID_TYPE =
-            new SimpleCommandExceptionType(Component.literal("Invalid fluid type. Use: normal, condense, luminous, luminous_condense"));
+    private static final SimpleCommandExceptionType ERROR_INVALID_TYPE = new SimpleCommandExceptionType(
+            Component.literal("Invalid fluid type. Use: normal, condense, luminous, luminous_condense"));
 
-    private static final SuggestionProvider<CommandSourceStack> TYPE_SUGGESTIONS = (context, builder) ->
-            SharedSuggestionProvider.suggest(List.of("normal", "condense", "luminous", "luminous_condense"), builder);
+    private static final SuggestionProvider<CommandSourceStack> TYPE_SUGGESTIONS = (context,
+            builder) -> SharedSuggestionProvider.suggest(List.of("normal", "condense", "luminous", "luminous_condense"),
+                    builder);
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("coloredwater")
@@ -52,15 +53,11 @@ public class ColoredWaterCommand {
                                 .then(Commands.argument("luminosity", IntegerArgumentType.integer(0, 15))
                                         .executes(ctx -> executeCommand(ctx, true, false))
                                         .then(Commands.argument("translucency", IntegerArgumentType.integer(0, 255))
-                                                .executes(ctx -> executeCommand(ctx, true, true))
-                                        )
-                                )
-                        )
-                )
-        );
+                                                .executes(ctx -> executeCommand(ctx, true, true)))))));
     }
 
-    private static int executeCommand(CommandContext<CommandSourceStack> context, boolean hasLuminosityArg, boolean hasTranslucencyArg) throws CommandSyntaxException {
+    private static int executeCommand(CommandContext<CommandSourceStack> context, boolean hasLuminosityArg,
+            boolean hasTranslucencyArg) throws CommandSyntaxException {
         String typeStr = StringArgumentType.getString(context, "type").toLowerCase(Locale.ROOT);
         String hexString = StringArgumentType.getString(context, "hexcolor");
 
@@ -106,12 +103,12 @@ public class ColoredWaterCommand {
 
         Item bucketItem = ModItems.COLORED_WATER_BUCKET.get();
         ItemStack bucket = new ItemStack(bucketItem);
-        bucket.set(DataComponents.DYED_COLOR, new DyedItemColor(argbColor));
-
+        bucket.set(DataComponents.DYED_COLOR, new DyedItemColor(rgb & 0xFFFFFF));
 
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("Condensed", isCondensed);
         tag.putInt("Luminosity", luminosity);
+        tag.putInt("Alpha", alpha & 0xFF);
         CustomData.update(DataComponents.CUSTOM_DATA, bucket, t -> t.merge(tag));
 
         if (!player.getInventory().add(bucket)) {
@@ -124,8 +121,7 @@ public class ColoredWaterCommand {
                     serverPlayer.getEyePosition(1.0F).add(serverPlayer.getLookAngle().scale(5.0)),
                     ClipContext.Block.OUTLINE,
                     ClipContext.Fluid.ANY,
-                    serverPlayer
-            ));
+                    serverPlayer));
 
             if (hitResult.getType() == HitResult.Type.BLOCK) {
                 BlockPos targetPos = hitResult.getBlockPos();
@@ -142,9 +138,10 @@ public class ColoredWaterCommand {
         final int finalAlpha = alpha;
         final int finalLuminosity = luminosity;
         source.sendSuccess(() -> Component.literal(
-                String.format("Gave %s Colored Water Bucket [Color: %s, Condensed: %b, Luminosity: %d, Opacity: %d/255]",
-                        typeStr.toUpperCase(Locale.ROOT), hexDisplay, isCondensed, finalLuminosity, finalAlpha)
-        ), true);
+                String.format(
+                        "Gave %s Colored Water Bucket [Color: %s, Condensed: %b, Luminosity: %d, Opacity: %d/255]",
+                        typeStr.toUpperCase(Locale.ROOT), hexDisplay, isCondensed, finalLuminosity, finalAlpha)),
+                true);
 
         return 1;
     }
@@ -152,7 +149,8 @@ public class ColoredWaterCommand {
     private static boolean isValidType(String type) {
         return switch (type) {
             case "normal", "colored_water", "water", "condense", "condense_colored_water", "luminous",
-                 "luminous_colored_water", "luminous_condense", "luminous_condense_colored_water" -> true;
+                    "luminous_colored_water", "luminous_condense", "luminous_condense_colored_water" ->
+                true;
             default -> false;
         };
     }

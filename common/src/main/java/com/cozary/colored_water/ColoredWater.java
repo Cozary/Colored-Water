@@ -23,6 +23,10 @@ public class ColoredWater {
         ModBlockEntities.loadClass();
     }
 
+    public static void postInit() {
+        ModCauldrons.registerCauldronInteractions();
+    }
+
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         ColoredWaterCommand.register(dispatcher);
     }

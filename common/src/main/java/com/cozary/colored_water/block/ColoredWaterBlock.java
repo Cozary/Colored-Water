@@ -138,7 +138,7 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         // Create the bucket item with the correct color and properties
         ItemStack stack = new ItemStack(this.fluidSupplier.get().getBucket());
         if (color != -1) {
-            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color));
+            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color & 0xFFFFFF));
         }
 
         CompoundTag tag = new CompoundTag();

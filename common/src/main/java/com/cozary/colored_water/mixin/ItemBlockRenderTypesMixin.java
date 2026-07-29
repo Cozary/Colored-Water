@@ -1,6 +1,7 @@
 package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.ColoredWaterBlock;
+import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
 import com.cozary.colored_water.fluids.ColoredWaterFluid;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -23,7 +24,7 @@ public class ItemBlockRenderTypesMixin {
 
     @Inject(method = "getChunkRenderType(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/renderer/chunk/ChunkSectionLayer;", at = @At("HEAD"), cancellable = true)
     private static void coloredWater$getDynamicChunkRenderType(BlockState state, CallbackInfoReturnable<ChunkSectionLayer> cir) {
-        if (state.getBlock() instanceof ColoredWaterBlock) {
+        if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
             cir.setReturnValue(ChunkSectionLayer.TRANSLUCENT);
         }
     }

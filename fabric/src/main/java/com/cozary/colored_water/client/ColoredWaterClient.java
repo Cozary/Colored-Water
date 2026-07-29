@@ -2,11 +2,14 @@ package com.cozary.colored_water.client;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
@@ -49,7 +52,17 @@ public class ColoredWaterClient implements ClientModInitializer {
                 }
         );
 
-        BlockRenderLayerMap.putBlocks(ChunkSectionLayer.TRANSLUCENT, ModBlocks.COLORED_WATER_BLOCK.get());
+        BlockRenderLayerMap.putBlocks(ChunkSectionLayer.TRANSLUCENT, ModBlocks.COLORED_WATER_BLOCK.get(), ModCauldrons.COLORED_WATER_CAULDRON.get());
         BlockRenderLayerMap.putFluids(ChunkSectionLayer.TRANSLUCENT, ModFluids.STILL_COLORED_WATER.get(), ModFluids.FLOWING_COLORED_WATER.get());
+
+        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+            if (view != null && pos != null) {
+                BlockEntity be = view.getBlockEntity(pos);
+                if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
+                    return coloredBe.getColor();
+                }
+            }
+            return 0xB43F76E4;
+        }, ModCauldrons.COLORED_WATER_CAULDRON.get());
     }
 }

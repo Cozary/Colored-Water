@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > This is an **experimental alpha build**. Due to the migration to a single unified fluid, this version is **incompatible with worlds or saves from previous versions**.
 > It's also likely to be prone to crashes. Use the Alpha versions at your own risk.
 
-### Fixed
-- Fixed bucket dye recipe color calculation when starting from a normal water bucket to output exact base dye colors instead of blending with default water blue.
+### Added
+- Cauldrons now support colored water! Fill a cauldron with a Colored Water Bucket to store and mix any color directly inside it.
+- The liquid inside a cauldron changes color dynamically based on what you pour in, including opacity, glow, and condensed variants.
 
-### Changed
-- Cleaned up inline fully qualified class names and consolidated imports across common, fabric, forge, and neoforge modules.
+### Fixed
+- Fixed an issue where crafting a dyed bucket starting from a plain water bucket would produce a slightly off color instead of the exact dye color.
 
 ## [2.0.0-alpha.2] - 2026-07-23
 
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed legacy individual fluid block and bucket items in favor of the new single unified fluid.
 
 ## [2.0.0-alpha] - 2026-07-16
+
 ### Added
 - Introduced a new fluid type that allows for water in any color like dyeable leather armor.
 - Colored Water Bucket: A new item that holds specific custom colors of water.
