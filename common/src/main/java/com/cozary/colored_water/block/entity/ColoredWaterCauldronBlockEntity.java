@@ -138,6 +138,7 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
         if (this.level != null && this.level.isClientSide()) {
             this.lastClientColor = this.color;
             BlockState state = getBlockState();
+            this.level.sendBlockUpdated(this.worldPosition, state, state, 3);
             this.level.setBlocksDirty(this.worldPosition, state, state);
         }
     }

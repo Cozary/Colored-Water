@@ -9,11 +9,6 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-/**
- * Handles client-side events that belong to the Forge game bus (not the mod bus).
- * RegisterColorHandlersEvent does not implement IModBusEvent in Forge 61.0.3,
- * so it must be subscribed here using Bus.FORGE.
- */
 @Mod.EventBusSubscriber(modid = ColoredWater.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ColoredWaterClientForgeEvents {
 
