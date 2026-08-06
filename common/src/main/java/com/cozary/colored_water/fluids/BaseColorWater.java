@@ -1,5 +1,7 @@
 package com.cozary.colored_water.fluids;
 
+import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.particles.SparkleParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -34,6 +36,20 @@ public abstract class BaseColorWater extends FlowingFluid {
             }
         } else if (random.nextInt(10) == 0) {
             level.addParticle(ParticleTypes.UNDERWATER, (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
+        }
+
+        if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
+            int luminosity = coloredBe.getLuminosity();
+            if (luminosity > 0) {
+                float chance = (luminosity / 15.0F) * 0.4F;
+                if (random.nextFloat() < chance) {
+                    int color = coloredBe.getColor();
+                    double x = (double) blockPos.getX() + random.nextDouble();
+                    double y = (double) blockPos.getY() + random.nextDouble();
+                    double z = (double) blockPos.getZ() + random.nextDouble();
+                    level.addParticle(new SparkleParticleOptions(color), x, y, z, 0.01, 0.01, 0.01);
+                }
+            }
         }
     }
 
