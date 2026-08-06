@@ -4,7 +4,9 @@
   "package": "com.cozary.colored_water.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "EntityMixin"
+  ],
   "client": [
     "ItemBlockRenderTypesMixin",
     "ModelBlockRendererMixin"

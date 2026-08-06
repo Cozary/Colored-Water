@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added obsidian, cobblestone, and stone generation mechanics when interacting with lava.
 - Re-implemented sparkle particles for luminous colored water and cauldrons, scaling emission rate dynamically with light level.
+- Added Riptide trident enchantment compatibility in colored water blocks and cauldrons.
 
 ## [2.0.0-alpha.4] - 2026-08-03
 

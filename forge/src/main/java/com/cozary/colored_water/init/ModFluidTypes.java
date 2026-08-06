@@ -25,7 +25,10 @@ public class ModFluidTypes {
                     .fallDistanceModifier(0F)
                     .canExtinguish(true)
                     .supportsBoating(true)
-                    .canHydrate(true)) {
+                    .canHydrate(true)
+                    .canSwim(true)
+                    .canDrown(true)
+                    .canConvertToSource(true)) {
                 @Override
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
                     consumer.accept(new IClientFluidTypeExtensions() {
