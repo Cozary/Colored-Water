@@ -8,8 +8,10 @@ import com.cozary.colored_water.init.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,6 +76,19 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
 
     @Override
     protected void spreadTo(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState) {
+        FluidState targetFluidState = level.getFluidState(pos);
+        if (targetFluidState.is(FluidTags.LAVA)) {
+            if (blockState.getBlock() instanceof LiquidBlock) {
+                if (targetFluidState.isSource()) {
+                    level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                } else {
+                    level.setBlock(pos, Blocks.COBBLESTONE.defaultBlockState(), 3);
+                }
+            }
+            level.levelEvent(1501, pos, 0);
+            return;
+        }
+
         super.spreadTo(level, pos, blockState, direction, fluidState);
         if (level.isClientSide()) return;
 

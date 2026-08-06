@@ -2,7 +2,9 @@ package com.cozary.colored_water.block;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -70,6 +72,7 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
+        checkLavaInteraction(level, pos);
         triggerPropagation(level, pos);
     }
 
@@ -80,7 +83,25 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bol) {
         super.neighborChanged(blockState, level, blockPos, block, orientation, bol);
+        checkLavaInteraction(level, blockPos);
         triggerPropagation(level, blockPos);
+    }
+
+    private void checkLavaInteraction(Level level, BlockPos pos) {
+        if (level.isClientSide()) return;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = pos.relative(direction);
+            FluidState neighborFluid = level.getFluidState(neighborPos);
+            if (neighborFluid.is(FluidTags.LAVA)) {
+                if (neighborFluid.isSource()) {
+                    level.setBlockAndUpdate(neighborPos, Blocks.OBSIDIAN.defaultBlockState());
+                    level.levelEvent(1501, neighborPos, 0);
+                } else if (neighborFluid.getHeight(level, neighborPos) >= 0.44444445F) {
+                    level.setBlockAndUpdate(neighborPos, Blocks.COBBLESTONE.defaultBlockState());
+                    level.levelEvent(1501, neighborPos, 0);
+                }
+            }
+        }
     }
 
     /**
