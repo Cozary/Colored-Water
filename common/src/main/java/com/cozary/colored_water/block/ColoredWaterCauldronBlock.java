@@ -45,6 +45,48 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
     }
 
     @Override
+    public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid == net.minecraft.world.level.material.Fluids.WATER) {
+            if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
+                int currentLevel = state.getValue(LEVEL);
+                int newLevel = Math.min(3, currentLevel + 1);
+
+                int cColor = cauldronBe.getColor();
+                int cAlpha = cauldronBe.getAlpha();
+                int cLuminosity = cauldronBe.getLuminosity();
+
+                int wColor = 0x3F76E4;
+                int wAlpha = 180;
+                int wLuminosity = 0;
+
+                int cWeight = currentLevel * 3;
+                int dWeight = 1;
+                int totalWeight = cWeight + dWeight;
+
+                int mixedAlpha = (cAlpha * cWeight + wAlpha * dWeight) / totalWeight;
+                int mixedRed = (((cColor >> 16) & 0xFF) * cWeight + ((wColor >> 16) & 0xFF) * dWeight) / totalWeight;
+                int mixedGreen = (((cColor >> 8) & 0xFF) * cWeight + ((wColor >> 8) & 0xFF) * dWeight) / totalWeight;
+                int mixedBlue = ((cColor & 0xFF) * cWeight + (wColor & 0xFF) * dWeight) / totalWeight;
+                int mixedLuminosity = (cLuminosity * cWeight + wLuminosity * dWeight) / totalWeight;
+                boolean mixedCondensed = mixedAlpha >= 220;
+
+                int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
+
+                cauldronBe.setCondensed(mixedCondensed);
+                cauldronBe.setLuminosity(mixedLuminosity);
+                cauldronBe.setAlpha(mixedAlpha);
+                cauldronBe.setColor(mixedColor);
+
+                level.setBlock(pos, state.setValue(LEVEL, newLevel)
+                        .setValue(CONDENSED, mixedCondensed)
+                        .setValue(LIGHT_LEVEL, mixedLuminosity), 3);
+
+                level.levelEvent(1047, pos, 0);
+            }
+        }
+    }
+
+    @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity coloredBe) {
             int luminosity = coloredBe.getLuminosity();
