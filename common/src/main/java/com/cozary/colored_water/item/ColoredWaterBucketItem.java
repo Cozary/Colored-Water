@@ -126,7 +126,7 @@ public class ColoredWaterBucketItem extends BucketItem {
 
         BlockState blockstate = level.getBlockState(pos);
 
-        if (tryRepaintSource(player, level, pos, blockstate, fluid)) {
+        if (tryRepaintSource(level, pos, blockstate, fluid)) {
             return true;
         }
 
@@ -159,31 +159,20 @@ public class ColoredWaterBucketItem extends BucketItem {
 
         this.playEmptySound(player, level, pos);
 
-        applyColorFromBucket(player, level, pos);
-
         return true;
     }
 
-    private boolean tryRepaintSource(@Nullable LivingEntity player, Level level, BlockPos pos, BlockState state, Fluid fluid) {
-        if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().getType().isSame(fluid)) {
-            if (player != null) {
-                ItemStack bucketStack = getHeldBucket(player);
-                if (bucketStack != null) {
-                    applyPropertiesToBE(bucketStack, level, pos);
-                    this.playEmptySound(player, level, pos);
-                    return true;
-                }
-            }
-        }
-        return false;
+    @Override
+    public void checkExtraContent(@Nullable LivingEntity player, Level level, ItemStack stack, BlockPos pos) {
+        applyPropertiesToBE(stack, level, pos);
     }
 
-    private void applyColorFromBucket(@Nullable LivingEntity player, Level level, BlockPos pos) {
-        if (player == null) return;
-        ItemStack bucketStack = getHeldBucket(player);
-        if (bucketStack != null) {
-            applyPropertiesToBE(bucketStack, level, pos);
+    private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid) {
+        if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().getType().isSame(fluid)) {
+            this.playEmptySound(null, level, pos);
+            return true;
         }
+        return false;
     }
 
     private void applyPropertiesToBE(ItemStack bucketStack, Level level, BlockPos pos) {
@@ -213,15 +202,6 @@ public class ColoredWaterBucketItem extends BucketItem {
             coloredBe.setLuminosity(luminosity);
             coloredBe.setColor(fullColor, null, true);
         }
-    }
-
-    @Nullable
-    private ItemStack getHeldBucket(LivingEntity player) {
-        ItemStack main = player.getMainHandItem();
-        if (main.getItem() instanceof ColoredWaterBucketItem) return main;
-        ItemStack off = player.getOffhandItem();
-        if (off.getItem() instanceof ColoredWaterBucketItem) return off;
-        return null;
     }
 
     private void playEvaporationEffects(Level level, BlockPos pos, @Nullable LivingEntity player) {
