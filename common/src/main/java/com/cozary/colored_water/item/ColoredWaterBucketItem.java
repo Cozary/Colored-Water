@@ -1,5 +1,6 @@
 package com.cozary.colored_water.item;
 
+import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModFluids;
 import net.minecraft.ChatFormatting;
@@ -130,7 +131,15 @@ public class ColoredWaterBucketItem extends BucketItem {
 
         BlockState blockstate = level.getBlockState(pos);
 
-        if (tryRepaintSource(level, pos, blockstate, fluid)) {
+        ItemStack bucketStack = ItemStack.EMPTY;
+        if (player instanceof Player p) {
+            bucketStack = p.getItemInHand(p.getUsedItemHand());
+            if (bucketStack.isEmpty() || !(bucketStack.getItem() instanceof ColoredWaterBucketItem)) {
+                bucketStack = p.getMainHandItem().getItem() instanceof ColoredWaterBucketItem ? p.getMainHandItem() : p.getOffhandItem();
+            }
+        }
+
+        if (tryRepaintSource(level, pos, blockstate, fluid, bucketStack)) {
             return true;
         }
 
@@ -146,14 +155,6 @@ public class ColoredWaterBucketItem extends BucketItem {
         if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos) && fluid.is(FluidTags.WATER)) {
             playEvaporationEffects(level, pos, player);
             return true;
-        }
-
-        ItemStack bucketStack = ItemStack.EMPTY;
-        if (player instanceof Player p) {
-            bucketStack = p.getItemInHand(p.getUsedItemHand());
-            if (bucketStack.isEmpty() || !(bucketStack.getItem() instanceof ColoredWaterBucketItem)) {
-                bucketStack = p.getMainHandItem().getItem() instanceof ColoredWaterBucketItem ? p.getMainHandItem() : p.getOffhandItem();
-            }
         }
 
         if (isWaterloggable) {
@@ -199,8 +200,19 @@ public class ColoredWaterBucketItem extends BucketItem {
         applyPropertiesToBE(stack, level, pos);
     }
 
-    private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid) {
-        if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().getType().isSame(fluid)) {
+    private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid, ItemStack bucketStack) {
+        if (state.getBlock() instanceof ColoredWaterBlock) {
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
+            this.playEmptySound(null, level, pos);
+            return true;
+        } else if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().is(FluidTags.WATER)) {
+            BlockState coloredState = fluid.defaultFluidState().createLegacyBlock();
+            level.setBlock(pos, coloredState, 11);
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
             this.playEmptySound(null, level, pos);
             return true;
         }
@@ -209,6 +221,9 @@ public class ColoredWaterBucketItem extends BucketItem {
 
     private void applyPropertiesToBE(ItemStack bucketStack, Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof ColoredWaterBlock) && !(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED))) {
+            return;
+        }
         ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
         coloredBe.markAsPlacedByBucket();
 
@@ -233,6 +248,9 @@ public class ColoredWaterBucketItem extends BucketItem {
         coloredBe.setCondensed(condensed);
         coloredBe.setLuminosity(luminosity);
         coloredBe.setColor(fullColor, null, true);
+        coloredBe.updateBlockStateProps();
+        coloredBe.propagateColor();
+        coloredBe.markUpdated();
     }
 
     private void playEvaporationEffects(Level level, BlockPos pos, @Nullable LivingEntity player) {

@@ -15,7 +15,10 @@
     "BlockLightEngineMixin",
     "FlowingFluidMixin",
     "ItemInvoker",
-    "WaterFluidMixin"
+    "WaterFluidMixin",
+    "IceBlockMixin",
+    "MatchingBlocksPredicateMixin",
+    "MatchingFluidsPredicateMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",
