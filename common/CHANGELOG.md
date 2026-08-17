@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added Waterlog. Blocks like slabs, stairs, and fences can now be waterlogged with colored water.
 - Added Frost Walker enchantment compatibility with colored water.
+- Added compatibility with Fish, axolotls, and other aquatic entities can now breathe and survive inside colored water.
 
 ## [2.0.0-alpha.5] - 2026-08-06
 

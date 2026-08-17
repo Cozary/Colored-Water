@@ -202,14 +202,24 @@ public class ColoredWaterBucketItem extends BucketItem {
 
     private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid, ItemStack bucketStack) {
         if (state.getBlock() instanceof ColoredWaterBlock) {
+            if (!state.getFluidState().isSource()) {
+                BlockState coloredState = fluid.defaultFluidState().createLegacyBlock();
+                level.setBlock(pos, coloredState, 11);
+            }
             if (!bucketStack.isEmpty()) {
                 applyPropertiesToBE(bucketStack, level, pos);
             }
             this.playEmptySound(null, level, pos);
             return true;
-        } else if (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource() && state.getFluidState().is(FluidTags.WATER)) {
+        } else if (state.getBlock() instanceof LiquidBlock && state.getFluidState().is(FluidTags.WATER)) {
             BlockState coloredState = fluid.defaultFluidState().createLegacyBlock();
             level.setBlock(pos, coloredState, 11);
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
+            this.playEmptySound(null, level, pos);
+            return true;
+        } else if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
             if (!bucketStack.isEmpty()) {
                 applyPropertiesToBE(bucketStack, level, pos);
             }
