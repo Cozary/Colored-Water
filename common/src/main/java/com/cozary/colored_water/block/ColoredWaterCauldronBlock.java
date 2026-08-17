@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
 public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements EntityBlock {
@@ -45,8 +47,8 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
     }
 
     @Override
-    public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.material.Fluid fluid) {
-        if (fluid == net.minecraft.world.level.material.Fluids.WATER) {
+    public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
+        if (fluid == Fluids.WATER) {
             if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
                 int currentLevel = state.getValue(LEVEL);
                 int newLevel = Math.min(3, currentLevel + 1);

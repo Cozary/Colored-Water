@@ -9,6 +9,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -69,14 +72,10 @@ public class ColoredWaterBlockEntity extends BlockEntity {
 
         // 1. Check UP first (water falling from above)
         BlockPos upPos = worldPosition.above();
-        BlockState upState = level.getBlockState(upPos);
-        if (upState.getBlock() == getBlockState().getBlock()) {
-            BlockEntity upBe = level.getBlockEntity(upPos);
-            if (upBe instanceof ColoredWaterBlockEntity coloredUpBe) {
-                BlockPos upSource = coloredUpBe.getSourcePos();
-                return upSource != null ? upSource : upPos;
-            }
-            return upPos;
+        BlockEntity upBe = level.getBlockEntity(upPos);
+        if (upBe instanceof ColoredWaterBlockEntity coloredUpBe) {
+            BlockPos upSource = coloredUpBe.getSourcePos();
+            return upSource != null ? upSource : upPos;
         }
 
         // 2. Check 4 horizontal directions for lowest LEVEL (highest fluid height)
@@ -87,8 +86,9 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos nPos = worldPosition.relative(dir);
             BlockState nState = level.getBlockState(nPos);
-            if (nState.getBlock() == getBlockState().getBlock() && nState.hasProperty(LiquidBlock.LEVEL)) {
-                int nLvl = nState.getValue(LiquidBlock.LEVEL);
+            BlockEntity nBe = level.getBlockEntity(nPos);
+            if (nBe instanceof ColoredWaterBlockEntity) {
+                int nLvl = nState.hasProperty(LiquidBlock.LEVEL) ? nState.getValue(LiquidBlock.LEVEL) : 0;
                 if (nLvl < minLevel) {
                     minLevel = nLvl;
                     bestParent = nPos;
@@ -144,20 +144,36 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         int alpha = condensed ? 255 : 180;
         int currentRgb = this.color == -1 ? (DEFAULT_COLOR & 0x00FFFFFF) : (this.color & 0x00FFFFFF);
         this.color = (alpha << 24) | currentRgb;
+        updateBlockStateProps();
         markUpdated();
     }
 
     public void updateBlockStateProps() {
-        if (level != null && !level.isClientSide()) {
-            BlockState currentState = getBlockState();
-            if (currentState.hasProperty(ColoredWaterBlock.LIGHT_LEVEL)) {
-                int targetLight = getLuminosity();
-                int stateLight = currentState.getValue(ColoredWaterBlock.LIGHT_LEVEL);
-                if (stateLight != targetLight) {
-                    BlockState newState = currentState.setValue(ColoredWaterBlock.LIGHT_LEVEL, targetLight);
-                    level.setBlock(worldPosition, newState, 3);
+        if (level != null) {
+            if (!level.isClientSide()) {
+                BlockState currentState = getBlockState();
+                boolean stateChanged = false;
+                if (currentState.hasProperty(ColoredWaterBlock.LIGHT_LEVEL)) {
+                    int targetLight = getLuminosity();
+                    int stateLight = currentState.getValue(ColoredWaterBlock.LIGHT_LEVEL);
+                    if (stateLight != targetLight) {
+                        currentState = currentState.setValue(ColoredWaterBlock.LIGHT_LEVEL, targetLight);
+                        stateChanged = true;
+                    }
+                }
+                if (currentState.hasProperty(ColoredWaterBlock.CONDENSED)) {
+                    boolean targetCond = isCondensed();
+                    boolean stateCond = currentState.getValue(ColoredWaterBlock.CONDENSED);
+                    if (stateCond != targetCond) {
+                        currentState = currentState.setValue(ColoredWaterBlock.CONDENSED, targetCond);
+                        stateChanged = true;
+                    }
+                }
+                if (stateChanged) {
+                    level.setBlock(worldPosition, currentState, 3);
                 }
             }
+            level.getChunkSource().getLightEngine().checkBlock(worldPosition);
         }
     }
 
@@ -173,13 +189,34 @@ public class ColoredWaterBlockEntity extends BlockEntity {
     public int getStoredColor() {
         if (this.color != -1)
             return this.color;
+        if (level != null && level.isClientSide()) {
+            int fallback = findNeighborColorOnClient();
+            if (fallback != -1) {
+                return fallback;
+            }
+        }
         int defaultAlpha = condensed ? 255 : 180;
         return (defaultAlpha << 24) | (DEFAULT_COLOR & 0x00FFFFFF);
     }
 
+    private int findNeighborColorOnClient() {
+        if (level == null) return -1;
+        BlockEntity upBe = level.getBlockEntity(worldPosition.above());
+        if (upBe instanceof ColoredWaterBlockEntity coloredUp && coloredUp.color != -1) {
+            return coloredUp.color;
+        }
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockEntity nBe = level.getBlockEntity(worldPosition.relative(dir));
+            if (nBe instanceof ColoredWaterBlockEntity coloredN && coloredN.color != -1) {
+                return coloredN.color;
+            }
+        }
+        return -1;
+    }
+
     public int getColor() {
-        if (level == null)
-            return color;
+        if (level == null || level.isClientSide())
+            return getStoredColor();
 
         BlockState state = getBlockState();
         boolean isSource = isSourceBlock(state);
@@ -231,7 +268,7 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         markUpdated();
     }
 
-    protected void markUpdated() {
+    public void markUpdated() {
         setChanged();
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -299,6 +336,7 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         }
 
         if (colorChanged) {
+            updateBlockStateProps();
             markUpdated();
             propagateToNeighbors();
         }
@@ -511,7 +549,21 @@ public class ColoredWaterBlockEntity extends BlockEntity {
     }
 
     private boolean isSourceBlock(BlockState state) {
-        return state.hasProperty(LiquidBlock.LEVEL) && state.getValue(LiquidBlock.LEVEL) == 0;
+        if (state.hasProperty(LiquidBlock.LEVEL) && state.getValue(LiquidBlock.LEVEL) == 0) {
+            return true;
+        }
+        return state.hasProperty(BlockStateProperties.WATERLOGGED)
+                && state.getValue(BlockStateProperties.WATERLOGGED);
+    }
+
+    public static ColoredWaterBlockEntity getOrCreate(Level level, BlockPos pos, BlockState state) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof ColoredWaterBlockEntity coloredBe) {
+            return coloredBe;
+        }
+        ColoredWaterBlockEntity newBe = new ColoredWaterBlockEntity(pos, state);
+        level.setBlockEntity(newBe);
+        return newBe;
     }
 
     /**
@@ -567,11 +619,12 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         int sz = input.getIntOr("SourceZ", Integer.MIN_VALUE);
         this.sourcePos = (sx != Integer.MIN_VALUE) ? new BlockPos(sx, sy, sz) : null;
 
-        // If on client and color changed, force a render update
-        if (this.level != null && this.level.isClientSide() && this.color != this.lastClientColor) {
-            markUpdated();
-            this.lastClientColor = this.color;
-            this.level.setBlocksDirty(this.worldPosition, getBlockState(), getBlockState());
+        if (this.level != null && this.level.isClientSide()) {
+            if (this.color != this.lastClientColor) {
+                this.lastClientColor = this.color;
+                this.level.setBlocksDirty(this.worldPosition, getBlockState(), getBlockState());
+                this.level.getChunkSource().getLightEngine().checkBlock(this.worldPosition);
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.FluidState;
 
 import java.util.Optional;
@@ -76,7 +77,7 @@ public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
     public boolean isSame(Fluid pFluid) {
-        return pFluid == getSource() || pFluid == getFlowing();
+        return pFluid == getSource() || pFluid == getFlowing() || pFluid == Fluids.WATER || pFluid == Fluids.FLOWING_WATER || pFluid instanceof ColoredWaterFluid;
     }
 
     @Override

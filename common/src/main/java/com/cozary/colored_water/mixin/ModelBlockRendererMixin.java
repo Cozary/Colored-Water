@@ -46,7 +46,6 @@ public class ModelBlockRendererMixin {
                 int a = coloredBe.getAlpha();
                 if (a == 0) a = coloredBe.isCondensed() ? 255 : 180;
                 targetAlpha = alpha * (a / 255.0F);
-                com.cozary.colored_water.ColoredWater.LOG.info("[ColoredWaterCauldron] Rendering quad at {} with alpha: {} ({} / 255)", pos, targetAlpha, a);
             }
         }
         instance.putBulkData(pose, quad, brightnesses, red, green, blue, targetAlpha, packedLight, packedOverlay);

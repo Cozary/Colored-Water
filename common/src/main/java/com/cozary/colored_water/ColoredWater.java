@@ -25,6 +25,7 @@ public class ColoredWater {
     public static final String MOD_ID = "colored_water";
     public static final String MOD_NAME = "Colored Water";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+    public static boolean isInitialized = false;
 
     public static void init() {
         ModBlocks.loadClass();
@@ -34,6 +35,7 @@ public class ColoredWater {
         ModRecipe.loadClass();
         ModParticles.loadClass();
         ModBlockEntities.loadClass();
+        isInitialized = true;
     }
 
     public static void postInit() {
@@ -75,7 +77,8 @@ public class ColoredWater {
                         return this.consumeWithRemainder(source, stack, filledStack);
                     }
                 }
-                return vanillaBucketBehavior != null ? vanillaBucketBehavior.dispense(source, stack) : super.execute(source, stack);
+                return vanillaBucketBehavior != null ? vanillaBucketBehavior.dispense(source, stack)
+                        : super.execute(source, stack);
             }
         });
     }

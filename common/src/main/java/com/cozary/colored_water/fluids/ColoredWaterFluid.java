@@ -56,8 +56,17 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
     @Override
     protected FluidState getNewLiquid(ServerLevel level, BlockPos pos, BlockState state) {
         FluidState newLiquid = super.getNewLiquid(level, pos, state);
-        if (newLiquid.hasProperty(CONDENSED) && state.hasProperty(CONDENSED)) {
-            return newLiquid.setValue(CONDENSED, state.getValue(CONDENSED));
+        boolean isCondensed = false;
+        if (state.hasProperty(CONDENSED)) {
+            isCondensed = state.getValue(CONDENSED);
+        } else {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof ColoredWaterBlockEntity coloredBe) {
+                isCondensed = coloredBe.isCondensed();
+            }
+        }
+        if (newLiquid.hasProperty(CONDENSED)) {
+            return newLiquid.setValue(CONDENSED, isCondensed);
         }
         return newLiquid;
     }
@@ -92,15 +101,23 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
         super.spreadTo(level, pos, blockState, direction, fluidState);
         if (level.isClientSide()) return;
 
-        BlockPos sourcePos = pos.relative(direction.getOpposite());
-        BlockEntity sourceBe = level.getBlockEntity(sourcePos);
-        BlockEntity targetBe = level.getBlockEntity(pos);
+        if (level instanceof ServerLevel serverLevel) {
+            BlockPos sourcePos = pos.relative(direction.getOpposite());
+            BlockEntity sourceBe = serverLevel.getBlockEntity(sourcePos);
+            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, serverLevel.getBlockState(pos));
 
-        if (sourceBe instanceof ColoredWaterBlockEntity sBe && targetBe instanceof ColoredWaterBlockEntity tBe) {
-            tBe.setLuminosity(sBe.getLuminosity());
-            tBe.setCondensed(sBe.isCondensed());
-            tBe.setColor(sBe.getStoredColor(), sourcePos, false);
-            tBe.propagateColor();
+            if (sourceBe instanceof ColoredWaterBlockEntity sBe) {
+                int colorToPass = sBe.getColor();
+                int lumToPass = sBe.getLuminosity();
+                boolean condToPass = sBe.isCondensed();
+
+                tBe.setLuminosity(lumToPass);
+                tBe.setCondensed(condToPass);
+                tBe.setColor(colorToPass, sourcePos, true);
+                tBe.updateBlockStateProps();
+                tBe.propagateColor();
+                tBe.markUpdated();
+            }
         }
     }
 

@@ -6,13 +6,25 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityMixin",
-    "PointedDripstoneMixin"
+    "PointedDripstoneMixin",
+    "LevelMixin",
+    "LevelChunkMixin",
+    "BlockEntityTypeMixin",
+    "BlockItemMixin",
+    "BucketItemMixin",
+    "BlockLightEngineMixin",
+    "FlowingFluidMixin",
+    "ItemInvoker",
+    "WaterFluidMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",
-    "ModelBlockRendererMixin"
+    "ModelBlockRendererMixin",
+    "LiquidBlockRendererMixin"
   ],
-  "server": [],
+  "server": [
+    "ServerLevelMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

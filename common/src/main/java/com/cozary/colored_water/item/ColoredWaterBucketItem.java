@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -113,7 +114,10 @@ public class ColoredWaterBucketItem extends BucketItem {
         }
     }
 
-    protected boolean canBlockContainFluid(@org.jspecify.annotations.Nullable Player player, Level worldIn, BlockPos posIn, BlockState blockstate) {
+    protected boolean canBlockContainFluid(@Nullable Player player, Level worldIn, BlockPos posIn, BlockState blockstate) {
+        if (blockstate.hasProperty(BlockStateProperties.WATERLOGGED) && !blockstate.getValue(BlockStateProperties.WATERLOGGED)) {
+            return true;
+        }
         return blockstate.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) blockstate.getBlock()).canPlaceLiquid(player, worldIn, posIn, blockstate, this.getContent());
     }
 
@@ -131,8 +135,9 @@ public class ColoredWaterBucketItem extends BucketItem {
         }
 
         Block block = blockstate.getBlock();
+        boolean isWaterloggable = blockstate.hasProperty(BlockStateProperties.WATERLOGGED) && !blockstate.getValue(BlockStateProperties.WATERLOGGED);
         boolean canReplace = blockstate.canBeReplaced(fluid);
-        boolean canPlace = blockstate.isAir() || canReplace || (block instanceof LiquidBlockContainer && ((LiquidBlockContainer) block).canPlaceLiquid(player, level, pos, blockstate, fluid));
+        boolean canPlace = blockstate.isAir() || isWaterloggable || canReplace || (block instanceof LiquidBlockContainer && ((LiquidBlockContainer) block).canPlaceLiquid(player, level, pos, blockstate, fluid));
 
         if (!canPlace) {
             return result != null && this.emptyContents(player, level, result.getBlockPos().relative(result.getDirection()), null);
@@ -143,8 +148,31 @@ public class ColoredWaterBucketItem extends BucketItem {
             return true;
         }
 
+        ItemStack bucketStack = ItemStack.EMPTY;
+        if (player instanceof Player p) {
+            bucketStack = p.getItemInHand(p.getUsedItemHand());
+            if (bucketStack.isEmpty() || !(bucketStack.getItem() instanceof ColoredWaterBucketItem)) {
+                bucketStack = p.getMainHandItem().getItem() instanceof ColoredWaterBucketItem ? p.getMainHandItem() : p.getOffhandItem();
+            }
+        }
+
+        if (isWaterloggable) {
+            level.setBlock(pos, blockstate.setValue(BlockStateProperties.WATERLOGGED, true), 3);
+            if (!level.isClientSide()) {
+                level.scheduleTick(pos, fluid, fluid.getTickDelay(level));
+            }
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
+            this.playEmptySound(player, level, pos);
+            return true;
+        }
+
         if (block instanceof LiquidBlockContainer container && container.canPlaceLiquid(player, level, pos, blockstate, fluid)) {
             container.placeLiquid(level, pos, blockstate, fluid.defaultFluidState());
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
             this.playEmptySound(player, level, pos);
             return true;
         }
@@ -155,6 +183,10 @@ public class ColoredWaterBucketItem extends BucketItem {
 
         if (!level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), 11) && !blockstate.getFluidState().isSource()) {
             return false;
+        }
+
+        if (!bucketStack.isEmpty()) {
+            applyPropertiesToBE(bucketStack, level, pos);
         }
 
         this.playEmptySound(player, level, pos);
@@ -176,32 +208,31 @@ public class ColoredWaterBucketItem extends BucketItem {
     }
 
     private void applyPropertiesToBE(ItemStack bucketStack, Level level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            coloredBe.markAsPlacedByBucket();
+        BlockState state = level.getBlockState(pos);
+        ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
+        coloredBe.markAsPlacedByBucket();
 
-            DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
-            CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
+        DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
+        CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
 
-            int rgb = dyedColor != null ? dyedColor.rgb() : 0x3F76E4;
-            boolean condensed = false;
-            int luminosity = 0;
-            int alpha = 0;
+        int rgb = dyedColor != null ? dyedColor.rgb() : 0x3F76E4;
+        boolean condensed = false;
+        int luminosity = 0;
+        int alpha = 0;
 
-            if (customData != null) {
-                CompoundTag tag = customData.copyTag();
-                condensed = tag.getBooleanOr("Condensed", false);
-                luminosity = tag.getIntOr("Luminosity", 0);
-                alpha = tag.getIntOr("Alpha", 0);
-            }
-
-            if (alpha == 0) alpha = condensed ? 255 : 180;
-            int fullColor = (alpha << 24) | (rgb & 0x00FFFFFF);
-
-            coloredBe.setCondensed(condensed);
-            coloredBe.setLuminosity(luminosity);
-            coloredBe.setColor(fullColor, null, true);
+        if (customData != null) {
+            CompoundTag tag = customData.copyTag();
+            condensed = tag.getBooleanOr("Condensed", false);
+            luminosity = tag.getIntOr("Luminosity", 0);
+            alpha = tag.getIntOr("Alpha", 0);
         }
+
+        if (alpha == 0) alpha = condensed ? 255 : 180;
+        int fullColor = (alpha << 24) | (rgb & 0x00FFFFFF);
+
+        coloredBe.setCondensed(condensed);
+        coloredBe.setLuminosity(luminosity);
+        coloredBe.setColor(fullColor, null, true);
     }
 
     private void playEvaporationEffects(Level level, BlockPos pos, @Nullable LivingEntity player) {
