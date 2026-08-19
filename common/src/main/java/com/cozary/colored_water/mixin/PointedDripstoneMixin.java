@@ -6,6 +6,8 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModCauldrons;
+import com.cozary.colored_water.init.ModParticles;
+import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -168,14 +170,22 @@ public abstract class PointedDripstoneMixin {
                 double x = (double) pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
                 double y = (double) pos.getY() + 0.1D;
                 double z = (double) pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
-                level.addParticle(ParticleTypes.DRIPPING_DRIPSTONE_WATER, x, y, z, 0.0, 0.0, 0.0);
 
+                int color = 0x3F76E4;
+                int luminosity = 0;
                 if (level.getBlockEntity(sourcePos) instanceof ColoredWaterBlockEntity sourceBe) {
-                    int luminosity = sourceBe.getLuminosity();
-                    if (luminosity > 0) {
-                        int color = sourceBe.getColor();
-                        level.addParticle(new SparkleParticleOptions(color), x, y, z, 0.01, -0.02, 0.01);
-                    }
+                    int c = sourceBe.getColor();
+                    if (c != -1) color = c;
+                    luminosity = sourceBe.getLuminosity();
+                } else if (level.getBlockEntity(sourcePos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
+                    color = cauldronBe.getColor();
+                    luminosity = cauldronBe.getLuminosity();
+                }
+
+                level.addParticle(new ColorParticleOptions(ModParticles.DRIPPING_DRIPSTONE_WATER.get(), color), x, y, z, 0.0, 0.0, 0.0);
+
+                if (luminosity > 0) {
+                    level.addParticle(new SparkleParticleOptions(color), x, y, z, 0.01, -0.02, 0.01);
                 }
             }
         }

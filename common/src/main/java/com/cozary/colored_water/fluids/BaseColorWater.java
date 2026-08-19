@@ -1,6 +1,8 @@
 package com.cozary.colored_water.fluids;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.init.ModParticles;
+import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +38,12 @@ public abstract class BaseColorWater extends FlowingFluid {
                 level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
             }
         } else if (random.nextInt(10) == 0) {
-            level.addParticle(ParticleTypes.UNDERWATER, (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
+            int color = 0x3F76E4;
+            if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
+                int c = coloredBe.getColor();
+                if (c != -1) color = c;
+            }
+            level.addParticle(new ColorParticleOptions(ModParticles.UNDERWATER.get(), color), (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
         }
 
         if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
@@ -56,7 +63,7 @@ public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
     public ParticleOptions getDripParticle() {
-        return ParticleTypes.DRIPPING_WATER;
+        return new ColorParticleOptions(ModParticles.DRIPPING_WATER.get(), 0x3F76E4);
     }
 
     @Override

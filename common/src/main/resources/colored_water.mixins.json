@@ -18,12 +18,16 @@
     "WaterFluidMixin",
     "IceBlockMixin",
     "MatchingBlocksPredicateMixin",
-    "MatchingFluidsPredicateMixin"
+    "MatchingFluidsPredicateMixin",
+    "FishingHookMixin",
+    "LivingEntityMixin",
+    "BubbleColumnBlockMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",
     "ModelBlockRendererMixin",
-    "LiquidBlockRendererMixin"
+    "LiquidBlockRendererMixin",
+    "WeatherEffectRendererMixin"
   ],
   "server": [
     "ServerLevelMixin"

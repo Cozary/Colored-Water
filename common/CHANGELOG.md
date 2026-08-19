@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0-alpha.7] - 2026-08-19
+
+> [!WARNING]
+> This is an **experimental alpha build**. Due to the migration to a single unified fluid, this version is **incompatible with worlds or saves from previous versions**.
+> It's also likely to be prone to crashes. Use the Alpha versions at your own risk.
+
+### Added
+- Added colored water particles for all vanilla particle types.
+
 ## [2.0.0-alpha.6] - 2026-08-17
 
 > [!WARNING]
