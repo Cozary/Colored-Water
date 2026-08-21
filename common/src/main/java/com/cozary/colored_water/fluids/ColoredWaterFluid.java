@@ -49,7 +49,7 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
     protected BlockState createLegacyBlock(FluidState state) {
         boolean isCondensed = state.hasProperty(CONDENSED) && state.getValue(CONDENSED);
         return ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                .setValue(LiquidBlock.LEVEL, state.isSource() ? 0 : Math.max(0, 8 - getAmount(state)))
+                .setValue(LiquidBlock.LEVEL, getLegacyLevel(state))
                 .setValue(CONDENSED, isCondensed);
     }
 

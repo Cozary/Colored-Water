@@ -27,6 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FlowingFluidMixin {
 
     @Shadow protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);
+    @Shadow protected static int getLegacyLevel(FluidState fluidState) {
+        throw new AssertionError();
+    }
 
     @Inject(method = "spreadTo", at = @At("HEAD"), cancellable = true)
     private void coloredWater$interceptWaterloggedSpread(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState, CallbackInfo ci) {
@@ -58,7 +61,9 @@ public abstract class FlowingFluidMixin {
             }
 
             if (blockState.getBlock() instanceof LiquidBlockContainer liquidblockcontainer) {
-                FluidState customFluidState = ModFluids.FLOWING_COLORED_WATER.get().getFlowing(fluidState.getAmount(), false);
+                FluidState customFluidState = fluidState.isSource()
+                        ? ModFluids.STILL_COLORED_WATER.get().getSource(false)
+                        : ModFluids.FLOWING_COLORED_WATER.get().getFlowing(fluidState.getAmount(), fluidState.hasProperty(FlowingFluid.FALLING) && fluidState.getValue(FlowingFluid.FALLING));
                 if (customFluidState.hasProperty(ColoredWaterBlock.CONDENSED)) {
                     customFluidState = customFluidState.setValue(ColoredWaterBlock.CONDENSED, condToPass);
                 }
@@ -69,7 +74,7 @@ public abstract class FlowingFluidMixin {
                 }
 
                 BlockState targetState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                        .setValue(ColoredWaterBlock.LEVEL, Math.max(1, Math.min(8, 8 - fluidState.getAmount())))
+                        .setValue(ColoredWaterBlock.LEVEL, getLegacyLevel(fluidState))
                         .setValue(ColoredWaterBlock.CONDENSED, condToPass);
 
                 serverLevel.setBlock(pos, targetState, 3);
