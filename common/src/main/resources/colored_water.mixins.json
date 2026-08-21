@@ -21,7 +21,9 @@
     "MatchingFluidsPredicateMixin",
     "FishingHookMixin",
     "LivingEntityMixin",
-    "BubbleColumnBlockMixin"
+    "BubbleColumnBlockMixin",
+    "MagmaBlockMixin",
+    "SoulSandBlockMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",

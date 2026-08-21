@@ -16,7 +16,7 @@ public abstract class BlockEntityTypeMixin {
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     private void coloredWater$allowWaterloggedBlocks(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this == ModBlockEntities.COLORED_WATER_BE.get()) {
-            if (state.hasProperty(BlockStateProperties.WATERLOGGED) || state.is(Blocks.FROSTED_ICE)) {
+            if (state.hasProperty(BlockStateProperties.WATERLOGGED) || state.is(Blocks.FROSTED_ICE) || state.is(Blocks.BUBBLE_COLUMN)) {
                 cir.setReturnValue(true);
             }
         }

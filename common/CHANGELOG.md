@@ -11,8 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > This is an **experimental alpha build**. Due to the migration to a single unified fluid, this version is **incompatible with worlds or saves from previous versions**.
 > It's also likely to be prone to crashes. Use the Alpha versions at your own risk.
 
+### Added
+- Added Bubble Column mechanics for colored water with Soul Sand and Magma Block.
+
 ### Fixed
 - Fixed an issue where falling colored water would generate source blocks instead of flowing water blocks.
+- Fixed outdated cauldron tag entries in cauldrons tag. (Old cauldrons)
 
 ## [2.0.0-alpha.7] - 2026-08-19
 

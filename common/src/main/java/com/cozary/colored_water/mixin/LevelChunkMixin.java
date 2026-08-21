@@ -35,16 +35,6 @@ public abstract class LevelChunkMixin {
                 chunk.getBlockEntities().remove(immutablePos);
             }
         }
-
-        BlockState state = this.getBlockState(immutablePos);
-        if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-            if (creationType == LevelChunk.EntityCreationType.IMMEDIATE) {
-                ColoredWaterBlockEntity newBe = new ColoredWaterBlockEntity(immutablePos, state);
-                newBe.setLevel(chunk.getLevel());
-                chunk.getBlockEntities().put(immutablePos, newBe);
-                cir.setReturnValue(newBe);
-            }
-        }
     }
 
     @Inject(method = "setBlockEntity", at = @At("HEAD"), cancellable = true)
@@ -52,8 +42,8 @@ public abstract class LevelChunkMixin {
         if (blockEntity instanceof ColoredWaterBlockEntity) {
             BlockPos pos = blockEntity.getBlockPos().immutable();
             BlockState state = this.getBlockState(pos);
-            if (state.hasProperty(BlockStateProperties.WATERLOGGED)
-                    && state.getValue(BlockStateProperties.WATERLOGGED)) {
+            boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+            if (isWaterlogged || state.is(Blocks.BUBBLE_COLUMN)) {
                 LevelChunk chunk = (LevelChunk) (Object) this;
                 blockEntity.setLevel(chunk.getLevel());
                 BlockEntity oldBe = chunk.getBlockEntities().put(pos, blockEntity);
@@ -77,7 +67,8 @@ public abstract class LevelChunkMixin {
                     && state.getValue(BlockStateProperties.WATERLOGGED);
             boolean isNewColoredWater = state.getBlock() instanceof ColoredWaterBlock;
             boolean isNewFrostedIce = state.is(Blocks.FROSTED_ICE);
-            if (isNewWaterlogged || isNewColoredWater || isNewFrostedIce) {
+            boolean isNewBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
+            if (isNewWaterlogged || isNewColoredWater || isNewFrostedIce || isNewBubbleColumn) {
                 // Preserve existing ColoredWaterBlockEntity across state transitions
                 return;
             }
@@ -90,6 +81,7 @@ public abstract class LevelChunkMixin {
     private void coloredWater$preventRemovalOnPreservedBlocks(BlockPos pos, CallbackInfo ci) {
         BlockState state = this.getBlockState(pos);
         if (state.is(Blocks.FROSTED_ICE)
+                || state.is(Blocks.BUBBLE_COLUMN)
                 || (state.hasProperty(BlockStateProperties.WATERLOGGED)
                         && state.getValue(BlockStateProperties.WATERLOGGED))
                 || state.getBlock() instanceof ColoredWaterBlock) {

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -57,10 +58,20 @@ public class ColoredWaterBlockEntity extends BlockEntity {
         super(ModBlockEntities.COLORED_WATER_BE.get(), pos, blockState);
     }
 
+    private boolean isFindingSource = false;
+
     public BlockPos getSourcePos() {
         if (level != null && !isSourceBlock(getBlockState())) {
             if (this.sourcePos == null || !isValidSource(this.sourcePos)) {
-                this.sourcePos = findUpstreamSourcePos();
+                if (this.isFindingSource) {
+                    return null;
+                }
+                this.isFindingSource = true;
+                try {
+                    this.sourcePos = findUpstreamSourcePos();
+                } finally {
+                    this.isFindingSource = false;
+                }
             }
         }
         return this.sourcePos;
@@ -368,13 +379,18 @@ public class ColoredWaterBlockEntity extends BlockEntity {
      * Verifies if a position contains a valid source block for this entity.
      */
     private boolean isValidSource(BlockPos pos) {
-        if (level == null)
+        if (level == null || pos == null)
             return false;
         if (!level.isLoaded(pos))
             return true; // Assume valid if unloaded to prevent breaking on chunk borders
         BlockState state = level.getBlockState(pos);
-        // Must be same block type and a source (level 0)
-        return state.getBlock() == getBlockState().getBlock() && state.getValue(LiquidBlock.LEVEL) == 0;
+        if (state.is(Blocks.BUBBLE_COLUMN)) {
+            return true;
+        }
+        if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
+            return true;
+        }
+        return state.getBlock() == getBlockState().getBlock() && state.hasProperty(LiquidBlock.LEVEL) && state.getValue(LiquidBlock.LEVEL) == 0;
     }
 
     /**
@@ -550,6 +566,9 @@ public class ColoredWaterBlockEntity extends BlockEntity {
 
     private boolean isSourceBlock(BlockState state) {
         if (state.hasProperty(LiquidBlock.LEVEL) && state.getValue(LiquidBlock.LEVEL) == 0) {
+            return true;
+        }
+        if (state.is(Blocks.BUBBLE_COLUMN)) {
             return true;
         }
         return state.hasProperty(BlockStateProperties.WATERLOGGED)

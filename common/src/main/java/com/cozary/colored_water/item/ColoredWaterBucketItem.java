@@ -32,6 +32,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
@@ -225,13 +226,19 @@ public class ColoredWaterBucketItem extends BucketItem {
             }
             this.playEmptySound(null, level, pos);
             return true;
+        } else if (state.is(Blocks.BUBBLE_COLUMN)) {
+            if (!bucketStack.isEmpty()) {
+                applyPropertiesToBE(bucketStack, level, pos);
+            }
+            this.playEmptySound(null, level, pos);
+            return true;
         }
         return false;
     }
 
     private void applyPropertiesToBE(ItemStack bucketStack, Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof ColoredWaterBlock) && !(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED))) {
+        if (!(state.getBlock() instanceof ColoredWaterBlock) && !(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) && !state.is(Blocks.BUBBLE_COLUMN)) {
             return;
         }
         ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);

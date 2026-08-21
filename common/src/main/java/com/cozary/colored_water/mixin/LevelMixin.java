@@ -5,6 +5,7 @@ import com.cozary.colored_water.fluids.ColoredWaterFluid;
 import com.cozary.colored_water.init.ModFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,7 +25,9 @@ public abstract class LevelMixin {
     @Inject(method = "getFluidState", at = @At("HEAD"), cancellable = true)
     private void coloredWater$getWaterloggedFluidState(BlockPos pos, CallbackInfoReturnable<FluidState> cir) {
         BlockState state = this.getBlockState(pos);
-        if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
+        boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+        boolean isBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
+        if (isWaterlogged || isBubbleColumn) {
             BlockEntity be = this.getBlockEntity(pos);
             if (be instanceof ColoredWaterBlockEntity coloredBe) {
                 boolean isCondensed = coloredBe.isCondensed();

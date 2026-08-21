@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BubbleColumnBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -74,6 +75,9 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         super.onPlace(state, level, pos, oldState, isMoving);
         checkLavaInteraction(level, pos);
         triggerPropagation(level, pos);
+        if (state.getValue(LEVEL) == 0) {
+            BubbleColumnBlock.updateColumn(level, pos, state);
+        }
     }
 
     /**
@@ -85,6 +89,9 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         super.neighborChanged(blockState, level, blockPos, block, orientation, bol);
         checkLavaInteraction(level, blockPos);
         triggerPropagation(level, blockPos);
+        if (blockState.getValue(LEVEL) == 0) {
+            BubbleColumnBlock.updateColumn(level, blockPos, blockState);
+        }
     }
 
     private void checkLavaInteraction(Level level, BlockPos pos) {
