@@ -68,7 +68,7 @@ loom.remapConfigurations.configureEach {
 publishMods {
     file = remapJar.archiveFile
     changelog = getLatestChangelog()
-    type = ALPHA
+    type = BETA
     modLoaders.add("fabric")
     displayName = "${mod_name}-fabric-${minecraft_version}-${version_fabric}"
     dryRun = dry_run.toBoolean()
