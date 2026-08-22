@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Cleaned and updated localization language files (`en_us`, `es_es`).
+- Optimized entity performance when in water or rain.
+
+### Removed
+- Cleaned up unused and dead code across the mod.
 
 ## [2.0.0-beta.1] - 2026-08-21
 

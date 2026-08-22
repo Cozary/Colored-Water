@@ -25,25 +25,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
-    @Inject(method = "isInWaterOrRain", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isInWaterOrRain", at = @At("RETURN"), cancellable = true)
     private void colored_water$isInWaterOrRain(CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValue()) {
+            return;
+        }
+
         Entity entity = (Entity) (Object) this;
         Level level = entity.level();
         if (level != null) {
             BlockPos pos = entity.blockPosition();
             BlockState state = level.getBlockState(pos);
-            if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
-                cir.setReturnValue(true);
-                return;
-            }
-            BlockPos eyePos = BlockPos.containing(entity.getEyePosition());
-            BlockState eyeState = level.getBlockState(eyePos);
-            if (eyeState.getBlock() instanceof ColoredWaterBlock || eyeState.getBlock() instanceof ColoredWaterCauldronBlock) {
-                cir.setReturnValue(true);
-                return;
-            }
-            FluidState fluidState = level.getFluidState(pos);
-            if (fluidState.getType() instanceof BaseColorWater) {
+            if (state.getBlock() instanceof ColoredWaterCauldronBlock) {
                 cir.setReturnValue(true);
             }
         }
