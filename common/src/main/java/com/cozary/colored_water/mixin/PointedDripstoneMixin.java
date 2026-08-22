@@ -11,7 +11,6 @@ import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;

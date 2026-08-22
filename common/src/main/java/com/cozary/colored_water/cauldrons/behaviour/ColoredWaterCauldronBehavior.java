@@ -1,6 +1,5 @@
 package com.cozary.colored_water.cauldrons.behaviour;
 
-import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModCauldrons;

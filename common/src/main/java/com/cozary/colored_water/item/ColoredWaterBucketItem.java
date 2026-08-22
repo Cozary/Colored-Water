@@ -299,26 +299,26 @@ public class ColoredWaterBucketItem extends BucketItem {
         if (alpha == 0) alpha = isCondensed ? 255 : 180;
         int opacityPct = Math.round((alpha * 100.0f) / 255.0f);
 
-        String typeName;
+        Component typeComponent;
         if (isCondensed && luminosity > 0) {
-            typeName = "Luminous Condense";
+            typeComponent = Component.translatable("tooltip.colored_water.type.luminous_condense");
         } else if (isCondensed) {
-            typeName = "Condense";
+            typeComponent = Component.translatable("tooltip.colored_water.type.condense");
         } else if (luminosity > 0) {
-            typeName = "Luminous";
+            typeComponent = Component.translatable("tooltip.colored_water.type.luminous");
         } else {
-            typeName = "Normal";
+            typeComponent = Component.translatable("tooltip.colored_water.type.normal");
         }
 
-        tooltipAdder.accept(Component.literal("Type: ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(typeName).withStyle(ChatFormatting.WHITE)));
+        tooltipAdder.accept(Component.translatable("tooltip.colored_water.type",
+                typeComponent.copy().withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.GRAY));
 
-        tooltipAdder.accept(Component.literal("Opacity: ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(opacityPct + "%").withStyle(ChatFormatting.WHITE)));
+        tooltipAdder.accept(Component.translatable("tooltip.colored_water.opacity",
+                Component.literal(opacityPct + "%").withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.GRAY));
 
         if (luminosity > 0) {
-            tooltipAdder.accept(Component.literal("Luminosity: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(String.valueOf(luminosity)).withStyle(ChatFormatting.GOLD)));
+            tooltipAdder.accept(Component.translatable("tooltip.colored_water.luminosity",
+                    Component.literal(String.valueOf(luminosity)).withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY));
         }
 
         DyedItemColor dyedColor = stack.get(DataComponents.DYED_COLOR);
@@ -328,8 +328,8 @@ public class ColoredWaterBucketItem extends BucketItem {
             Component coloredHex = Component.literal(hexString)
                     .withStyle(Style.EMPTY.withColor(colorRgb));
 
-            tooltipAdder.accept(Component.literal("Color: ").withStyle(ChatFormatting.GRAY)
-                    .append(coloredHex));
+            tooltipAdder.accept(Component.translatable("tooltip.colored_water.color",
+                    coloredHex).withStyle(ChatFormatting.GRAY));
         }
     }
 }

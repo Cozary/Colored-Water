@@ -21,7 +21,6 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
     private int color = -1;
     private boolean condensed = false;
     private int luminosity = 0;
-    private int lastClientColor = -1;
 
     public ColoredWaterCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.COLORED_WATER_CAULDRON_BE.get(), pos, state);
@@ -136,9 +135,7 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
         this.luminosity = input.getIntOr("Luminosity", 0);
 
         if (this.level != null && this.level.isClientSide()) {
-            this.lastClientColor = this.color;
             BlockState state = getBlockState();
-            this.level.sendBlockUpdated(this.worldPosition, state, state, 3);
             this.level.setBlocksDirty(this.worldPosition, state, state);
         }
     }

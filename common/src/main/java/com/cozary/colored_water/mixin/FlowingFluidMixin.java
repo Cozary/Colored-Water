@@ -1,6 +1,5 @@
 package com.cozary.colored_water.mixin;
 
-import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
