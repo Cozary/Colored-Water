@@ -5,11 +5,9 @@ import com.cozary.colored_water.fluids.ColoredWaterFluid;
 import com.cozary.colored_water.init.ModFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,15 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Level.class)
 public abstract class LevelMixin {
 
-    @Shadow public abstract BlockState getBlockState(BlockPos pos);
     @Shadow public abstract BlockEntity getBlockEntity(BlockPos pos);
 
-    @Inject(method = "getFluidState", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getFluidState", at = @At("RETURN"), cancellable = true)
     private void coloredWater$getWaterloggedFluidState(BlockPos pos, CallbackInfoReturnable<FluidState> cir) {
-        BlockState state = this.getBlockState(pos);
-        boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
-        boolean isBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
-        if (isWaterlogged || isBubbleColumn) {
+        FluidState original = cir.getReturnValue();
+        if (original != null && original.is(Fluids.WATER)) {
             BlockEntity be = this.getBlockEntity(pos);
             if (be instanceof ColoredWaterBlockEntity coloredBe) {
                 boolean isCondensed = coloredBe.isCondensed();
