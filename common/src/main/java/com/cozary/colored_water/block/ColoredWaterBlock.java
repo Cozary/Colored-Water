@@ -1,6 +1,7 @@
 package com.cozary.colored_water.block;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -74,7 +75,9 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
         checkLavaInteraction(level, pos);
-        triggerPropagation(level, pos);
+        if (!level.isClientSide()) {
+            level.scheduleTick(pos, state.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
+        }
         if (state.getValue(LEVEL) == 0) {
             BubbleColumnBlock.updateColumn(level, pos, state);
         }
@@ -88,7 +91,9 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bol) {
         super.neighborChanged(blockState, level, blockPos, block, orientation, bol);
         checkLavaInteraction(level, blockPos);
-        triggerPropagation(level, blockPos);
+        if (!level.isClientSide()) {
+            level.scheduleTick(blockPos, blockState.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
+        }
         if (blockState.getValue(LEVEL) == 0) {
             BubbleColumnBlock.updateColumn(level, blockPos, blockState);
         }
@@ -147,36 +152,15 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
             return ItemStack.EMPTY;
         }
 
-        int color = -1;
-        boolean condensed = false;
-        int luminosity = 0;
-        int alpha = 0;
-
+        ItemStack stack = ItemStack.EMPTY;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ColoredWaterBlockEntity coloredWaterBE) {
-            color = coloredWaterBE.getColor();
-            condensed = coloredWaterBE.isCondensed();
-            luminosity = coloredWaterBE.getLuminosity();
-            alpha = (color >> 24) & 0xFF;
+            stack = ColoredWaterUtil.createBucketStack(coloredWaterBE);
         }
 
         // Remove the block
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
 
-        // Create the bucket item with the correct color and properties
-        ItemStack stack = new ItemStack(this.fluidSupplier.get().getBucket());
-        if (color != -1) {
-            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color & 0xFFFFFF));
-        }
-
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("Condensed", condensed);
-        tag.putInt("Luminosity", luminosity);
-        if (alpha > 0) {
-            tag.putInt("Alpha", alpha);
-        }
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-
-        return stack;
+        return stack.isEmpty() ? new ItemStack(this.fluidSupplier.get().getBucket()) : stack;
     }
 }

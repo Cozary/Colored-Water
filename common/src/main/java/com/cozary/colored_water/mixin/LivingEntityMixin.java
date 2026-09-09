@@ -7,6 +7,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -37,9 +38,9 @@ public abstract class LivingEntityMixin {
         if (particle == ParticleTypes.BUBBLE) {
             LivingEntity entity = (LivingEntity) (Object) this;
             BlockPos pos = BlockPos.containing(x, y, z);
-            int color = getColoredWaterAt(level, pos);
+            int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
             if (color == -1) {
-                color = getColoredWaterAt(level, entity.blockPosition());
+                color = ColoredWaterUtil.getColoredWaterAt(level, entity.blockPosition());
             }
 
             if (color != -1) {
@@ -49,25 +50,5 @@ public abstract class LivingEntityMixin {
         }
 
         level.addParticle(particle, x, y, z, dx, dy, dz);
-    }
-
-    private static int getColoredWaterAt(Level level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            int c = coloredBe.getColor();
-            return c != -1 ? c : 0x3F76E4;
-        }
-        if (be instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-            return cauldronBe.getColor();
-        }
-        FluidState fluid = level.getFluidState(pos);
-        if (fluid.getType() instanceof BaseColorWater) {
-            return 0x3F76E4;
-        }
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
-            return 0x3F76E4;
-        }
-        return -1;
     }
 }

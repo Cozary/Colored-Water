@@ -2,6 +2,7 @@ package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -49,28 +50,12 @@ public abstract class BucketItemMixin {
                 BlockState state = level.getBlockState(pos);
                 if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
                     BlockEntity be = level.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe) {
-                        int color = coloredBe.getColor();
-                        boolean condensed = coloredBe.isCondensed();
-                        int luminosity = coloredBe.getLuminosity();
-                        int alpha = (color >> 24) & 0xFF;
-
+                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                         level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
                         player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
                         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
 
-                        ItemStack filledBucket = new ItemStack(ModFluids.STILL_COLORED_WATER.get().getBucket());
-                        if (color != -1) {
-                            filledBucket.set(DataComponents.DYED_COLOR, new DyedItemColor(color & 0xFFFFFF));
-                        }
-
-                        CompoundTag tag = new CompoundTag();
-                        tag.putBoolean("Condensed", condensed);
-                        tag.putInt("Luminosity", luminosity);
-                        if (alpha > 0) {
-                            tag.putInt("Alpha", alpha);
-                        }
-                        filledBucket.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+                        ItemStack filledBucket = ColoredWaterUtil.createBucketStack(coloredBe);
 
                         player.awardStat(Stats.ITEM_USED.get((BucketItem) (Object) this));
                         if (!level.isClientSide()) {

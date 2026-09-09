@@ -6,6 +6,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,22 +33,22 @@ public class ColoredWaterClient implements ClientModInitializer {
         FluidRenderHandlerRegistry.INSTANCE.register(
                 ModFluids.STILL_COLORED_WATER.get(),
                 ModFluids.FLOWING_COLORED_WATER.get(),
-                new SimpleFluidRenderHandler(STILL_TEXTURE, FLOWING_TEXTURE, 0x3F76E4) {
+                new SimpleFluidRenderHandler(STILL_TEXTURE, FLOWING_TEXTURE, ColoredWaterUtil.DEFAULT_COLOR) {
                     @Override
                     public int getFluidColor(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
                         if (view != null && pos != null) {
                             BlockEntity be = view.getBlockEntity(pos);
-                            if (be instanceof ColoredWaterBlockEntity coloredBe) {
+                            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                                 int color = coloredBe.getColor();
-                                int alpha = (color >> 24) & 0xFF;
+                                int alpha = ColoredWaterUtil.getAlpha(color);
                                 if (alpha == 0) {
-                                    alpha = coloredBe.isCondensed() ? 255 : 180;
-                                    color = (alpha << 24) | (color & 0x00FFFFFF);
+                                    alpha = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                                    color = ColoredWaterUtil.withAlpha(color, alpha);
                                 }
                                 return color;
                             }
                         }
-                        return 0xB43F76E4;
+                        return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
                     }
                 }
         );
@@ -62,7 +63,7 @@ public class ColoredWaterClient implements ClientModInitializer {
                     return coloredBe.getColor();
                 }
             }
-            return 0xB43F76E4;
+            return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
         }, ModCauldrons.COLORED_WATER_CAULDRON.get());
     }
 }

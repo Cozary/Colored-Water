@@ -5,21 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.2] - 2026-08-22
+## [2.0.0-beta.2] - 2026-09-09
 
 > [!WARNING]
 > This is a **beta build**. Due to the migration to a single unified fluid, this version is **incompatible with worlds or saves from versions prior to 2.0.0**.
 > Use with appropriate backups.
 
 ### Added
-- Bucket tooltips localization.
+- Added full localization for bucket tooltips (`en_us`, `es_es`).
+- Frost Walker compatibility: colored water now properly retains its color and properties when frozen into frosted ice and thawed.
 
 ### Changed
-- Cleaned and updated localization language files (`en_us`, `es_es`).
-- Optimized entity performance when in water or rain.
+- Flowing colored water now transitions smoothly between colors and light levels instead of changing abruptly.
+- Improved overall performance when in water, rain, and around flowing fluids.
+- Optimized lighting updates.
+- Cleaned and updated language files.
+
+### Fixed
+- Fixed colored water losing its color or glow when breaking or melting ice.
+- Fixed picking up colored water with a bucket from waterlogged blocks and bubble columns resetting its properties.
+- Fixed cauldrons not immediately updating their light level when color or luminosity changed.
 
 ### Removed
-- Cleaned up unused and dead code across the mod.
+- Cleaned up obsolete files and unused legacy code.
 
 ## [2.0.0-beta.1] - 2026-08-21
 

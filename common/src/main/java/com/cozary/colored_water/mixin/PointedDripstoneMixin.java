@@ -9,6 +9,7 @@ import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DripstoneThickness;
 import net.minecraft.world.level.material.FluidState;
@@ -45,18 +47,20 @@ public abstract class PointedDripstoneMixin {
         if (randChance < 0.17578125F) {
             BlockPos tipPos = findStalactiteTipPos(level, pos);
 
-            int color = 0x3F76E4;
+            int color = ColoredWaterUtil.DEFAULT_COLOR;
             int luminosity = 0;
             boolean condensed = false;
-            int alpha = 180;
+            int alpha = ColoredWaterUtil.DEFAULT_ALPHA;
 
             if (level.getBlockEntity(sourcePos) instanceof ColoredWaterBlockEntity sourceBe) {
                 color = sourceBe.getColor();
                 luminosity = sourceBe.getLuminosity();
                 condensed = sourceBe.isCondensed();
-                alpha = (color >>> 24) & 0xFF;
-                if (alpha == 0) alpha = condensed ? 255 : 180;
+                alpha = ColoredWaterUtil.getAlpha(color);
+                if (alpha == 0) alpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
             }
+
+            int dripFullColor = ColoredWaterUtil.withAlpha(color, alpha);
 
             for (int i = 1; i <= 11; i++) {
                 BlockPos cauldronPos = tipPos.below(i);
@@ -64,39 +68,27 @@ public abstract class PointedDripstoneMixin {
 
                 if (cauldronState.getBlock() instanceof AbstractCauldronBlock) {
                     if (cauldronState.is(Blocks.CAULDRON)) {
-                        int fullColor = (alpha << 24) | (color & 0xFFFFFF);
                         level.setBlock(cauldronPos, ModCauldrons.COLORED_WATER_CAULDRON.get().defaultBlockState()
                                 .setValue(LayeredCauldronBlock.LEVEL, 1)
                                 .setValue(ColoredWaterCauldronBlock.CONDENSED, condensed)
                                 .setValue(ColoredWaterCauldronBlock.LIGHT_LEVEL, luminosity), 3);
 
                         if (level.getBlockEntity(cauldronPos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-                            cauldronBe.setCondensed(condensed);
-                            cauldronBe.setLuminosity(luminosity);
-                            cauldronBe.setAlpha(alpha);
-                            cauldronBe.setColor(fullColor);
+                            cauldronBe.setProperties(dripFullColor, condensed, luminosity);
                         }
                         level.levelEvent(1047, cauldronPos, 0);
                     } else if (cauldronState.is(Blocks.WATER_CAULDRON)) {
                         int currentLevel = cauldronState.getValue(LayeredCauldronBlock.LEVEL);
                         int newLevel = Math.min(3, currentLevel + 1);
 
-                        int cColor = 0x3F76E4;
-                        int cAlpha = 180;
-                        int cLuminosity = 0;
-
                         int cWeight = currentLevel * 3;
                         int dWeight = 1;
                         int totalWeight = cWeight + dWeight;
 
-                        int mixedAlpha = (cAlpha * cWeight + alpha * dWeight) / totalWeight;
-                        int mixedRed = (((cColor >> 16) & 0xFF) * cWeight + ((color >> 16) & 0xFF) * dWeight) / totalWeight;
-                        int mixedGreen = (((cColor >> 8) & 0xFF) * cWeight + ((color >> 8) & 0xFF) * dWeight) / totalWeight;
-                        int mixedBlue = ((cColor & 0xFF) * cWeight + (color & 0xFF) * dWeight) / totalWeight;
-                        int mixedLuminosity = (cLuminosity * cWeight + luminosity * dWeight) / totalWeight;
-                        boolean mixedCondensed = mixedAlpha >= 220;
-
-                        int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
+                        int mixedColor = ColoredWaterUtil.blend(ColoredWaterUtil.DEFAULT_ARGB_NORMAL, cWeight, dripFullColor, dWeight);
+                        int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
+                        int mixedLuminosity = (luminosity * dWeight) / totalWeight;
+                        boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
                         level.setBlock(cauldronPos, ModCauldrons.COLORED_WATER_CAULDRON.get().defaultBlockState()
                                 .setValue(LayeredCauldronBlock.LEVEL, newLevel)
@@ -104,10 +96,7 @@ public abstract class PointedDripstoneMixin {
                                 .setValue(ColoredWaterCauldronBlock.LIGHT_LEVEL, mixedLuminosity), 3);
 
                         if (level.getBlockEntity(cauldronPos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-                            cauldronBe.setCondensed(mixedCondensed);
-                            cauldronBe.setLuminosity(mixedLuminosity);
-                            cauldronBe.setAlpha(mixedAlpha);
-                            cauldronBe.setColor(mixedColor);
+                            cauldronBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
                         }
                         level.levelEvent(1047, cauldronPos, 0);
                     } else if (cauldronState.getBlock() instanceof ColoredWaterCauldronBlock) {
@@ -115,27 +104,16 @@ public abstract class PointedDripstoneMixin {
                             int currentLevel = cauldronState.getValue(LayeredCauldronBlock.LEVEL);
                             int newLevel = Math.min(3, currentLevel + 1);
 
-                            int cColor = cauldronBe.getColor();
-                            int cAlpha = cauldronBe.getAlpha();
-                            int cLuminosity = cauldronBe.getLuminosity();
-
                             int cWeight = currentLevel * 3;
                             int dWeight = 1;
                             int totalWeight = cWeight + dWeight;
 
-                            int mixedAlpha = (cAlpha * cWeight + alpha * dWeight) / totalWeight;
-                            int mixedRed = (((cColor >> 16) & 0xFF) * cWeight + ((color >> 16) & 0xFF) * dWeight) / totalWeight;
-                            int mixedGreen = (((cColor >> 8) & 0xFF) * cWeight + ((color >> 8) & 0xFF) * dWeight) / totalWeight;
-                            int mixedBlue = ((cColor & 0xFF) * cWeight + (color & 0xFF) * dWeight) / totalWeight;
-                            int mixedLuminosity = (cLuminosity * cWeight + luminosity * dWeight) / totalWeight;
-                            boolean mixedCondensed = mixedAlpha >= 220;
+                            int mixedColor = ColoredWaterUtil.blend(cauldronBe.getColor(), cWeight, dripFullColor, dWeight);
+                            int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
+                            int mixedLuminosity = (cauldronBe.getLuminosity() * cWeight + luminosity * dWeight) / totalWeight;
+                            boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
-                            int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
-
-                            cauldronBe.setCondensed(mixedCondensed);
-                            cauldronBe.setLuminosity(mixedLuminosity);
-                            cauldronBe.setAlpha(mixedAlpha);
-                            cauldronBe.setColor(mixedColor);
+                            cauldronBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
 
                             level.setBlock(cauldronPos, cauldronState.setValue(LayeredCauldronBlock.LEVEL, newLevel)
                                     .setValue(ColoredWaterCauldronBlock.CONDENSED, mixedCondensed)
@@ -208,9 +186,11 @@ public abstract class PointedDripstoneMixin {
     private static boolean isColoredWaterAt(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         FluidState fluid = level.getFluidState(pos);
-        return state.getBlock() instanceof ColoredWaterBlock
-                || fluid.getType() instanceof BaseColorWater
-                || level.getBlockEntity(pos) instanceof ColoredWaterBlockEntity;
+        if (state.getBlock() instanceof ColoredWaterBlock || fluid.getType() instanceof BaseColorWater) {
+            return true;
+        }
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties();
     }
 
     private static BlockPos findStalactiteTipPos(Level level, BlockPos pos) {

@@ -10,6 +10,7 @@ import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
@@ -54,7 +55,7 @@ public abstract class BubbleColumnBlockMixin {
     private static boolean coloredWater$redirectSetBlockInUpdateColumn(LevelAccessor level, BlockPos pos, BlockState state, int flags) {
         if (state.is(Blocks.WATER)) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
+            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                 BlockState coloredState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
                         .setValue(ColoredWaterBlock.CONDENSED, coloredBe.isCondensed())
                         .setValue(ColoredWaterBlock.LIGHT_LEVEL, coloredBe.getLuminosity());
@@ -67,27 +68,9 @@ public abstract class BubbleColumnBlockMixin {
     @Inject(method = "pickupBlock", at = @At("HEAD"), cancellable = true)
     private void coloredWater$pickupBubbleColumn(LivingEntity player, LevelAccessor level, BlockPos pos, BlockState state, CallbackInfoReturnable<ItemStack> cir) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            int color = coloredBe.getColor();
-            boolean condensed = coloredBe.isCondensed();
-            int luminosity = coloredBe.getLuminosity();
-            int alpha = (color >> 24) & 0xFF;
-
+        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
-
-            ItemStack stack = new ItemStack(ModFluids.STILL_COLORED_WATER.get().getBucket());
-            if (color != -1) {
-                stack.set(DataComponents.DYED_COLOR, new DyedItemColor(color & 0xFFFFFF));
-            }
-
-            CompoundTag tag = new CompoundTag();
-            tag.putBoolean("Condensed", condensed);
-            tag.putInt("Luminosity", luminosity);
-            if (alpha > 0) {
-                tag.putInt("Alpha", alpha);
-            }
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-
+            ItemStack stack = ColoredWaterUtil.createBucketStack(coloredBe);
             cir.setReturnValue(stack);
         }
     }
@@ -105,7 +88,7 @@ public abstract class BubbleColumnBlockMixin {
 
         if (particle == ParticleTypes.BUBBLE_COLUMN_UP || particle == ParticleTypes.CURRENT_DOWN) {
             BlockPos pos = BlockPos.containing(x, y, z);
-            int color = getColoredWaterAt(level, pos);
+            int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
             if (color != -1) {
                 var pType = (particle == ParticleTypes.BUBBLE_COLUMN_UP)
                         ? ModParticles.BUBBLE_COLUMN_UP.get()
@@ -121,7 +104,7 @@ public abstract class BubbleColumnBlockMixin {
     @Inject(method = "animateTick", at = @At("TAIL"))
     private void coloredWater$animateSparkle(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
+        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
             int luminosity = coloredBe.getLuminosity();
             if (luminosity > 0) {
                 float chance = (luminosity / 15.0F) * 0.4F;
@@ -134,25 +117,5 @@ public abstract class BubbleColumnBlockMixin {
                 }
             }
         }
-    }
-
-    private static int getColoredWaterAt(Level level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            int c = coloredBe.getColor();
-            return c != -1 ? c : 0x3F76E4;
-        }
-        if (be instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-            return cauldronBe.getColor();
-        }
-        FluidState fluid = level.getFluidState(pos);
-        if (fluid.getType() instanceof BaseColorWater) {
-            return 0x3F76E4;
-        }
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
-            return 0x3F76E4;
-        }
-        return -1;
     }
 }

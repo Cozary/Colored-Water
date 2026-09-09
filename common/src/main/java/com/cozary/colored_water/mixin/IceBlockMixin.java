@@ -3,6 +3,7 @@ package com.cozary.colored_water.mixin;
 import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -25,28 +26,11 @@ public abstract class IceBlockMixin {
     @Inject(method = "melt", at = @At("HEAD"), cancellable = true)
     private void coloredWater$meltIntoColoredWater(BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
+        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
             if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                 level.removeBlock(pos, false);
             } else {
-                int color = coloredBe.getColor();
-                boolean condensed = coloredBe.isCondensed();
-                int luminosity = coloredBe.getLuminosity();
-
-                BlockState coloredWaterState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                        .setValue(ColoredWaterBlock.CONDENSED, condensed);
-                level.setBlockAndUpdate(pos, coloredWaterState);
-                level.neighborChanged(pos, coloredWaterState.getBlock(), null);
-
-                BlockEntity newBe = level.getBlockEntity(pos);
-                if (newBe instanceof ColoredWaterBlockEntity newColoredBe) {
-                    newColoredBe.setCondensed(condensed);
-                    newColoredBe.setLuminosity(luminosity);
-                    newColoredBe.setColor(color, null, true);
-                    newColoredBe.updateBlockStateProps();
-                    newColoredBe.propagateColor();
-                    newColoredBe.markUpdated();
-                }
+                restoreColoredWater(level, pos, coloredBe);
             }
             ci.cancel();
         }
@@ -55,7 +39,7 @@ public abstract class IceBlockMixin {
     @Inject(method = "playerDestroy", at = @At("HEAD"), cancellable = true)
     private void coloredWater$destroyIntoColoredWater(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool, CallbackInfo ci) {
         BlockEntity be = blockEntity != null ? blockEntity : level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
+        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
             if (!EnchantmentHelper.hasTag(tool, EnchantmentTags.PREVENTS_ICE_MELTING)) {
                 if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                     level.removeBlock(pos, false);
@@ -65,27 +49,23 @@ public abstract class IceBlockMixin {
 
                 BlockState below = level.getBlockState(pos.below());
                 if (below.blocksMotion() || below.liquid()) {
-                    int color = coloredBe.getColor();
-                    boolean condensed = coloredBe.isCondensed();
-                    int luminosity = coloredBe.getLuminosity();
-
-                    BlockState coloredWaterState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                            .setValue(ColoredWaterBlock.CONDENSED, condensed);
-                    level.setBlockAndUpdate(pos, coloredWaterState);
-                    level.neighborChanged(pos, coloredWaterState.getBlock(), null);
-
-                    BlockEntity newBe = level.getBlockEntity(pos);
-                    if (newBe instanceof ColoredWaterBlockEntity newColoredBe) {
-                        newColoredBe.setCondensed(condensed);
-                        newColoredBe.setLuminosity(luminosity);
-                        newColoredBe.setColor(color, null, true);
-                        newColoredBe.updateBlockStateProps();
-                        newColoredBe.propagateColor();
-                        newColoredBe.markUpdated();
-                    }
+                    restoreColoredWater(level, pos, coloredBe);
                     ci.cancel();
                 }
             }
+        }
+    }
+
+    private static void restoreColoredWater(Level level, BlockPos pos, ColoredWaterBlockEntity oldBe) {
+        boolean condensed = oldBe.isCondensed();
+        BlockState coloredWaterState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
+                .setValue(ColoredWaterBlock.CONDENSED, condensed);
+        level.setBlockAndUpdate(pos, coloredWaterState);
+        level.neighborChanged(pos, coloredWaterState.getBlock(), null);
+
+        BlockEntity newBe = level.getBlockEntity(pos);
+        if (newBe instanceof ColoredWaterBlockEntity newColoredBe) {
+            ColoredWaterUtil.transferProperties(oldBe, newColoredBe);
         }
     }
 }

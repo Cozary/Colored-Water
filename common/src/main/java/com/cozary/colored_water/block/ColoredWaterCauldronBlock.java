@@ -2,6 +2,7 @@ package com.cozary.colored_water.block;
 
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.util.RandomSource;
@@ -54,30 +55,18 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
                 int newLevel = Math.min(3, currentLevel + 1);
 
                 int cColor = cauldronBe.getColor();
-                int cAlpha = cauldronBe.getAlpha();
                 int cLuminosity = cauldronBe.getLuminosity();
-
-                int wColor = 0x3F76E4;
-                int wAlpha = 180;
-                int wLuminosity = 0;
 
                 int cWeight = currentLevel * 3;
                 int dWeight = 1;
                 int totalWeight = cWeight + dWeight;
 
-                int mixedAlpha = (cAlpha * cWeight + wAlpha * dWeight) / totalWeight;
-                int mixedRed = (((cColor >> 16) & 0xFF) * cWeight + ((wColor >> 16) & 0xFF) * dWeight) / totalWeight;
-                int mixedGreen = (((cColor >> 8) & 0xFF) * cWeight + ((wColor >> 8) & 0xFF) * dWeight) / totalWeight;
-                int mixedBlue = ((cColor & 0xFF) * cWeight + (wColor & 0xFF) * dWeight) / totalWeight;
-                int mixedLuminosity = (cLuminosity * cWeight + wLuminosity * dWeight) / totalWeight;
-                boolean mixedCondensed = mixedAlpha >= 220;
+                int mixedColor = ColoredWaterUtil.blend(cColor, cWeight, ColoredWaterUtil.DEFAULT_ARGB_NORMAL, dWeight);
+                int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
+                int mixedLuminosity = (cLuminosity * cWeight) / totalWeight;
+                boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
-                int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
-
-                cauldronBe.setCondensed(mixedCondensed);
-                cauldronBe.setLuminosity(mixedLuminosity);
-                cauldronBe.setAlpha(mixedAlpha);
-                cauldronBe.setColor(mixedColor);
+                cauldronBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
 
                 level.setBlock(pos, state.setValue(LEVEL, newLevel)
                         .setValue(CONDENSED, mixedCondensed)

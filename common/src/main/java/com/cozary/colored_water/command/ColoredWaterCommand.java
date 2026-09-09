@@ -2,6 +2,7 @@ package com.cozary.colored_water.command;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -92,24 +93,16 @@ public class ColoredWaterCommand {
             alpha = IntegerArgumentType.getInteger(context, "translucency");
         }
 
-        int argbColor = ((alpha & 0xFF) << 24) | (rgb & 0xFFFFFF);
+        int argbColor = ColoredWaterUtil.packArgb(alpha, (rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 
         boolean isCondensed = typeStr.contains("condense");
-        int defaultLuminosity = typeStr.contains("luminous") ? 15 : 0;
+        int defaultLuminosity = typeStr.contains("luminous") ? ColoredWaterUtil.MAX_LUMINOSITY : ColoredWaterUtil.MIN_LUMINOSITY;
         int luminosity = hasLuminosityArg ? IntegerArgumentType.getInteger(context, "luminosity") : defaultLuminosity;
 
         CommandSourceStack source = context.getSource();
         Player player = source.getPlayerOrException();
 
-        Item bucketItem = ModItems.COLORED_WATER_BUCKET.get();
-        ItemStack bucket = new ItemStack(bucketItem);
-        bucket.set(DataComponents.DYED_COLOR, new DyedItemColor(rgb & 0xFFFFFF));
-
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("Condensed", isCondensed);
-        tag.putInt("Luminosity", luminosity);
-        tag.putInt("Alpha", alpha & 0xFF);
-        CustomData.update(DataComponents.CUSTOM_DATA, bucket, t -> t.merge(tag));
+        ItemStack bucket = ColoredWaterUtil.createBucketStack(argbColor, isCondensed, luminosity);
 
         if (!player.getInventory().add(bucket)) {
             player.drop(bucket, false);

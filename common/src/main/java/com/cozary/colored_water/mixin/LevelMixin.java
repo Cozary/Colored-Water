@@ -24,7 +24,7 @@ public abstract class LevelMixin {
         FluidState original = cir.getReturnValue();
         if (original != null && original.is(Fluids.WATER)) {
             BlockEntity be = this.getBlockEntity(pos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
+            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                 boolean isCondensed = coloredBe.isCondensed();
                 FluidState fluidState = ModFluids.STILL_COLORED_WATER.get().getSource(false);
                 if (fluidState.hasProperty(ColoredWaterFluid.CONDENSED)) {

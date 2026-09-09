@@ -3,6 +3,7 @@ package com.cozary.colored_water.client;
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModCauldrons;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -21,7 +22,7 @@ public class ColoredWaterClientForgeEvents {
                     return coloredBe.getColor();
                 }
             }
-            return 0xB43F76E4;
+            return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
         }, ModCauldrons.COLORED_WATER_CAULDRON.get());
     }
 }

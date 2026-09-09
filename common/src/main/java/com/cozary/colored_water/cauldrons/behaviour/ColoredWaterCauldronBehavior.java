@@ -4,11 +4,11 @@ import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -21,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BannerBlock;
@@ -39,25 +38,13 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
         if (currentLevel <= 0) return InteractionResult.PASS;
 
         if (!level.isClientSide()) {
-            int cauldronRgb = coloredBe.getColor() & 0xFFFFFF;
+            int cauldronRgb = ColoredWaterUtil.getRgb(coloredBe.getColor());
             int finalRgb = cauldronRgb;
 
             DyedItemColor existingDyedColor = stack.get(DataComponents.DYED_COLOR);
             if (existingDyedColor != null) {
                 int existingRgb = existingDyedColor.rgb() & 0xFFFFFF;
-                int eRed = (existingRgb >> 16) & 0xFF;
-                int eGreen = (existingRgb >> 8) & 0xFF;
-                int eBlue = existingRgb & 0xFF;
-
-                int cRed = (cauldronRgb >> 16) & 0xFF;
-                int cGreen = (cauldronRgb >> 8) & 0xFF;
-                int cBlue = cauldronRgb & 0xFF;
-
-                int mRed = (eRed + cRed) / 2;
-                int mGreen = (eGreen + cGreen) / 2;
-                int mBlue = (eBlue + cBlue) / 2;
-
-                finalRgb = (mRed << 16) | (mGreen << 8) | mBlue;
+                finalRgb = ColoredWaterUtil.getRgb(ColoredWaterUtil.blend(existingRgb, 1, cauldronRgb, 1));
             }
 
             if (stack.getCount() == 1) {
@@ -151,9 +138,8 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
                 return InteractionResult.PASS;
             }
             if (!level.isClientSide()) {
-                coloredBe.setCondensed(true);
-                coloredBe.setAlpha(255);
-                coloredBe.setColor((255 << 24) | (coloredBe.getColor() & 0xFFFFFF));
+                int newColor = ColoredWaterUtil.withAlpha(coloredBe.getColor(), ColoredWaterUtil.CONDENSED_ALPHA);
+                coloredBe.setProperties(newColor, true, coloredBe.getLuminosity());
                 level.setBlock(pos, state.setValue(ColoredWaterCauldronBlock.CONDENSED, true), 3);
 
                 if (!player.isCreative()) stack.shrink(1);
@@ -163,14 +149,14 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
             return InteractionResult.SUCCESS;
         });
 
-        // Glowstone Dust (Liminous)
+        // Glowstone Dust (Luminous)
         map.put(Items.GLOWSTONE_DUST, (state, level, pos, player, hand, stack) -> {
-            if (!(level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity coloredBe) || coloredBe.getLuminosity() >= 15) {
+            if (!(level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity coloredBe) || coloredBe.getLuminosity() >= ColoredWaterUtil.MAX_LUMINOSITY) {
                 return InteractionResult.PASS;
             }
             if (!level.isClientSide()) {
-                coloredBe.setLuminosity(15);
-                level.setBlock(pos, state.setValue(ColoredWaterCauldronBlock.LIGHT_LEVEL, 15), 3);
+                coloredBe.setProperties(coloredBe.getColor(), coloredBe.isCondensed(), ColoredWaterUtil.MAX_LUMINOSITY);
+                level.setBlock(pos, state.setValue(ColoredWaterCauldronBlock.LIGHT_LEVEL, ColoredWaterUtil.MAX_LUMINOSITY), 3);
 
                 if (!player.isCreative()) stack.shrink(1);
                 player.awardStat(Stats.USE_CAULDRON);
@@ -213,8 +199,8 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
             int currentLevel = state.getValue(LayeredCauldronBlock.LEVEL);
             if (currentLevel <= 0) return InteractionResult.PASS;
 
-            int colorRgb = coloredBe.getColor() & 0xFFFFFF;
-            DyeColor closestColor = getClosestDyeColor(colorRgb);
+            int colorRgb = ColoredWaterUtil.getRgb(coloredBe.getColor());
+            DyeColor closestColor = ColoredWaterUtil.getClosestDyeColor(colorRgb);
             Item targetShulkerItem = ShulkerBoxBlock.getBlockByColor(closestColor).asItem();
 
             if (stack.is(targetShulkerItem)) return InteractionResult.PASS;
@@ -245,8 +231,8 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
             int currentLevel = state.getValue(LayeredCauldronBlock.LEVEL);
             if (currentLevel <= 0) return InteractionResult.PASS;
 
-            int colorRgb = coloredBe.getColor() & 0xFFFFFF;
-            DyeColor closestColor = getClosestDyeColor(colorRgb);
+            int colorRgb = ColoredWaterUtil.getRgb(coloredBe.getColor());
+            DyeColor closestColor = ColoredWaterUtil.getClosestDyeColor(colorRgb);
             Item targetBannerItem = BannerBlock.byColor(closestColor).asItem();
 
             if (stack.is(targetBannerItem)) return InteractionResult.PASS;
@@ -274,60 +260,24 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
     // --- Helper Logic ---
 
     private static void mixBucketIntoCauldron(Level level, BlockPos pos, BlockState state, ColoredWaterCauldronBlockEntity coloredBe, Player player, InteractionHand hand, ItemStack stack, int currentLevel) {
-        int bRgb = 0x3F76E4;
-        boolean bCondensed = false;
-        int bLuminosity = 0;
-        int bAlpha = 0;
-
-        if (stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
-            DyedItemColor dyedColor = stack.get(DataComponents.DYED_COLOR);
-            if (dyedColor != null) {
-                bRgb = dyedColor.rgb() & 0xFFFFFF;
-            }
-
-            CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null) {
-                CompoundTag tag = customData.copyTag();
-                bCondensed = tag.getBooleanOr("Condensed", false);
-                bLuminosity = tag.getIntOr("Luminosity", 0);
-                if (tag.contains("Alpha")) {
-                    bAlpha = tag.getIntOr("Alpha", 0);
-                }
-            }
-        }
-
-        if (bAlpha == 0) bAlpha = bCondensed ? 255 : 180;
-        if (bCondensed) bAlpha = 255;
+        int bColor = stack.is(ModItems.COLORED_WATER_BUCKET.get())
+                ? ColoredWaterUtil.getBucketFullColor(stack)
+                : ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
+        int bLuminosity = stack.is(ModItems.COLORED_WATER_BUCKET.get())
+                ? ColoredWaterUtil.getBucketLuminosity(stack)
+                : 0;
 
         int newLevel = currentLevel + 1;
-        int cAlpha = coloredBe.getAlpha();
-        int cColor = coloredBe.getColor();
-        int cRed = (cColor >> 16) & 0xFF;
-        int cGreen = (cColor >> 8) & 0xFF;
-        int cBlue = cColor & 0xFF;
-
-        int bRed = (bRgb >> 16) & 0xFF;
-        int bGreen = (bRgb >> 8) & 0xFF;
-        int bBlue = bRgb & 0xFF;
-
         int cWeight = currentLevel;
         int bWeight = 1;
         int totalWeight = cWeight + bWeight;
 
-        int mixedAlpha = (cAlpha * cWeight + bAlpha * bWeight) / totalWeight;
-        int mixedRed = (cRed * cWeight + bRed * bWeight) / totalWeight;
-        int mixedGreen = (cGreen * cWeight + bGreen * bWeight) / totalWeight;
-        int mixedBlue = (cBlue * cWeight + bBlue * bWeight) / totalWeight;
-
+        int mixedColor = ColoredWaterUtil.blend(coloredBe.getColor(), cWeight, bColor, bWeight);
+        int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
         int mixedLuminosity = (coloredBe.getLuminosity() * cWeight + bLuminosity * bWeight) / totalWeight;
-        boolean mixedCondensed = mixedAlpha >= 220;
+        boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
-        int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
-
-        coloredBe.setCondensed(mixedCondensed);
-        coloredBe.setLuminosity(mixedLuminosity);
-        coloredBe.setAlpha(mixedAlpha);
-        coloredBe.setColor(mixedColor);
+        coloredBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
 
         level.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, newLevel)
                 .setValue(ColoredWaterCauldronBlock.CONDENSED, mixedCondensed)
@@ -343,66 +293,20 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
         int dyeRgb = dye.getDyeColor().getTextureDiffuseColor() & 0xFFFFFF;
         int cColor = coloredBe.getColor();
         int cAlpha = coloredBe.getAlpha();
-        int cRed = (cColor >> 16) & 0xFF;
-        int cGreen = (cColor >> 8) & 0xFF;
-        int cBlue = cColor & 0xFF;
 
-        int dRed = (dyeRgb >> 16) & 0xFF;
-        int dGreen = (dyeRgb >> 8) & 0xFF;
-        int dBlue = dyeRgb & 0xFF;
-
-        int mixedRed = (cRed + dRed) / 2;
-        int mixedGreen = (cGreen + dGreen) / 2;
-        int mixedBlue = (cBlue + dBlue) / 2;
-
-        int mixedColor = (cAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
+        int mixedRgb = ColoredWaterUtil.getRgb(ColoredWaterUtil.blend(cColor, 1, dyeRgb, 1));
+        int mixedColor = ColoredWaterUtil.withAlpha(mixedRgb, cAlpha);
         coloredBe.setColor(mixedColor);
     }
 
     static ItemStack createBucketFromCauldron(ColoredWaterCauldronBlockEntity coloredBe) {
-        ItemStack stack = new ItemStack(ModItems.COLORED_WATER_BUCKET.get());
-        int fullColor = coloredBe.getColor();
-        int colorRgb = fullColor & 0xFFFFFF;
-        int alpha = coloredBe.getAlpha();
-
-        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(colorRgb));
-
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("Condensed", coloredBe.isCondensed());
-        tag.putInt("Luminosity", coloredBe.getLuminosity());
-        tag.putInt("Alpha", alpha);
-        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-
-        return stack;
+        return ColoredWaterUtil.createBucketStack(coloredBe);
     }
 
     static void fillFromEmptyCauldron(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack bucketStack) {
-        int bRgb = 0x3F76E4;
-        boolean bCondensed = false;
-        int bLuminosity = 0;
-        int bAlpha = 0;
-
-        if (bucketStack.is(ModItems.COLORED_WATER_BUCKET.get())) {
-            DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
-            if (dyedColor != null) {
-                bRgb = dyedColor.rgb() & 0xFFFFFF;
-            }
-
-            CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null) {
-                CompoundTag tag = customData.copyTag();
-                bCondensed = tag.getBooleanOr("Condensed", false);
-                bLuminosity = tag.getIntOr("Luminosity", 0);
-                if (tag.contains("Alpha")) {
-                    bAlpha = tag.getIntOr("Alpha", 0);
-                }
-            }
-        }
-
-        if (bAlpha == 0) bAlpha = bCondensed ? 255 : 180;
-        if (bCondensed) bAlpha = 255;
-
-        int fullColor = (bAlpha << 24) | (bRgb & 0xFFFFFF);
+        int fullColor = ColoredWaterUtil.getBucketFullColor(bucketStack);
+        boolean bCondensed = ColoredWaterUtil.getBucketCondensed(bucketStack);
+        int bLuminosity = ColoredWaterUtil.getBucketLuminosity(bucketStack);
 
         level.setBlock(pos, ModCauldrons.COLORED_WATER_CAULDRON.get().defaultBlockState()
                 .setValue(LayeredCauldronBlock.LEVEL, 1)
@@ -411,10 +315,7 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-            coloredBe.setCondensed(bCondensed);
-            coloredBe.setLuminosity(bLuminosity);
-            coloredBe.setAlpha(bAlpha);
-            coloredBe.setColor(fullColor);
+            coloredBe.setProperties(fullColor, bCondensed, bLuminosity);
         }
 
         player.setItemInHand(hand, ItemUtils.createFilledResult(bucketStack, player, new ItemStack(Items.BUCKET)));
@@ -424,54 +325,18 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
     }
 
     static void fillAndMixFromWaterCauldron(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack bucketStack, int currentLevel) {
-        int bRgb = 0x3F76E4;
-        boolean bCondensed = false;
-        int bLuminosity = 0;
-        int bAlpha = 0;
-
-        if (bucketStack.is(ModItems.COLORED_WATER_BUCKET.get())) {
-            DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
-            if (dyedColor != null) {
-                bRgb = dyedColor.rgb() & 0xFFFFFF;
-            }
-
-            CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
-            if (customData != null) {
-                CompoundTag tag = customData.copyTag();
-                bCondensed = tag.getBooleanOr("Condensed", false);
-                bLuminosity = tag.getIntOr("Luminosity", 0);
-                if (tag.contains("Alpha")) {
-                    bAlpha = tag.getIntOr("Alpha", 0);
-                }
-            }
-        }
-
-        if (bAlpha == 0) bAlpha = bCondensed ? 255 : 180;
-        if (bCondensed) bAlpha = 255;
-
-        int cAlpha = 180;
-        int cColor = 0x3F76E4;
-        int cRed = (cColor >> 16) & 0xFF;
-        int cGreen = (cColor >> 8) & 0xFF;
-        int cBlue = cColor & 0xFF;
-
-        int bRed = (bRgb >> 16) & 0xFF;
-        int bGreen = (bRgb >> 8) & 0xFF;
-        int bBlue = bRgb & 0xFF;
+        int bColor = ColoredWaterUtil.getBucketFullColor(bucketStack);
+        int bLuminosity = ColoredWaterUtil.getBucketLuminosity(bucketStack);
 
         int newLevel = currentLevel + 1;
         int cWeight = currentLevel;
         int bWeight = 1;
         int totalWeight = cWeight + bWeight;
 
-        int mixedAlpha = (cAlpha * cWeight + bAlpha * bWeight) / totalWeight;
-        int mixedRed = (cRed * cWeight + bRed * bWeight) / totalWeight;
-        int mixedGreen = (cGreen * cWeight + bGreen * bWeight) / totalWeight;
-        int mixedBlue = (cBlue * cWeight + bBlue * bWeight) / totalWeight;
+        int mixedColor = ColoredWaterUtil.blend(ColoredWaterUtil.DEFAULT_ARGB_NORMAL, cWeight, bColor, bWeight);
+        int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
         int mixedLuminosity = (0 * cWeight + bLuminosity * bWeight) / totalWeight;
-        boolean mixedCondensed = mixedAlpha >= 220;
-
-        int mixedColor = (mixedAlpha << 24) | (mixedRed << 16) | (mixedGreen << 8) | mixedBlue;
+        boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
         level.setBlock(pos, ModCauldrons.COLORED_WATER_CAULDRON.get().defaultBlockState()
                 .setValue(LayeredCauldronBlock.LEVEL, newLevel)
@@ -480,10 +345,7 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-            coloredBe.setCondensed(mixedCondensed);
-            coloredBe.setLuminosity(mixedLuminosity);
-            coloredBe.setAlpha(mixedAlpha);
-            coloredBe.setColor(mixedColor);
+            coloredBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
         }
 
         player.setItemInHand(hand, ItemUtils.createFilledResult(bucketStack, player, new ItemStack(Items.BUCKET)));
@@ -491,26 +353,5 @@ public interface ColoredWaterCauldronBehavior extends CauldronInteraction {
         player.awardStat(Stats.ITEM_USED.get(bucketStack.getItem()));
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
-
-    static DyeColor getClosestDyeColor(int rgb) {
-        int r = (rgb >> 16) & 0xFF;
-        int g = (rgb >> 8) & 0xFF;
-        int b = rgb & 0xFF;
-
-        DyeColor closest = DyeColor.WHITE;
-        double minDistance = Double.MAX_VALUE;
-
-        for (DyeColor color : DyeColor.values()) {
-            int dyeRgb = color.getTextureDiffuseColor() & 0xFFFFFF;
-            int dr = r - ((dyeRgb >> 16) & 0xFF);
-            int dg = g - ((dyeRgb >> 8) & 0xFF);
-            int db = b - (dyeRgb & 0xFF);
-            double dist = dr * dr + dg * dg + db * db;
-            if (dist < minDistance) {
-                minDistance = dist;
-                closest = color;
-            }
-        }
-        return closest;
-    }
 }
+

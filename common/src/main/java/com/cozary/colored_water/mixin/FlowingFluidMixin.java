@@ -4,6 +4,7 @@ import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -37,7 +38,7 @@ public abstract class FlowingFluidMixin {
         BlockPos sourcePos = pos.relative(direction.getOpposite());
         BlockEntity sourceBe = serverLevel.getBlockEntity(sourcePos);
 
-        if (sourceBe instanceof ColoredWaterBlockEntity sBe) {
+        if (sourceBe instanceof ColoredWaterBlockEntity sBe && sBe.hasCustomProperties()) {
             int colorToPass = sBe.getColor();
             int lumToPass = sBe.getLuminosity();
             boolean condToPass = sBe.isCondensed();
@@ -59,6 +60,12 @@ public abstract class FlowingFluidMixin {
                 return;
             }
 
+            if (fluidState.isEmpty()) {
+                serverLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+                ci.cancel();
+                return;
+            }
+
             if (blockState.getBlock() instanceof LiquidBlockContainer liquidblockcontainer) {
                 FluidState customFluidState = fluidState.isSource()
                         ? ModFluids.STILL_COLORED_WATER.get().getSource(false)
@@ -72,23 +79,38 @@ public abstract class FlowingFluidMixin {
                     this.beforeDestroyingBlock(level, pos, blockState);
                 }
 
+                int legacyLevel;
+                if (fluidState.isSource()) {
+                    legacyLevel = 0;
+                } else {
+                    boolean isFalling = fluidState.hasProperty(FlowingFluid.FALLING) && fluidState.getValue(FlowingFluid.FALLING);
+                    legacyLevel = 8 - Math.min(fluidState.getAmount(), 8) + (isFalling ? 8 : 0);
+                }
+
                 BlockState targetState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                        .setValue(ColoredWaterBlock.LEVEL, getLegacyLevel(fluidState))
-                        .setValue(ColoredWaterBlock.CONDENSED, condToPass);
+                        .setValue(ColoredWaterBlock.LEVEL, legacyLevel)
+                        .setValue(ColoredWaterBlock.CONDENSED, condToPass)
+                        .setValue(ColoredWaterBlock.LIGHT_LEVEL, lumToPass);
 
                 serverLevel.setBlock(pos, targetState, 3);
             }
 
             // Transfer color, condensed, luminosity to target ColoredWaterBlockEntity
-            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, serverLevel.getBlockState(pos));
-            tBe.setLuminosity(lumToPass);
-            tBe.setCondensed(condToPass);
-            tBe.setColor(colorToPass, sourcePos, true);
-            tBe.updateBlockStateProps();
-            tBe.propagateColor();
-            tBe.markUpdated();
+            BlockState currentState = serverLevel.getBlockState(pos);
+            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
+            if (tBe != null) {
+                ColoredWaterUtil.transferProperties(sBe, tBe);
+            }
 
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void coloredWater$onFluidTick(ServerLevel level, BlockPos pos, BlockState state, FluidState fluidState, CallbackInfo ci) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof ColoredWaterBlockEntity coloredBe) {
+            coloredBe.propagateColor();
         }
     }
 }

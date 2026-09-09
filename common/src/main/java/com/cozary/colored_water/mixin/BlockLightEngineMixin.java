@@ -5,6 +5,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -27,13 +28,15 @@ public abstract class BlockLightEngineMixin extends LightEngine {
         if (!ColoredWater.isInitialized) {
             return;
         }
-        if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
+        boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
+        boolean isBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
+        if (isWaterlogged || isBubbleColumn) {
             BlockPos pos = BlockPos.of(blockPos);
             if (this.chunkSource != null) {
                 BlockGetter chunk = this.chunkSource.getChunkForLighting(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
                 if (chunk != null) {
                     BlockEntity be = chunk.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe) {
+                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                         cir.setReturnValue(coloredBe.getLuminosity());
                     }
                 }

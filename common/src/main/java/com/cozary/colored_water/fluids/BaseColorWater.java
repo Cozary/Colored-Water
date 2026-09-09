@@ -4,6 +4,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.particles.SparkleParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -37,7 +38,7 @@ public abstract class BaseColorWater extends FlowingFluid {
                 level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
             }
         } else if (random.nextInt(10) == 0) {
-            int color = 0x3F76E4;
+            int color = ColoredWaterUtil.DEFAULT_COLOR;
             if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
                 int c = coloredBe.getColor();
                 if (c != -1) color = c;
@@ -62,7 +63,7 @@ public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
     public ParticleOptions getDripParticle() {
-        return new ColorParticleOptions(ModParticles.DRIPPING_WATER.get(), 0x3F76E4);
+        return new ColorParticleOptions(ModParticles.DRIPPING_WATER.get(), ColoredWaterUtil.DEFAULT_COLOR);
     }
 
     @Override

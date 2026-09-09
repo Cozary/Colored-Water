@@ -7,6 +7,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,9 +37,9 @@ public abstract class FishingHookMixin {
         if (particle == ParticleTypes.FISHING || particle == ParticleTypes.SPLASH) {
             FishingHook hook = (FishingHook) (Object) this;
             BlockPos hookPos = hook.blockPosition();
-            int color = getColoredWaterAt(level, hookPos);
+            int color = ColoredWaterUtil.getColoredWaterAt(level, hookPos);
             if (color == -1) {
-                color = getColoredWaterAt(level, BlockPos.containing(x, y, z));
+                color = ColoredWaterUtil.getColoredWaterAt(level, BlockPos.containing(x, y, z));
             }
 
             if (color != -1) {
@@ -51,25 +52,5 @@ public abstract class FishingHookMixin {
         }
 
         return level.sendParticles(particle, x, y, z, count, deltaX, deltaY, deltaZ, speed);
-    }
-
-    private static int getColoredWaterAt(ServerLevel level, BlockPos pos) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            int c = coloredBe.getColor();
-            return c != -1 ? c : 0x3F76E4;
-        }
-        if (be instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-            return cauldronBe.getColor();
-        }
-        FluidState fluid = level.getFluidState(pos);
-        if (fluid.getType() instanceof BaseColorWater) {
-            return 0x3F76E4;
-        }
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
-            return 0x3F76E4;
-        }
-        return -1;
     }
 }

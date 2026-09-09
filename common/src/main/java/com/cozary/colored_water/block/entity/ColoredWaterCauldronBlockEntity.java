@@ -2,6 +2,7 @@ package com.cozary.colored_water.block.entity;
 
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
 import com.cozary.colored_water.init.ModBlockEntities;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -17,27 +18,57 @@ import org.jetbrains.annotations.Nullable;
 
 public class ColoredWaterCauldronBlockEntity extends BlockEntity {
 
-    private static final int DEFAULT_COLOR = 0x3F76E4;
     private int color = -1;
     private boolean condensed = false;
     private int luminosity = 0;
+    private int lastClientColor = -1;
+    private int lastClientLuminosity = -1;
+    private int lastSyncedColor = -1;
+    private int lastSyncedLuminosity = -1;
+    private boolean lastSyncedCondensed = false;
 
     public ColoredWaterCauldronBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.COLORED_WATER_CAULDRON_BE.get(), pos, state);
     }
 
+    public boolean hasChangedSinceLastSync() {
+        return this.color != this.lastSyncedColor
+                || this.luminosity != this.lastSyncedLuminosity
+                || this.condensed != this.lastSyncedCondensed;
+    }
+
+    public void markSynced() {
+        this.lastSyncedColor = this.color;
+        this.lastSyncedLuminosity = this.luminosity;
+        this.lastSyncedCondensed = this.condensed;
+    }
+
+    public void setProperties(int color, boolean condensed, int luminosity) {
+        this.condensed = condensed;
+        this.luminosity = Mth.clamp(luminosity, ColoredWaterUtil.MIN_LUMINOSITY, ColoredWaterUtil.MAX_LUMINOSITY);
+        int alpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+        int rgb = color == -1 ? ColoredWaterUtil.DEFAULT_COLOR : ColoredWaterUtil.getRgb(color);
+        int customAlpha = ColoredWaterUtil.getAlpha(color);
+        if (customAlpha > 0) {
+            this.color = color;
+        } else {
+            this.color = ColoredWaterUtil.withAlpha(rgb, alpha);
+        }
+        markUpdated();
+    }
+
     public int getStoredColor() {
         if (this.color != -1) return this.color;
-        int defaultAlpha = condensed ? 255 : 180;
-        return (defaultAlpha << 24) | (DEFAULT_COLOR & 0x00FFFFFF);
+        int defaultAlpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+        return ColoredWaterUtil.withAlpha(ColoredWaterUtil.DEFAULT_COLOR, defaultAlpha);
     }
 
     public int getColor() {
         if (this.color != -1) {
-            int a = (this.color >>> 24) & 0xFF;
+            int a = ColoredWaterUtil.getAlpha(this.color);
             if (a == 0) {
-                int defaultAlpha = condensed ? 255 : 180;
-                return (defaultAlpha << 24) | (this.color & 0x00FFFFFF);
+                int defaultAlpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                return ColoredWaterUtil.withAlpha(this.color, defaultAlpha);
             }
             return this.color;
         }
@@ -51,17 +82,17 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
 
     public boolean isCondensed() {
         if (this.color != -1) {
-            int a = (this.color >>> 24) & 0xFF;
-            if (a > 0) return a >= 220;
+            int a = ColoredWaterUtil.getAlpha(this.color);
+            if (a > 0) return ColoredWaterUtil.isCondensedAlpha(a);
         }
         return condensed;
     }
 
     public void setCondensed(boolean condensed) {
         this.condensed = condensed;
-        int alpha = condensed ? 255 : 180;
-        int currentRgb = this.color == -1 ? (DEFAULT_COLOR & 0x00FFFFFF) : (this.color & 0x00FFFFFF);
-        this.color = (alpha << 24) | currentRgb;
+        int alpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+        int currentRgb = this.color == -1 ? ColoredWaterUtil.DEFAULT_COLOR : ColoredWaterUtil.getRgb(this.color);
+        this.color = ColoredWaterUtil.withAlpha(currentRgb, alpha);
         markUpdated();
     }
 
@@ -70,7 +101,7 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
     }
 
     public void setLuminosity(int luminosity) {
-        int clamped = Mth.clamp(luminosity, 0, 15);
+        int clamped = Mth.clamp(luminosity, ColoredWaterUtil.MIN_LUMINOSITY, ColoredWaterUtil.MAX_LUMINOSITY);
         if (this.luminosity != clamped) {
             this.luminosity = clamped;
             updateBlockStateProps();
@@ -80,16 +111,16 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
 
     public int getAlpha() {
         if (this.color != -1) {
-            int a = (this.color >>> 24) & 0xFF;
+            int a = ColoredWaterUtil.getAlpha(this.color);
             if (a > 0) return a;
         }
-        return condensed ? 255 : 180;
+        return condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
     }
 
     public void setAlpha(int alpha) {
-        int currentRgb = this.color == -1 ? (DEFAULT_COLOR & 0x00FFFFFF) : (this.color & 0x00FFFFFF);
-        this.color = ((alpha & 0xFF) << 24) | currentRgb;
-        if (alpha >= 220) this.condensed = true;
+        int currentRgb = this.color == -1 ? ColoredWaterUtil.DEFAULT_COLOR : ColoredWaterUtil.getRgb(this.color);
+        this.color = ColoredWaterUtil.withAlpha(currentRgb, alpha);
+        if (ColoredWaterUtil.isCondensedAlpha(alpha)) this.condensed = true;
         markUpdated();
     }
 
@@ -135,8 +166,13 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
         this.luminosity = input.getIntOr("Luminosity", 0);
 
         if (this.level != null && this.level.isClientSide()) {
-            BlockState state = getBlockState();
-            this.level.setBlocksDirty(this.worldPosition, state, state);
+            if (this.color != this.lastClientColor || this.luminosity != this.lastClientLuminosity) {
+                this.lastClientColor = this.color;
+                this.lastClientLuminosity = this.luminosity;
+                BlockState state = getBlockState();
+                this.level.sendBlockUpdated(this.worldPosition, state, state, 11);
+                this.level.getChunkSource().getLightEngine().checkBlock(this.worldPosition);
+            }
         }
     }
 
@@ -156,10 +192,6 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        tag.putInt("Color", this.color);
-        tag.putBoolean("Condensed", this.condensed);
-        tag.putInt("Luminosity", this.luminosity);
-        return tag;
+        return saveWithoutMetadata(registries);
     }
 }

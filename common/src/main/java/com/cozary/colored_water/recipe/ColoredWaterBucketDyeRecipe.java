@@ -2,6 +2,7 @@ package com.cozary.colored_water.recipe;
 
 import com.cozary.colored_water.init.ModItems;
 import com.cozary.colored_water.init.ModRecipe;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -97,26 +98,18 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         if (!dyes.isEmpty()) {
             resultStack = DyedItemColor.applyDyes(resultStack, dyes);
         } else if (bucketInput.is(Items.WATER_BUCKET)) {
-            resultStack.set(DataComponents.DYED_COLOR, new DyedItemColor(0x3F76E4));
+            resultStack.set(DataComponents.DYED_COLOR, new DyedItemColor(ColoredWaterUtil.DEFAULT_COLOR));
         }
 
-        boolean isCondensed = false;
-        int luminosity = 0;
-        int alpha = 0;
-
-        CustomData customData = resultStack.get(DataComponents.CUSTOM_DATA);
-        if (customData != null) {
-            CompoundTag tag = customData.copyTag();
-            isCondensed = tag.getBooleanOr("Condensed", false);
-            luminosity = tag.getIntOr("Luminosity", 0);
-            alpha = tag.getIntOr("Alpha", 0);
-        }
+        boolean isCondensed = ColoredWaterUtil.getBucketCondensed(resultStack);
+        int luminosity = ColoredWaterUtil.getBucketLuminosity(resultStack);
+        int alpha = ColoredWaterUtil.getBucketAlpha(resultStack);
 
         if (addRedstone) isCondensed = true;
-        if (addGlowstone) luminosity = 15;
+        if (addGlowstone) luminosity = ColoredWaterUtil.MAX_LUMINOSITY;
 
         if (alpha == 0) {
-            alpha = isCondensed ? 255 : 180;
+            alpha = isCondensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
         }
 
         CompoundTag newTag = new CompoundTag();

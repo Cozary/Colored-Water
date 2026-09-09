@@ -3,6 +3,7 @@ package com.cozary.colored_water.item;
 import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -242,32 +243,9 @@ public class ColoredWaterBucketItem extends BucketItem {
             return;
         }
         ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
-        coloredBe.markAsPlacedByBucket();
-
-        DyedItemColor dyedColor = bucketStack.get(DataComponents.DYED_COLOR);
-        CustomData customData = bucketStack.get(DataComponents.CUSTOM_DATA);
-
-        int rgb = dyedColor != null ? dyedColor.rgb() : 0x3F76E4;
-        boolean condensed = false;
-        int luminosity = 0;
-        int alpha = 0;
-
-        if (customData != null) {
-            CompoundTag tag = customData.copyTag();
-            condensed = tag.getBooleanOr("Condensed", false);
-            luminosity = tag.getIntOr("Luminosity", 0);
-            alpha = tag.getIntOr("Alpha", 0);
+        if (coloredBe != null) {
+            ColoredWaterUtil.applyBucketProperties(bucketStack, coloredBe);
         }
-
-        if (alpha == 0) alpha = condensed ? 255 : 180;
-        int fullColor = (alpha << 24) | (rgb & 0x00FFFFFF);
-
-        coloredBe.setCondensed(condensed);
-        coloredBe.setLuminosity(luminosity);
-        coloredBe.setColor(fullColor, null, true);
-        coloredBe.updateBlockStateProps();
-        coloredBe.propagateColor();
-        coloredBe.markUpdated();
     }
 
     private void playEvaporationEffects(Level level, BlockPos pos, @Nullable LivingEntity player) {
@@ -284,19 +262,10 @@ public class ColoredWaterBucketItem extends BucketItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, context, display, tooltipAdder, isAdvanced);
 
-        boolean isCondensed = false;
-        int luminosity = 0;
-        int alpha = 0;
+        boolean isCondensed = ColoredWaterUtil.getBucketCondensed(stack);
+        int luminosity = ColoredWaterUtil.getBucketLuminosity(stack);
+        int alpha = ColoredWaterUtil.getBucketAlpha(stack);
 
-        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        if (customData != null) {
-            CompoundTag tag = customData.copyTag();
-            isCondensed = tag.getBooleanOr("Condensed", false);
-            luminosity = tag.getIntOr("Luminosity", 0);
-            alpha = tag.getIntOr("Alpha", 0);
-        }
-
-        if (alpha == 0) alpha = isCondensed ? 255 : 180;
         int opacityPct = Math.round((alpha * 100.0f) / 255.0f);
 
         Component typeComponent;

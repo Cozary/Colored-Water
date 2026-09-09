@@ -32,7 +32,7 @@ public abstract class BlockItemMixin {
             boolean condensed = false;
             int luminosity = 0;
 
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
+            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                 color = coloredBe.getColor();
                 condensed = coloredBe.isCondensed();
                 luminosity = coloredBe.getLuminosity();
@@ -60,11 +60,13 @@ public abstract class BlockItemMixin {
                             level.setBlock(pos, state, 3);
                         }
                         ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
-                        coloredBe.markAsPlacedByBucket();
-                        coloredBe.setCondensed(info.condensed());
-                        coloredBe.setLuminosity(info.luminosity());
-                        if (info.color() != -1) {
-                            coloredBe.setColor(info.color(), null, true);
+                        if (coloredBe != null) {
+                            coloredBe.markAsPlacedByBucket();
+                            coloredBe.setCondensed(info.condensed());
+                            coloredBe.setLuminosity(info.luminosity());
+                            if (info.color() != -1) {
+                                coloredBe.setColor(info.color(), null, true);
+                            }
                         }
                     }
                 }

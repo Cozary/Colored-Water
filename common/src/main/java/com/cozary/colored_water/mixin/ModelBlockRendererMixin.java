@@ -2,6 +2,7 @@ package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -44,7 +45,7 @@ public class ModelBlockRendererMixin {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
                 int a = coloredBe.getAlpha();
-                if (a == 0) a = coloredBe.isCondensed() ? 255 : 180;
+                if (a == 0) a = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
                 targetAlpha = alpha * (a / 255.0F);
             }
         }

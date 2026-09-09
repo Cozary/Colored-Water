@@ -36,7 +36,7 @@ public class LiquidBlockRendererMixin {
         if (isWaterlogged || isBubbleColumn) {
             if (level != null && pos != null) {
                 BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof ColoredWaterBlockEntity coloredBe) {
+                if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                     FluidState newFluidState = ModFluids.STILL_COLORED_WATER.get().getSource(false);
                     if (newFluidState.hasProperty(ColoredWaterFluid.CONDENSED)) {
                         newFluidState = newFluidState.setValue(ColoredWaterFluid.CONDENSED, coloredBe.isCondensed());

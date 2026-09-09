@@ -2,6 +2,7 @@ package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -54,17 +55,17 @@ public class ModFluidTypes {
             public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
                 if (getter != null && pos != null) {
                     BlockEntity be = getter.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe) {
+                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
                         int color = coloredBe.getColor();
-                        int alpha = (color >> 24) & 0xFF;
+                        int alpha = ColoredWaterUtil.getAlpha(color);
                         if (alpha == 0) {
-                            alpha = coloredBe.isCondensed() ? 255 : 180;
-                            color = (alpha << 24) | (color & 0x00FFFFFF);
+                            alpha = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                            color = ColoredWaterUtil.withAlpha(color, alpha);
                         }
                         return color;
                     }
                 }
-                return 0xB43F76E4;
+                return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
             }
         }, COLORED_WATER_TYPE.get());
     }

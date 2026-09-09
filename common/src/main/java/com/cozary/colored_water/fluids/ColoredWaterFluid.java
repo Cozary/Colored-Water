@@ -5,6 +5,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -47,9 +48,17 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
 
     @Override
     protected BlockState createLegacyBlock(FluidState state) {
+        if (state.isEmpty()) {
+            return Blocks.AIR.defaultBlockState();
+        }
         boolean isCondensed = state.hasProperty(CONDENSED) && state.getValue(CONDENSED);
+        int legacyLevel = 0;
+        if (!state.isSource()) {
+            boolean isFalling = state.hasProperty(FALLING) && state.getValue(FALLING);
+            legacyLevel = 8 - Math.min(state.getAmount(), 8) + (isFalling ? 8 : 0);
+        }
         return ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                .setValue(LiquidBlock.LEVEL, getLegacyLevel(state))
+                .setValue(LiquidBlock.LEVEL, legacyLevel)
                 .setValue(CONDENSED, isCondensed);
     }
 
@@ -99,24 +108,20 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
         }
 
         super.spreadTo(level, pos, blockState, direction, fluidState);
-        if (level.isClientSide()) return;
+        if (level.isClientSide() || fluidState.isEmpty()) return;
 
         if (level instanceof ServerLevel serverLevel) {
+            BlockState currentState = serverLevel.getBlockState(pos);
+            if (currentState.isAir()) return;
+
+            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
+            if (tBe == null) return;
+
             BlockPos sourcePos = pos.relative(direction.getOpposite());
             BlockEntity sourceBe = serverLevel.getBlockEntity(sourcePos);
-            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, serverLevel.getBlockState(pos));
 
             if (sourceBe instanceof ColoredWaterBlockEntity sBe) {
-                int colorToPass = sBe.getColor();
-                int lumToPass = sBe.getLuminosity();
-                boolean condToPass = sBe.isCondensed();
-
-                tBe.setLuminosity(lumToPass);
-                tBe.setCondensed(condToPass);
-                tBe.setColor(colorToPass, sourcePos, true);
-                tBe.updateBlockStateProps();
-                tBe.propagateColor();
-                tBe.markUpdated();
+                ColoredWaterUtil.transferProperties(sBe, tBe);
             }
         }
     }

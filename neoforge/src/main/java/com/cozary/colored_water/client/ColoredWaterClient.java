@@ -5,6 +5,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
 import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -36,7 +37,7 @@ public class ColoredWaterClient {
                     return coloredBe.getColor();
                 }
             }
-            return 0xB43F76E4;
+            return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
         }, ModCauldrons.COLORED_WATER_CAULDRON.get());
     }
 }
