@@ -1,10 +1,6 @@
 package com.cozary.colored_water.mixin;
 
-import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
-import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
-import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
-import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.util.ColoredWaterUtil;
@@ -14,17 +10,38 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Entity water interaction and particle redirects.
+ * <p>
+ * - Detects colored water cauldrons in isInWaterOrRain for entities (e.g. Riptide trident).
+ * - Redirects splash and bubble particles to match local colored water color.
+ */
 @Mixin(Entity.class)
 public abstract class EntityMixin {
+
+    @Redirect(method = "sendBubbleColumnParticles", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"))
+    private static <T extends ParticleOptions> int colored_water$redirectBubbleColumnParticles(
+            ServerLevel level, T particle, double x, double y, double z, int count,
+            double dx, double dy, double dz, double speed) {
+
+        if (particle == ParticleTypes.SPLASH || particle == ParticleTypes.BUBBLE) {
+            BlockPos pos = BlockPos.containing(x, y - 0.5, z);
+            int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
+            if (color != -1) {
+                var pType = (particle == ParticleTypes.SPLASH) ? ModParticles.SPLASH.get() : ModParticles.BUBBLE.get();
+                return level.sendParticles(new ColorParticleOptions(pType, color), x, y, z, count, dx, dy, dz, speed);
+            }
+        }
+
+        return level.sendParticles(particle, x, y, z, count, dx, dy, dz, speed);
+    }
 
     @Inject(method = "isInWaterOrRain", at = @At("RETURN"), cancellable = true)
     private void colored_water$isInWaterOrRain(CallbackInfoReturnable<Boolean> cir) {
@@ -43,13 +60,7 @@ public abstract class EntityMixin {
         }
     }
 
-    @Redirect(
-        method = "doWaterSplashEffect",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"
-        )
-    )
+    @Redirect(method = "doWaterSplashEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"))
     private void colored_water$redirectDoWaterSplashParticle(
             Level level, ParticleOptions particle, double x, double y, double z,
             double dx, double dy, double dz) {
@@ -70,28 +81,5 @@ public abstract class EntityMixin {
         }
 
         level.addParticle(particle, x, y, z, dx, dy, dz);
-    }
-
-    @Redirect(
-        method = "sendBubbleColumnParticles",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"
-        )
-    )
-    private static <T extends ParticleOptions> int colored_water$redirectBubbleColumnParticles(
-            ServerLevel level, T particle, double x, double y, double z, int count,
-            double dx, double dy, double dz, double speed) {
-
-        if (particle == ParticleTypes.SPLASH || particle == ParticleTypes.BUBBLE) {
-            BlockPos pos = BlockPos.containing(x, y - 0.5, z);
-            int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
-            if (color != -1) {
-                var pType = (particle == ParticleTypes.SPLASH) ? ModParticles.SPLASH.get() : ModParticles.BUBBLE.get();
-                return level.sendParticles(new ColorParticleOptions(pType, color), x, y, z, count, dx, dy, dz, speed);
-            }
-        }
-
-        return level.sendParticles(particle, x, y, z, count, dx, dy, dz, speed);
     }
 }
