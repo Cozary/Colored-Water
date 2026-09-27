@@ -11,8 +11,10 @@ configurations {
     }
 }
 
+def commonProjectName = project.name.endsWith('-lite') ? ':common-lite' : ':common'
+
 dependencies {
-    compileOnly(project(':common')) {
+    compileOnly(project(commonProjectName)) {
         capabilities {
             requireCapability "$group:$mod_id"
         }
@@ -21,8 +23,8 @@ dependencies {
             attribute(loaderAttribute, 'common')
         }
     }
-    commonJava project(path: ':common', configuration: 'commonJava')
-    commonResources project(path: ':common', configuration: 'commonResources')
+    commonJava project(path: commonProjectName, configuration: 'commonJava')
+    commonResources project(path: commonProjectName, configuration: 'commonResources')
 }
 
 tasks.named('compileJava', JavaCompile) {

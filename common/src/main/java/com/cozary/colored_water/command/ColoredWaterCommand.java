@@ -29,7 +29,7 @@ import net.minecraft.world.phys.HitResult;
  * Command handling for /coloredwater.
  * <p>
  * - Manages and obtains custom colored water buckets via command arguments.
- * - Supports syntax: /coloredwater <hexcolor> [luminosity] [opacity].
+ * - Supports syntax: {@code /coloredwater <hexcolor> [luminosity] [opacity]}.
  * - Updates target colored water block or cauldron in front of player if looking at one.
  */
 public class ColoredWaterCommand {

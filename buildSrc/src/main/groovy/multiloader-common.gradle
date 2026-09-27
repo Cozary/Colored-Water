@@ -83,10 +83,18 @@ jar {
 }
 
 processResources {
+    def isLite = project.name.endsWith('-lite')
+    def curVersionForge = isLite && project.hasProperty('version_forge_lite') ? version_forge_lite : version_forge
+    def curVersionFabric = isLite && project.hasProperty('version_fabric_lite') ? version_fabric_lite : version_fabric
+    def curVersionNeoForge = isLite && project.hasProperty('version_neoforge_lite') ? version_neoforge_lite : version_neoforge
+
     var expandProps = [
-            'version_forge'                : version_forge,
-            'version_fabric'               : version_fabric,
-            'version_neoforge'             : version_neoforge,
+            'version_forge'                : curVersionForge,
+            'version_fabric'               : curVersionFabric,
+            'version_neoforge'             : curVersionNeoForge,
+            'version_forge_lite'           : project.findProperty('version_forge_lite') ?: version_forge,
+            'version_fabric_lite'          : project.findProperty('version_fabric_lite') ?: version_fabric,
+            'version_neoforge_lite'        : project.findProperty('version_neoforge_lite') ?: version_neoforge,
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
             'minecraft_version_range'      : minecraft_version_range,

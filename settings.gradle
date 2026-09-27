@@ -50,3 +50,8 @@ include('common')
 include('fabric')
 include('neoforge')
 include('forge')
+
+include('common-lite')
+include('fabric-lite')
+include('neoforge-lite')
+include('forge-lite')

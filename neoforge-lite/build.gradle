@@ -1,0 +1,89 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+    id "me.modmuss50.mod-publish-plugin" version "${mod_publish_version}"
+}
+base {
+    archivesName = "${mod_name}-neoforge-lite-${minecraft_version}-${version_neoforge_lite}"
+}
+
+neoForge {
+    version = neoforge_version
+    // Automatically enable neoforge AccessTransformers if the file exists
+    def at = project(':common-lite').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        configureEach {
+            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
+        }
+        client {
+            client()
+        }
+        data {
+            clientData()
+            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments = ['--mod', project.mod_id, '--all', '--output', file('src/generated/').getAbsolutePath(), '--existing', file('../common-lite/src/main/resources/').getAbsolutePath()]
+        }
+        server {
+            server()
+        }
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    changelog = getLatestChangelog()
+    type = STABLE
+    modLoaders.add("neoforge")
+    displayName = "${mod_name}-neoforge-lite-${minecraft_version}-${version_neoforge_lite}"
+    dryRun = dry_run.toBoolean()
+    version = version_neoforge_lite
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
+        projectId = curseforge_project_id
+        minecraftVersions.add(minecraft_version)
+    }
+
+
+    modrinth {
+        accessToken = accessToken = providers.environmentVariable("MODRINTH_API_KEY")
+        projectId = modrinth_project_id
+        minecraftVersions.add(minecraft_version)
+    }
+}
