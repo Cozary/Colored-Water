@@ -5,17 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.3] - 2026-09-09
+## [2.0.0-beta.3] - 2026-09-27
 
 > [!WARNING]
 > This is a **beta build**. Due to the migration to a single unified fluid, this version is **incompatible with worlds or saves from versions prior to 2.0.0**.
 > Use with appropriate backups.
 
+### Added
+- Added underwater fog rendering that matches the colored water color and light level.
+
+### Changed
+- Improved fluid mixing propagation and smooth color transitions in flowing water.
+- Improved cauldron color blending and Pointed Dripstone dripping mechanics.
+- Optimized colored water particles.
+
 ### Fixed
-- Trident with Riptide enchantment not activating inside colored water on Forge.
-- Fish and aquatic creatures drowning inside colored water on Forge.
-- Fixed water splash particles and more particles on Forge.
-- Fixed bubble columns and waterlogged blocks rendering with default vanilla water on Fabric.
+- Fixed Trident with Riptide enchantment not activating inside colored water.
+- Fixed fish and aquatic creatures drowning inside colored water.
+- Fixed water splash particles and bubble particles.
+- Fixed bubble columns and waterlogged blocks rendering with default vanilla water.
+
+### Removed
+- Cleaned up obsolete particle textures and unused legacy code.
 
 ## [2.0.0-beta.2] - 2026-09-09
 
