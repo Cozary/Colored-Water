@@ -38,19 +38,15 @@ public class ModTabs {
         DyeColor[] colors = DyeColor.values();
         Item bucketItem = ModItems.COLORED_WATER_BUCKET.get();
 
-        // 1. Normal (16 colors)
         for (DyeColor color : colors) {
             output.accept(createBucketStack(bucketItem, color.getTextureDiffuseColor(), false, 0));
         }
-        // 2. Condense (16 colors)
         for (DyeColor color : colors) {
             output.accept(createBucketStack(bucketItem, color.getTextureDiffuseColor(), true, 0));
         }
-        // 3. Luminous (16 colors)
         for (DyeColor color : colors) {
             output.accept(createBucketStack(bucketItem, color.getTextureDiffuseColor(), false, 15));
         }
-        // 4. Luminous Condense (16 colors)
         for (DyeColor color : colors) {
             output.accept(createBucketStack(bucketItem, color.getTextureDiffuseColor(), true, 15));
         }

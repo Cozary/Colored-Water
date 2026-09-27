@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Synchronizes BlockEntity packet updates with tracking players when colored water or cauldrons change.
+ */
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin {
 
@@ -25,26 +28,28 @@ public abstract class ServerLevelMixin {
         }
 
         ServerLevel level = (ServerLevel) (Object) this;
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-            if (coloredBe.hasChangedSinceLastSync()) {
-                Packet<ClientGamePacketListener> packet = be.getUpdatePacket();
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+            boolean stateChanged = oldState != newState;
+            if (coloredWaterBlockEntity.hasChangedSinceLastSync() || stateChanged) {
+                Packet<ClientGamePacketListener> packet = blockEntity.getUpdatePacket();
                 if (packet != null) {
                     level.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(player -> {
                         player.connection.send(packet);
                     });
                 }
-                coloredBe.markSynced();
+                coloredWaterBlockEntity.markSynced();
             }
-        } else if (be instanceof ColoredWaterCauldronBlockEntity coloredCauldronBe) {
-            if (coloredCauldronBe.hasChangedSinceLastSync()) {
-                Packet<ClientGamePacketListener> packet = be.getUpdatePacket();
+        } else if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+            boolean stateChanged = oldState != newState;
+            if (cauldronBlockEntity.hasChangedSinceLastSync() || stateChanged) {
+                Packet<ClientGamePacketListener> packet = blockEntity.getUpdatePacket();
                 if (packet != null) {
                     level.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(player -> {
                         player.connection.send(packet);
                     });
                 }
-                coloredCauldronBe.markSynced();
+                cauldronBlockEntity.markSynced();
             }
         }
     }

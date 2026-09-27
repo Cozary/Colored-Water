@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Bubble Column mechanics: schedules upward bubble column updates below colored water.
+ */
 @Mixin(SoulSandBlock.class)
 public abstract class SoulSandBlockMixin {
 

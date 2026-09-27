@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Emits dynamic block light for luminous waterlogged blocks and bubble columns.
+ */
 @Mixin(BlockLightEngine.class)
 public abstract class BlockLightEngineMixin extends LightEngine {
 
@@ -35,9 +38,9 @@ public abstract class BlockLightEngineMixin extends LightEngine {
             if (this.chunkSource != null) {
                 BlockGetter chunk = this.chunkSource.getChunkForLighting(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
                 if (chunk != null) {
-                    BlockEntity be = chunk.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-                        cir.setReturnValue(coloredBe.getLuminosity());
+                    BlockEntity blockEntity = chunk.getBlockEntity(pos);
+                    if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                        cir.setReturnValue(coloredWaterBlockEntity.getLuminosity());
                     }
                 }
             }

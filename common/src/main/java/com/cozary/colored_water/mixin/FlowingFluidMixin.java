@@ -8,6 +8,7 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -16,36 +17,44 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.tags.FluidTags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Fluid spreading mechanics for colored water.
+ * <p>
+ * - Intercepts fluid spread from waterlogged blocks and colored water sources.
+ * - Handles lava collisions to generate obsidian or cobblestone.
+ * - Transfers color, luminosity, and condensed properties to the target block entity.
+ */
 @Mixin(FlowingFluid.class)
 public abstract class FlowingFluidMixin {
 
-    @Shadow protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);
-    @Shadow protected static int getLegacyLevel(FluidState fluidState) {
+    @Shadow
+    protected static int getLegacyLevel(FluidState fluidState) {
         throw new AssertionError();
     }
+
+    @Shadow
+    protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);
 
     @Inject(method = "spreadTo", at = @At("HEAD"), cancellable = true)
     private void coloredWater$interceptWaterloggedSpread(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState, CallbackInfo ci) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
         BlockPos sourcePos = pos.relative(direction.getOpposite());
-        BlockEntity sourceBe = serverLevel.getBlockEntity(sourcePos);
+        BlockEntity sourceBlockEntity = serverLevel.getBlockEntity(sourcePos);
 
-        if (sourceBe instanceof ColoredWaterBlockEntity sBe && sBe.hasCustomProperties()) {
-            int colorToPass = sBe.getColor();
-            int lumToPass = sBe.getLuminosity();
-            boolean condToPass = sBe.isCondensed();
+        if (sourceBlockEntity instanceof ColoredWaterBlockEntity sourceColoredWaterBlockEntity && sourceColoredWaterBlockEntity.hasCustomProperties()) {
+            int colorToPass = sourceColoredWaterBlockEntity.getColor();
+            int lumToPass = sourceColoredWaterBlockEntity.getLuminosity();
+            boolean condToPass = sourceColoredWaterBlockEntity.isCondensed();
 
             if (colorToPass == -1) return;
 
-            // Handle lava collision
             FluidState targetFluidState = level.getFluidState(pos);
             if (targetFluidState.is(FluidTags.LAVA)) {
                 if (blockState.getBlock() instanceof LiquidBlock) {
@@ -95,11 +104,10 @@ public abstract class FlowingFluidMixin {
                 serverLevel.setBlock(pos, targetState, 3);
             }
 
-            // Transfer color, condensed, luminosity to target ColoredWaterBlockEntity
             BlockState currentState = serverLevel.getBlockState(pos);
-            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
-            if (tBe != null) {
-                ColoredWaterUtil.transferProperties(sBe, tBe);
+            ColoredWaterBlockEntity targetBlockEntity = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
+            if (targetBlockEntity != null) {
+                ColoredWaterUtil.transferProperties(sourceColoredWaterBlockEntity, targetBlockEntity);
             }
 
             ci.cancel();
@@ -108,9 +116,9 @@ public abstract class FlowingFluidMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void coloredWater$onFluidTick(ServerLevel level, BlockPos pos, BlockState state, FluidState fluidState, CallbackInfo ci) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            coloredBe.propagateColor();
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+            coloredWaterBlockEntity.propagateColor();
         }
     }
 }

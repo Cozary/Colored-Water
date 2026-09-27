@@ -1,5 +1,6 @@
 package com.cozary.colored_water;
 
+import com.cozary.colored_water.client.ColoredWaterClient;
 import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModTabs;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -7,6 +8,7 @@ import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(ColoredWater.MOD_ID)
 @Mod.EventBusSubscriber(modid = ColoredWater.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -20,6 +22,10 @@ public class ColoredWaterForge {
         ModTabs.CREATIVE_MODE_TABS.register(eventBus);
 
         RegisterCommandsEvent.BUS.addListener(this::registerCommands);
+
+        if (FMLEnvironment.dist.isClient()) {
+            ColoredWaterClient.init();
+        }
     }
 
     @SubscribeEvent

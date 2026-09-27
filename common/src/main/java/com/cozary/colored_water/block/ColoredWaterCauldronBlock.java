@@ -20,6 +20,15 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * LayeredCauldronBlock implementation supporting colored water fluids.
+ * <p>
+ * - Stores colored water with dynamic ARGB tinting, opacity, and light
+ * emission.
+ * - Pointed Dripstone mechanic: blends dripping water into existing cauldron
+ * contents.
+ * - Spawns sparkle particles for luminous cauldrons scaling with light level.
+ */
 public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements EntityBlock {
 
     public static final BooleanProperty CONDENSED = ColoredWaterBlock.CONDENSED;
@@ -47,26 +56,31 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
         return new ColoredWaterCauldronBlockEntity(pos, state);
     }
 
+    /**
+     * Pointed Dripstone mechanic: drips water into the cauldron and blends color,
+     * opacity, and luminosity.
+     */
     @Override
     public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
         if (fluid == Fluids.WATER) {
-            if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
+            if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
                 int currentLevel = state.getValue(LEVEL);
                 int newLevel = Math.min(3, currentLevel + 1);
 
-                int cColor = cauldronBe.getColor();
-                int cLuminosity = cauldronBe.getLuminosity();
+                int cauldronColor = cauldronBlockEntity.getColor();
+                int cauldronLuminosity = cauldronBlockEntity.getLuminosity();
 
-                int cWeight = currentLevel * 3;
-                int dWeight = 1;
-                int totalWeight = cWeight + dWeight;
+                int cauldronWeight = currentLevel * 3;
+                int dripWeight = 1;
+                int totalWeight = cauldronWeight + dripWeight;
 
-                int mixedColor = ColoredWaterUtil.blend(cColor, cWeight, ColoredWaterUtil.DEFAULT_ARGB_NORMAL, dWeight);
+                int mixedColor = ColoredWaterUtil.blend(cauldronColor, cauldronWeight,
+                        ColoredWaterUtil.DEFAULT_ARGB_NORMAL, dripWeight);
                 int mixedAlpha = ColoredWaterUtil.getAlpha(mixedColor);
-                int mixedLuminosity = (cLuminosity * cWeight) / totalWeight;
+                int mixedLuminosity = (cauldronLuminosity * cauldronWeight) / totalWeight;
                 boolean mixedCondensed = ColoredWaterUtil.isCondensedAlpha(mixedAlpha);
 
-                cauldronBe.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
+                cauldronBlockEntity.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
 
                 level.setBlock(pos, state.setValue(LEVEL, newLevel)
                         .setValue(CONDENSED, mixedCondensed)
@@ -79,12 +93,12 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-            int luminosity = coloredBe.getLuminosity();
+        if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+            int luminosity = cauldronBlockEntity.getLuminosity();
             if (luminosity > 0) {
                 float chance = (luminosity / 15.0F) * 0.4F;
                 if (random.nextFloat() < chance) {
-                    int color = coloredBe.getColor();
+                    int color = cauldronBlockEntity.getColor();
                     double x = (double) pos.getX() + 0.125D + random.nextDouble() * 0.75D;
                     double y = (double) pos.getY() + 0.35D + (state.getValue(LEVEL) * 0.2D);
                     double z = (double) pos.getZ() + 0.125D + random.nextDouble() * 0.75D;

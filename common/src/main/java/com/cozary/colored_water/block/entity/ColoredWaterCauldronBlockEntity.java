@@ -16,6 +16,13 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * BlockEntity managing fluid properties and state for Colored Water cauldrons.
+ * <p>
+ * - Stores ARGB color, luminosity level, and condensed state inside cauldrons.
+ * - Synchronizes light level updates and client rendering packets.
+ * - Handles bucket filling, dye mixing, and item washing states.
+ */
 public class ColoredWaterCauldronBlockEntity extends BlockEntity {
 
     private int color = -1;
@@ -32,9 +39,7 @@ public class ColoredWaterCauldronBlockEntity extends BlockEntity {
     }
 
     public boolean hasChangedSinceLastSync() {
-        return this.color != this.lastSyncedColor
-                || this.luminosity != this.lastSyncedLuminosity
-                || this.condensed != this.lastSyncedCondensed;
+        return this.color != this.lastSyncedColor || this.luminosity != this.lastSyncedLuminosity || this.condensed != this.lastSyncedCondensed;
     }
 
     public void markSynced() {

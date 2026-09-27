@@ -2,7 +2,6 @@ package com.cozary.colored_water.item;
 
 import com.cozary.colored_water.block.ColoredWaterBlock;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
-import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -10,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,17 +25,11 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BucketPickup;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -52,16 +44,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Handles placement, painting of existing sources, and displays tooltips with the type and color.
+ * BucketItem implementation for colored water fluid.
+ * <p>
+ * - Stores ARGB tinting, opacity, and luminosity data components.
+ * - Places colored water into the world, waterlogging compatible blocks.
  */
 public class ColoredWaterBucketItem extends BucketItem {
 
     public ColoredWaterBucketItem(Supplier<? extends Fluid> fluidSupplier, Properties properties) {
         super(fluidSupplier.get(), properties);
-    }
-
-    public ColoredWaterBucketItem(Properties properties) {
-        super(ModFluids.STILL_COLORED_WATER.get(), properties);
     }
 
     @Override
@@ -165,7 +156,7 @@ public class ColoredWaterBucketItem extends BucketItem {
                 level.scheduleTick(pos, fluid, fluid.getTickDelay(level));
             }
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(player, level, pos);
             return true;
@@ -174,7 +165,7 @@ public class ColoredWaterBucketItem extends BucketItem {
         if (block instanceof LiquidBlockContainer container && container.canPlaceLiquid(player, level, pos, blockstate, fluid)) {
             container.placeLiquid(level, pos, blockstate, fluid.defaultFluidState());
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(player, level, pos);
             return true;
@@ -189,7 +180,7 @@ public class ColoredWaterBucketItem extends BucketItem {
         }
 
         if (!bucketStack.isEmpty()) {
-            applyPropertiesToBE(bucketStack, level, pos);
+            applyPropertiesToBlockEntity(bucketStack, level, pos);
         }
 
         this.playEmptySound(player, level, pos);
@@ -199,7 +190,7 @@ public class ColoredWaterBucketItem extends BucketItem {
 
     @Override
     public void checkExtraContent(@Nullable LivingEntity player, Level level, ItemStack stack, BlockPos pos) {
-        applyPropertiesToBE(stack, level, pos);
+        applyPropertiesToBlockEntity(stack, level, pos);
     }
 
     private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid, ItemStack bucketStack) {
@@ -209,7 +200,7 @@ public class ColoredWaterBucketItem extends BucketItem {
                 level.setBlock(pos, coloredState, 11);
             }
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(null, level, pos);
             return true;
@@ -217,19 +208,19 @@ public class ColoredWaterBucketItem extends BucketItem {
             BlockState coloredState = fluid.defaultFluidState().createLegacyBlock();
             level.setBlock(pos, coloredState, 11);
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(null, level, pos);
             return true;
         } else if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(null, level, pos);
             return true;
         } else if (state.is(Blocks.BUBBLE_COLUMN)) {
             if (!bucketStack.isEmpty()) {
-                applyPropertiesToBE(bucketStack, level, pos);
+                applyPropertiesToBlockEntity(bucketStack, level, pos);
             }
             this.playEmptySound(null, level, pos);
             return true;
@@ -237,14 +228,14 @@ public class ColoredWaterBucketItem extends BucketItem {
         return false;
     }
 
-    private void applyPropertiesToBE(ItemStack bucketStack, Level level, BlockPos pos) {
+    private void applyPropertiesToBlockEntity(ItemStack bucketStack, Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (!(state.getBlock() instanceof ColoredWaterBlock) && !(state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) && !state.is(Blocks.BUBBLE_COLUMN)) {
             return;
         }
-        ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
-        if (coloredBe != null) {
-            ColoredWaterUtil.applyBucketProperties(bucketStack, coloredBe);
+        ColoredWaterBlockEntity coloredWaterBlockEntity = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
+        if (coloredWaterBlockEntity != null) {
+            ColoredWaterUtil.applyBucketProperties(bucketStack, coloredWaterBlockEntity);
         }
     }
 

@@ -14,18 +14,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Overrides getFluidState for waterlogged blocks holding a ColoredWaterBlockEntity.
+ */
 @Mixin(Level.class)
 public abstract class LevelMixin {
 
-    @Shadow public abstract BlockEntity getBlockEntity(BlockPos pos);
+    @Shadow
+    public abstract BlockEntity getBlockEntity(BlockPos pos);
 
     @Inject(method = "getFluidState", at = @At("RETURN"), cancellable = true)
     private void coloredWater$getWaterloggedFluidState(BlockPos pos, CallbackInfoReturnable<FluidState> cir) {
         FluidState original = cir.getReturnValue();
         if (original != null && original.is(Fluids.WATER)) {
-            BlockEntity be = this.getBlockEntity(pos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-                boolean isCondensed = coloredBe.isCondensed();
+            BlockEntity blockEntity = this.getBlockEntity(pos);
+            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                boolean isCondensed = coloredWaterBlockEntity.isCondensed();
                 FluidState fluidState = ModFluids.STILL_COLORED_WATER.get().getSource(false);
                 if (fluidState.hasProperty(ColoredWaterFluid.CONDENSED)) {
                     fluidState = fluidState.setValue(ColoredWaterFluid.CONDENSED, isCondensed);

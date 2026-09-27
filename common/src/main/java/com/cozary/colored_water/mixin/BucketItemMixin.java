@@ -1,12 +1,9 @@
 package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
-import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
@@ -16,8 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,10 +30,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Handles picking up colored water from waterlogged blocks with an empty bucket, preserving properties.
+ */
 @Mixin(BucketItem.class)
 public abstract class BucketItemMixin {
 
-    @Shadow @Final private Fluid content;
+    @Shadow
+    @Final
+    private Fluid content;
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     private void coloredWater$useEmptyBucketOnWaterlogged(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
@@ -49,13 +49,13 @@ public abstract class BucketItemMixin {
                 BlockPos pos = hitResult.getBlockPos();
                 BlockState state = level.getBlockState(pos);
                 if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-                    BlockEntity be = level.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
                         level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
                         player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
                         level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
 
-                        ItemStack filledBucket = ColoredWaterUtil.createBucketStack(coloredBe);
+                        ItemStack filledBucket = ColoredWaterUtil.createBucketStack(coloredWaterBlockEntity);
 
                         player.awardStat(Stats.ITEM_USED.get((BucketItem) (Object) this));
                         if (!level.isClientSide()) {

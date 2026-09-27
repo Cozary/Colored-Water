@@ -20,17 +20,34 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Ice melting and breaking mechanics for colored water.
+ * <p>
+ * - Restores color, luminosity, and condensed properties when ice melts or is broken without Silk Touch.
+ */
 @Mixin(IceBlock.class)
 public abstract class IceBlockMixin {
 
+    private static void restoreColoredWater(Level level, BlockPos pos, ColoredWaterBlockEntity sourceBlockEntity) {
+        boolean condensed = sourceBlockEntity.isCondensed();
+        BlockState coloredWaterState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState().setValue(ColoredWaterBlock.CONDENSED, condensed);
+        level.setBlockAndUpdate(pos, coloredWaterState);
+        level.neighborChanged(pos, coloredWaterState.getBlock(), null);
+
+        BlockEntity newBlockEntity = level.getBlockEntity(pos);
+        if (newBlockEntity instanceof ColoredWaterBlockEntity newColoredWaterBlockEntity) {
+            ColoredWaterUtil.transferProperties(sourceBlockEntity, newColoredWaterBlockEntity);
+        }
+    }
+
     @Inject(method = "melt", at = @At("HEAD"), cancellable = true)
     private void coloredWater$meltIntoColoredWater(BlockState state, Level level, BlockPos pos, CallbackInfo ci) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
             if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                 level.removeBlock(pos, false);
             } else {
-                restoreColoredWater(level, pos, coloredBe);
+                restoreColoredWater(level, pos, coloredWaterBlockEntity);
             }
             ci.cancel();
         }
@@ -38,8 +55,8 @@ public abstract class IceBlockMixin {
 
     @Inject(method = "playerDestroy", at = @At("HEAD"), cancellable = true)
     private void coloredWater$destroyIntoColoredWater(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool, CallbackInfo ci) {
-        BlockEntity be = blockEntity != null ? blockEntity : level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
+        BlockEntity targetBlockEntity = blockEntity != null ? blockEntity : level.getBlockEntity(pos);
+        if (targetBlockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
             if (!EnchantmentHelper.hasTag(tool, EnchantmentTags.PREVENTS_ICE_MELTING)) {
                 if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
                     level.removeBlock(pos, false);
@@ -49,23 +66,10 @@ public abstract class IceBlockMixin {
 
                 BlockState below = level.getBlockState(pos.below());
                 if (below.blocksMotion() || below.liquid()) {
-                    restoreColoredWater(level, pos, coloredBe);
+                    restoreColoredWater(level, pos, coloredWaterBlockEntity);
                     ci.cancel();
                 }
             }
-        }
-    }
-
-    private static void restoreColoredWater(Level level, BlockPos pos, ColoredWaterBlockEntity oldBe) {
-        boolean condensed = oldBe.isCondensed();
-        BlockState coloredWaterState = ModBlocks.COLORED_WATER_BLOCK.get().defaultBlockState()
-                .setValue(ColoredWaterBlock.CONDENSED, condensed);
-        level.setBlockAndUpdate(pos, coloredWaterState);
-        level.neighborChanged(pos, coloredWaterState.getBlock(), null);
-
-        BlockEntity newBe = level.getBlockEntity(pos);
-        if (newBe instanceof ColoredWaterBlockEntity newColoredBe) {
-            ColoredWaterUtil.transferProperties(oldBe, newColoredBe);
         }
     }
 }

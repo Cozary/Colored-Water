@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Marks waterlogged blocks, frosted ice, and bubble columns as valid for ColoredWaterBlockEntity.
+ */
 @Mixin(BlockEntityType.class)
 public abstract class BlockEntityTypeMixin {
 

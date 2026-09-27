@@ -21,14 +21,15 @@ import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Centralized utility class containing shared color mathematics, bucket data-component handling,
- * block entity property transfers, and world fluid color lookups across loaders.
+ * Utility functions for color mathematics, property conversions, and bucket serialization.
+ * <p>
+ * - Handles ARGB and RGB extraction, packing, and blending.
+ * - Manages bucket ItemStack serialization (color, opacity, luminosity).
+ * - Smoothly interpolates (lerp) color and luminosity for flowing fluid transitions.
+ * - Transfers properties between block entities across loaders.
  */
 public final class ColoredWaterUtil {
 
-    private ColoredWaterUtil() {}
-
-    // Constants
     public static final int DEFAULT_COLOR = 0x3F76E4;
     public static final int DEFAULT_ALPHA = 180;
     public static final int CONDENSED_ALPHA = 255;
@@ -39,7 +40,8 @@ public final class ColoredWaterUtil {
     public static final int MIN_LUMINOSITY = 0;
     public static final int UPDATE_DELAY = 3;
 
-    // Color Extraction
+    private ColoredWaterUtil() {
+    }
 
     public static int getAlpha(int argb) {
         return (argb >>> 24) & 0xFF;
@@ -72,8 +74,6 @@ public final class ColoredWaterUtil {
     public static boolean isCondensedAlpha(int alpha) {
         return alpha >= CONDENSED_ALPHA_THRESHOLD;
     }
-
-    // Color Comparison & Blending
 
     public static boolean isColorDiffSignificant(int c1, int c2) {
         int aDiff = Math.abs(getAlpha(c1) - getAlpha(c2));
@@ -146,8 +146,6 @@ public final class ColoredWaterUtil {
         return closest;
     }
 
-    // Bucket ItemStack Serialization & Helpers
-
     public static ItemStack createBucketStack(int argbColor, boolean condensed, int luminosity) {
         ItemStack stack = new ItemStack(ModItems.COLORED_WATER_BUCKET.get());
         int rgb = getRgb(argbColor);
@@ -170,12 +168,12 @@ public final class ColoredWaterUtil {
         return stack;
     }
 
-    public static ItemStack createBucketStack(ColoredWaterBlockEntity be) {
-        return createBucketStack(be.getColor(), be.isCondensed(), be.getLuminosity());
+    public static ItemStack createBucketStack(ColoredWaterBlockEntity coloredWaterBlockEntity) {
+        return createBucketStack(coloredWaterBlockEntity.getColor(), coloredWaterBlockEntity.isCondensed(), coloredWaterBlockEntity.getLuminosity());
     }
 
-    public static ItemStack createBucketStack(ColoredWaterCauldronBlockEntity be) {
-        return createBucketStack(be.getColor(), be.isCondensed(), be.getLuminosity());
+    public static ItemStack createBucketStack(ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+        return createBucketStack(cauldronBlockEntity.getColor(), cauldronBlockEntity.isCondensed(), cauldronBlockEntity.getLuminosity());
     }
 
     public static int getBucketRgb(ItemStack stack) {
@@ -219,26 +217,26 @@ public final class ColoredWaterUtil {
         return withAlpha(rgb, alpha);
     }
 
-    public static void applyBucketProperties(ItemStack stack, ColoredWaterBlockEntity coloredBe) {
+    public static void applyBucketProperties(ItemStack stack, ColoredWaterBlockEntity coloredWaterBlockEntity) {
         int fullColor = getBucketFullColor(stack);
         boolean condensed = getBucketCondensed(stack);
         int luminosity = getBucketLuminosity(stack);
 
-        coloredBe.markAsPlacedByBucket();
-        coloredBe.setCondensed(condensed);
-        coloredBe.setLuminosity(luminosity);
-        coloredBe.setColor(fullColor, null, true);
-        coloredBe.setBaseProperties(fullColor, condensed, luminosity);
-        coloredBe.updateBlockStateProps();
-        coloredBe.propagateColor();
-        coloredBe.markUpdated();
+        coloredWaterBlockEntity.markAsPlacedByBucket();
+        coloredWaterBlockEntity.setCondensed(condensed);
+        coloredWaterBlockEntity.setLuminosity(luminosity);
+        coloredWaterBlockEntity.setColor(fullColor, null, true);
+        coloredWaterBlockEntity.setBaseProperties(fullColor, condensed, luminosity);
+        coloredWaterBlockEntity.updateBlockStateProps();
+        coloredWaterBlockEntity.propagateColor();
+        coloredWaterBlockEntity.markUpdated();
     }
 
-    public static void applyBucketProperties(ItemStack stack, ColoredWaterCauldronBlockEntity coloredBe) {
+    public static void applyBucketProperties(ItemStack stack, ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
         int fullColor = getBucketFullColor(stack);
         boolean condensed = getBucketCondensed(stack);
         int luminosity = getBucketLuminosity(stack);
-        coloredBe.setProperties(fullColor, condensed, luminosity);
+        cauldronBlockEntity.setProperties(fullColor, condensed, luminosity);
     }
 
     public static void transferProperties(ColoredWaterBlockEntity source, ColoredWaterBlockEntity target) {
@@ -256,28 +254,23 @@ public final class ColoredWaterUtil {
         target.markUpdated();
     }
 
-    // World Color Lookups
-
     public static int getColoredWaterAt(@Nullable Level level, @Nullable BlockPos pos) {
         if (level == null || pos == null) return -1;
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredBe) {
-            if (coloredBe.hasCustomProperties()) {
-                int c = coloredBe.getColor();
-                return c != -1 ? c : DEFAULT_COLOR;
-            }
-            return -1;
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+            int c = coloredWaterBlockEntity.getColor();
+            return c != -1 ? c : DEFAULT_ARGB_NORMAL;
         }
-        if (be instanceof ColoredWaterCauldronBlockEntity cauldronBe) {
-            return cauldronBe.getColor();
+        if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+            return cauldronBlockEntity.getColor();
         }
         FluidState fluid = level.getFluidState(pos);
         if (fluid.getType() instanceof BaseColorWater) {
-            return DEFAULT_COLOR;
+            return DEFAULT_ARGB_NORMAL;
         }
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof ColoredWaterBlock || state.getBlock() instanceof ColoredWaterCauldronBlock) {
-            return DEFAULT_COLOR;
+            return DEFAULT_ARGB_NORMAL;
         }
         return -1;
     }

@@ -21,6 +21,13 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
+/**
+ * Fluid implementation for colored water.
+ * <p>
+ * - Handles lava collision to produce obsidian or cobblestone.
+ * - Transfers color, condensed state, and luminosity when spreading to new positions.
+ * - Schedules ticks for color propagation and smooth mixing.
+ */
 public abstract class ColoredWaterFluid extends BaseColorWater {
 
     public static final BooleanProperty CONDENSED = ColoredWaterBlock.CONDENSED;
@@ -69,9 +76,9 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
         if (state.hasProperty(CONDENSED)) {
             isCondensed = state.getValue(CONDENSED);
         } else {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
-                isCondensed = coloredBe.isCondensed();
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+                isCondensed = coloredWaterBlockEntity.isCondensed();
             }
         }
         if (newLiquid.hasProperty(CONDENSED)) {
@@ -84,9 +91,9 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
     public void tick(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState, FluidState fluidState) {
         super.tick(serverLevel, blockPos, blockState, fluidState);
         if (!serverLevel.isClientSide()) {
-            BlockEntity be = serverLevel.getBlockEntity(blockPos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
-                coloredBe.propagateColor();
+            BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
+            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+                coloredWaterBlockEntity.propagateColor();
             }
         }
     }
@@ -114,14 +121,14 @@ public abstract class ColoredWaterFluid extends BaseColorWater {
             BlockState currentState = serverLevel.getBlockState(pos);
             if (currentState.isAir()) return;
 
-            ColoredWaterBlockEntity tBe = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
-            if (tBe == null) return;
+            ColoredWaterBlockEntity targetBlockEntity = ColoredWaterBlockEntity.getOrCreate(serverLevel, pos, currentState);
+            if (targetBlockEntity == null) return;
 
             BlockPos sourcePos = pos.relative(direction.getOpposite());
-            BlockEntity sourceBe = serverLevel.getBlockEntity(sourcePos);
+            BlockEntity sourceBlockEntity = serverLevel.getBlockEntity(sourcePos);
 
-            if (sourceBe instanceof ColoredWaterBlockEntity sBe) {
-                ColoredWaterUtil.transferProperties(sBe, tBe);
+            if (sourceBlockEntity instanceof ColoredWaterBlockEntity sourceColoredWaterBlockEntity) {
+                ColoredWaterUtil.transferProperties(sourceColoredWaterBlockEntity, targetBlockEntity);
             }
         }
     }

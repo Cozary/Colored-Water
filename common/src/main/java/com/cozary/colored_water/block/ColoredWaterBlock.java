@@ -4,20 +4,12 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BubbleColumnBlock;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -31,7 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 /**
- * Inherits from LiquidBlock for water physics and adds a BlockEntity to store the color and more.
+ * LiquidBlock implementation for colored water fluid.
+ * <p>
+ * - Manages water physics, light levels, and condensed states.
+ * - Handles lava collisions to generate obsidian or cobblestone.
+ * - Updates bubble column mechanics for Soul Sand and Magma blocks.
+ * - Preserves color, luminosity, and condensed properties when picked up with a bucket.
  */
 public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
 
@@ -67,10 +64,6 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         return new ColoredWaterBlockEntity(pos, state);
     }
 
-    /**
-     * Triggered when the block is placed.
-     * Ensures the color propagation logic starts immediately.
-     */
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
@@ -83,10 +76,6 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         }
     }
 
-    /**
-     * Triggered when a neighbor block changes.
-     * Used to update color mixing if adjacent water blocks change.
-     */
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bol) {
         super.neighborChanged(blockState, level, blockPos, block, orientation, bol);
@@ -116,21 +105,6 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         }
     }
 
-    /**
-     * Helper to notify the BlockEntity to recalculate/propagate its color.
-     */
-    private void triggerPropagation(Level level, BlockPos pos) {
-        if (!level.isClientSide()) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ColoredWaterBlockEntity coloredBe) {
-                coloredBe.propagateColor();
-            }
-        }
-    }
-
-    /**
-     * Handles custom events, specifically for client-side rendering updates.
-     */
     @Override
     public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
         if (level.isClientSide() && id == 1) {
@@ -140,12 +114,6 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         return super.triggerEvent(state, level, pos, id, param);
     }
 
-    /**
-     * Handles picking up the block (e.g., with a bucket).
-     * <p>
-     * If the block is a source (level 0), it returns a Colored Water Bucket
-     * preserving the current color of the block.
-     */
     @Override
     public ItemStack pickupBlock(@Nullable LivingEntity player, LevelAccessor level, BlockPos pos, BlockState state) {
         if (state.getValue(LEVEL) != 0) {
@@ -153,12 +121,11 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
         }
 
         ItemStack stack = ItemStack.EMPTY;
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ColoredWaterBlockEntity coloredWaterBE) {
-            stack = ColoredWaterUtil.createBucketStack(coloredWaterBE);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+            stack = ColoredWaterUtil.createBucketStack(coloredWaterBlockEntity);
         }
 
-        // Remove the block
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
 
         return stack.isEmpty() ? new ItemStack(this.fluidSupplier.get().getBucket()) : stack;

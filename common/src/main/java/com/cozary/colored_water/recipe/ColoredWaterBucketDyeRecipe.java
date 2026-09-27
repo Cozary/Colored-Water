@@ -27,14 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Custom recipe handling dyeing and modifying colored water buckets.
+ * Dynamic shapeless crafting recipe for colored water buckets.
+ * <p>
+ * - Combines plain Water Buckets or existing Colored Water Buckets with Dyes.
+ * - Applies Redstone as the Condensed modifier.
+ * - Applies Glowstone Dust as the Luminous modifier.
  */
 public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
 
     public ColoredWaterBucketDyeRecipe(CraftingBookCategory category) {
         super(category);
     }
-
 
     @Override
     public boolean matches(@NotNull CraftingInput input, @NotNull Level level) {

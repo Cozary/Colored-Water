@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Preserves colored water fluid properties when waterloggable blocks are placed into water.
+ */
 @Mixin(BlockItem.class)
 public abstract class BlockItemMixin {
 
@@ -27,15 +30,15 @@ public abstract class BlockItemMixin {
         FluidState fluidState = level.getFluidState(pos);
 
         if (fluidState.getType() instanceof BaseColorWater) {
-            BlockEntity be = level.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             int color = -1;
             boolean condensed = false;
             int luminosity = 0;
 
-            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-                color = coloredBe.getColor();
-                condensed = coloredBe.isCondensed();
-                luminosity = coloredBe.getLuminosity();
+            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                color = coloredWaterBlockEntity.getColor();
+                condensed = coloredWaterBlockEntity.isCondensed();
+                luminosity = coloredWaterBlockEntity.getLuminosity();
             }
 
             CapturedFluidInfo.set(color, condensed, luminosity);
@@ -59,13 +62,13 @@ public abstract class BlockItemMixin {
                             state = state.setValue(BlockStateProperties.WATERLOGGED, true);
                             level.setBlock(pos, state, 3);
                         }
-                        ColoredWaterBlockEntity coloredBe = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
-                        if (coloredBe != null) {
-                            coloredBe.markAsPlacedByBucket();
-                            coloredBe.setCondensed(info.condensed());
-                            coloredBe.setLuminosity(info.luminosity());
+                        ColoredWaterBlockEntity coloredWaterBlockEntity = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
+                        if (coloredWaterBlockEntity != null) {
+                            coloredWaterBlockEntity.markAsPlacedByBucket();
+                            coloredWaterBlockEntity.setCondensed(info.condensed());
+                            coloredWaterBlockEntity.setLuminosity(info.luminosity());
                             if (info.color() != -1) {
-                                coloredBe.setColor(info.color(), null, true);
+                                coloredWaterBlockEntity.setColor(info.color(), null, true);
                             }
                         }
                     }

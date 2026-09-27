@@ -24,11 +24,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.Optional;
 
+/**
+ * Base FlowingFluid implementation for colored water.
+ * <p>
+ * - Manages underwater ambient sounds and custom color particle emissions.
+ * - Scales luminous sparkle particles with light level.
+ */
 public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
@@ -39,19 +45,19 @@ public abstract class BaseColorWater extends FlowingFluid {
             }
         } else if (random.nextInt(10) == 0) {
             int color = ColoredWaterUtil.DEFAULT_COLOR;
-            if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
-                int c = coloredBe.getColor();
+            if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+                int c = coloredWaterBlockEntity.getColor();
                 if (c != -1) color = c;
             }
             level.addParticle(new ColorParticleOptions(ModParticles.UNDERWATER.get(), color), (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
         }
 
-        if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredBe) {
-            int luminosity = coloredBe.getLuminosity();
+        if (level.getBlockEntity(blockPos) instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
+            int luminosity = coloredWaterBlockEntity.getLuminosity();
             if (luminosity > 0) {
                 float chance = (luminosity / 15.0F) * 0.4F;
                 if (random.nextFloat() < chance) {
-                    int color = coloredBe.getColor();
+                    int color = coloredWaterBlockEntity.getColor();
                     double x = (double) blockPos.getX() + random.nextDouble();
                     double y = (double) blockPos.getY() + random.nextDouble();
                     double z = (double) blockPos.getZ() + random.nextDouble();

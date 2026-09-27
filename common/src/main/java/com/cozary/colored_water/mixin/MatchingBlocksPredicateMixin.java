@@ -15,7 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "net.minecraft.world.level.levelgen.blockpredicates.MatchingBlocksPredicate")
 public abstract class MatchingBlocksPredicateMixin {
 
-    @Shadow @Final private HolderSet<Block> blocks;
+    @Shadow
+    @Final
+    private HolderSet<Block> blocks;
 
     @Inject(method = "test(Lnet/minecraft/world/level/block/state/BlockState;)Z", at = @At("HEAD"), cancellable = true)
     private void coloredWater$matchColoredWaterBlock(BlockState state, CallbackInfoReturnable<Boolean> cir) {

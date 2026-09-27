@@ -14,6 +14,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Bubble Column mechanics: schedules downward bubble column updates below colored water.
+ */
 @Mixin(MagmaBlock.class)
 public abstract class MagmaBlockMixin {
 

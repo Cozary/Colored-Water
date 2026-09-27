@@ -19,5 +19,6 @@ public class CapturedFluidInfo {
         HOLDER.remove();
     }
 
-    public record Info(int color, boolean condensed, int luminosity) {}
+    public record Info(int color, boolean condensed, int luminosity) {
+    }
 }
