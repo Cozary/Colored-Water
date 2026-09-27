@@ -10,10 +10,10 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -37,12 +37,12 @@ public class ColoredWaterClient implements ClientModInitializer {
                     @Override
                     public int getFluidColor(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
                         if (view != null && pos != null) {
-                            BlockEntity be = view.getBlockEntity(pos);
-                            if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-                                int color = coloredBe.getColor();
+                            BlockEntity blockEntity = view.getBlockEntity(pos);
+                            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                                int color = coloredWaterBlockEntity.getColor();
                                 int alpha = ColoredWaterUtil.getAlpha(color);
                                 if (alpha == 0) {
-                                    alpha = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                                    alpha = coloredWaterBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
                                     color = ColoredWaterUtil.withAlpha(color, alpha);
                                 }
                                 return color;
@@ -58,9 +58,9 @@ public class ColoredWaterClient implements ClientModInitializer {
 
         ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
             if (view != null && pos != null) {
-                BlockEntity be = view.getBlockEntity(pos);
-                if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-                    return coloredBe.getColor();
+                BlockEntity blockEntity = view.getBlockEntity(pos);
+                if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+                    return cauldronBlockEntity.getColor();
                 }
             }
             return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;

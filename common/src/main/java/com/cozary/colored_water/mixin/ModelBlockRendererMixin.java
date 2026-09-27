@@ -15,37 +15,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * Applies custom opacity (alpha) to tinted cauldron water quads during model rendering.
+ */
 @Mixin(ModelBlockRenderer.class)
 public class ModelBlockRendererMixin {
 
-    @Redirect(
-        method = "putQuadData",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFFF[II)V"
-        )
-    )
-    private void coloredWater$applyAlphaToCauldronQuad(
-        VertexConsumer instance,
-        PoseStack.Pose pose,
-        BakedQuad quad,
-        float[] brightnesses,
-        float red,
-        float green,
-        float blue,
-        float alpha,
-        int[] packedLight,
-        int packedOverlay,
-        BlockAndTintGetter level,
-        BlockState state,
-        BlockPos pos
-    ) {
+    @Redirect(method = "putQuadData", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFFF[II)V"))
+    private void coloredWater$applyAlphaToCauldronQuad(VertexConsumer instance, PoseStack.Pose pose, BakedQuad quad, float[] brightnesses, float red, float green, float blue, float alpha, int[] packedLight, int packedOverlay, BlockAndTintGetter level, BlockState state, BlockPos pos) {
         float targetAlpha = alpha;
         if (state.getBlock() instanceof ColoredWaterCauldronBlock && level != null && pos != null && quad.isTinted()) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-                int a = coloredBe.getAlpha();
-                if (a == 0) a = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+                int a = cauldronBlockEntity.getAlpha();
+                if (a == 0)
+                    a = cauldronBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
                 targetAlpha = alpha * (a / 255.0F);
             }
         }

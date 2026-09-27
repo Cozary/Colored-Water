@@ -29,7 +29,8 @@
     "ItemBlockRenderTypesMixin",
     "ModelBlockRendererMixin",
     "LiquidBlockRendererMixin",
-    "WeatherEffectRendererMixin"
+    "WeatherEffectRendererMixin",
+    "ScreenEffectRendererMixin"
   ],
   "server": [
     "ServerLevelMixin"

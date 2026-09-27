@@ -2,9 +2,19 @@ package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
+import com.cozary.colored_water.client.ColoredWaterFog;
+import com.cozary.colored_water.client.ColoredWaterOverlayRenderer;
 import com.cozary.colored_water.util.ColoredWaterUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.fog.FogData;
+import net.minecraft.client.renderer.fog.environment.FogEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.FluidState;
@@ -13,6 +23,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import org.joml.Vector4f;
 
 import java.util.function.Supplier;
 
@@ -34,6 +45,11 @@ public class ModFluidTypes {
                 public boolean getIsWaterLike() {
                     return true;
                 }
+
+                @Override
+                public boolean canDrownIn(LivingEntity entity) {
+                    return !entity.canBreatheUnderwater();
+                }
             });
 
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
@@ -54,18 +70,33 @@ public class ModFluidTypes {
             @Override
             public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
                 if (getter != null && pos != null) {
-                    BlockEntity be = getter.getBlockEntity(pos);
-                    if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
-                        int color = coloredBe.getColor();
+                    BlockEntity blockEntity = getter.getBlockEntity(pos);
+                    if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                        int color = coloredWaterBlockEntity.getColor();
                         int alpha = ColoredWaterUtil.getAlpha(color);
                         if (alpha == 0) {
-                            alpha = coloredBe.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                            alpha = coloredWaterBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
                             color = ColoredWaterUtil.withAlpha(color, alpha);
                         }
                         return color;
                     }
                 }
                 return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
+            }
+
+            @Override
+            public void renderOverlay(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+                ColoredWaterOverlayRenderer.renderOverlay(mc, poseStack, buffer);
+            }
+
+            @Override
+            public Vector4f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistanceChunks, float bossColorModifier, Vector4f defaultColor) {
+                return ColoredWaterFog.getFogColor(camera, partialTick, level, defaultColor);
+            }
+
+            @Override
+            public void modifyFogRender(Camera camera, FogEnvironment fogEnvironment, float renderDistance, float partialTick, FogData fogData) {
+                ColoredWaterFog.modifyFogRender(camera, (ClientLevel) camera.entity().level(), renderDistance, fogData);
             }
         }, COLORED_WATER_TYPE.get());
     }

@@ -16,30 +16,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+/**
+ * Renders custom fluid textures and tinting for waterlogged blocks and bubble columns.
+ */
 @Mixin(LiquidBlockRenderer.class)
 public class LiquidBlockRendererMixin {
 
-    /**
-     * Replaces the FluidState passed to tesselate() for waterlogged blocks that have a
-     * ColoredWaterBlockEntity, so the LiquidBlockRenderer uses colored_water textures/tint
-     * instead of vanilla water. This ONLY affects rendering game logic uses LevelMixin.
-     */
-    @ModifyVariable(
-        method = {"tesselate", "render"},
-        at = @At("HEAD"),
-        argsOnly = true,
-        require = 0
-    )
+    @ModifyVariable(method = {"tesselate", "render"}, at = @At("HEAD"), argsOnly = true, require = 0)
     private FluidState coloredWater$modifyWaterloggedFluidState(FluidState fluidState, BlockAndTintGetter level, BlockPos pos, VertexConsumer buffer, BlockState blockState) {
         boolean isWaterlogged = blockState != null && blockState.hasProperty(BlockStateProperties.WATERLOGGED) && blockState.getValue(BlockStateProperties.WATERLOGGED);
         boolean isBubbleColumn = blockState != null && blockState.is(Blocks.BUBBLE_COLUMN);
         if (isWaterlogged || isBubbleColumn) {
             if (level != null && pos != null) {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof ColoredWaterBlockEntity coloredBe && coloredBe.hasCustomProperties()) {
+                BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
                     FluidState newFluidState = ModFluids.STILL_COLORED_WATER.get().getSource(false);
                     if (newFluidState.hasProperty(ColoredWaterFluid.CONDENSED)) {
-                        newFluidState = newFluidState.setValue(ColoredWaterFluid.CONDENSED, coloredBe.isCondensed());
+                        newFluidState = newFluidState.setValue(ColoredWaterFluid.CONDENSED, coloredWaterBlockEntity.isCondensed());
                     }
                     return newFluidState;
                 }

@@ -32,9 +32,9 @@ public class ColoredWaterClient {
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, view, pos, tintIndex) -> {
             if (view != null && pos != null) {
-                BlockEntity be = view.getBlockEntity(pos);
-                if (be instanceof ColoredWaterCauldronBlockEntity coloredBe) {
-                    return coloredBe.getColor();
+                BlockEntity blockEntity = view.getBlockEntity(pos);
+                if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+                    return cauldronBlockEntity.getColor();
                 }
             }
             return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
