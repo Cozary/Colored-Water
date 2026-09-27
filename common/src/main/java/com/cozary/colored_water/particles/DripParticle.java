@@ -89,15 +89,7 @@ public class DripParticle extends SingleQuadParticle {
     public static class DripHangParticle extends DripParticle {
         private final ParticleOptions fallingParticle;
 
-        public DripHangParticle(
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                Fluid fluid,
-                ParticleOptions fallingParticle,
-                TextureAtlasSprite sprite
-        ) {
+        public DripHangParticle(ClientLevel level, double x, double y, double z, Fluid fluid, ParticleOptions fallingParticle, TextureAtlasSprite sprite) {
             super(level, x, y, z, fluid, sprite);
             this.fallingParticle = fallingParticle;
             this.gravity *= 0.02F;
@@ -149,15 +141,7 @@ public class DripParticle extends SingleQuadParticle {
     public static class DripstoneFallAndLandParticle extends DripParticle {
         protected final ParticleOptions landParticle;
 
-        public DripstoneFallAndLandParticle(
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                Fluid fluid,
-                ParticleOptions landParticle,
-                TextureAtlasSprite sprite
-        ) {
+        public DripstoneFallAndLandParticle(ClientLevel level, double x, double y, double z, Fluid fluid, ParticleOptions landParticle, TextureAtlasSprite sprite) {
             super(level, x, y, z, fluid, sprite);
             this.lifetime = (int) (64.0 / (this.random.nextFloat() * 0.8 + 0.2));
             this.landParticle = landParticle;
@@ -183,17 +167,7 @@ public class DripParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             ColorParticleOptions fallingOptions = new ColorParticleOptions(ModParticles.FALLING_WATER.get(), options.color());
             DripParticle dripparticle = new DripHangParticle(
                     level, x, y, z, Fluids.WATER, fallingOptions, this.sprite.get(random)
@@ -212,17 +186,7 @@ public class DripParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             ColorParticleOptions splashOptions = new ColorParticleOptions(ModParticles.SPLASH.get(), options.color());
             DripParticle dripparticle = new FallAndLandParticle(
                     level, x, y, z, Fluids.WATER, splashOptions, this.sprite.get(random)
@@ -241,17 +205,7 @@ public class DripParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             ColorParticleOptions fallingOptions = new ColorParticleOptions(ModParticles.FALLING_DRIPSTONE_WATER.get(), options.color());
             DripParticle dripparticle = new DripHangParticle(
                     level, x, y, z, Fluids.WATER, fallingOptions, this.sprite.get(random)
@@ -270,17 +224,7 @@ public class DripParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             ColorParticleOptions splashOptions = new ColorParticleOptions(ModParticles.SPLASH.get(), options.color());
             DripParticle dripparticle = new DripstoneFallAndLandParticle(
                     level, x, y, z, Fluids.WATER, splashOptions, this.sprite.get(random)

@@ -11,10 +11,6 @@ public class ColorParticleType extends ParticleType<ColorParticleOptions> {
         super(overrideLimiter);
     }
 
-    public ColorParticleType() {
-        this(false);
-    }
-
     @Override
     public MapCodec<ColorParticleOptions> codec() {
         return ColorParticleOptions.codec(this);

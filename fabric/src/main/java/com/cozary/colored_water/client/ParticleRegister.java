@@ -1,15 +1,7 @@
 package com.cozary.colored_water.client;
 
 import com.cozary.colored_water.init.ModParticles;
-import com.cozary.colored_water.particles.BubbleColumnUpParticle;
-import com.cozary.colored_water.particles.BubbleParticle;
-import com.cozary.colored_water.particles.DripParticle;
-import com.cozary.colored_water.particles.SparkleParticle;
-import com.cozary.colored_water.particles.SplashParticle;
-import com.cozary.colored_water.particles.UnderwaterParticle;
-import com.cozary.colored_water.particles.WakeParticle;
-import com.cozary.colored_water.particles.WaterCurrentDownParticle;
-import com.cozary.colored_water.particles.WaterDropParticle;
+import com.cozary.colored_water.particles.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 

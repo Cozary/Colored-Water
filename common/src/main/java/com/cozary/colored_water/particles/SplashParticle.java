@@ -11,20 +11,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class SplashParticle extends SingleQuadParticle {
 
-    public SplashParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double dx,
-            double dy,
-            double dz,
-            TextureAtlasSprite sprite
-    ) {
+    public SplashParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, TextureAtlasSprite sprite) {
         super(level, x, y, z, sprite);
         this.setSize(0.01F, 0.01F);
         this.gravity = 0.04F;
-        this.lifetime = (int)(16.0 / (this.random.nextFloat() * 0.8 + 0.2));
+        this.lifetime = (int) (16.0 / (this.random.nextFloat() * 0.8 + 0.2));
         if (dy == 0.0 && (dx != 0.0 || dz != 0.0)) {
             this.xd = dx;
             this.yd = 0.1;
@@ -82,17 +73,7 @@ public class SplashParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             SplashParticle particle = new SplashParticle(level, x, y, z, dx, dy, dz, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;

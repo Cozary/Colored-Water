@@ -11,23 +11,14 @@ import org.jetbrains.annotations.Nullable;
 public class WakeParticle extends SingleQuadParticle {
     private final SpriteSet sprites;
 
-    public WakeParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double dx,
-            double dy,
-            double dz,
-            SpriteSet sprites
-    ) {
+    public WakeParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, SpriteSet sprites) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sprites.first());
         this.sprites = sprites;
         this.xd *= 0.3F;
         this.yd = this.random.nextFloat() * 0.2F + 0.1F;
         this.zd *= 0.3F;
         this.setSize(0.01F, 0.01F);
-        this.lifetime = (int)(8.0 / (this.random.nextFloat() * 0.8 + 0.2));
+        this.lifetime = (int) (8.0 / (this.random.nextFloat() * 0.8 + 0.2));
         this.setSpriteFromAge(sprites);
         this.gravity = 0.0F;
         this.xd = dx;
@@ -78,17 +69,7 @@ public class WakeParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             WakeParticle particle = new WakeParticle(level, x, y, z, dx, dy, dz, this.sprites);
             particle.setColor(options.color());
             return particle;

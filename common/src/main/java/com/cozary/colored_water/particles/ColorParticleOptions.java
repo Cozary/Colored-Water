@@ -8,12 +8,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record ColorParticleOptions(ParticleType<ColorParticleOptions> particleType, int color) implements ParticleOptions {
-
-    @Override
-    public ParticleType<?> getType() {
-        return this.particleType;
-    }
+public record ColorParticleOptions(ParticleType<ColorParticleOptions> particleType,
+                                   int color) implements ParticleOptions {
 
     public static MapCodec<ColorParticleOptions> codec(ParticleType<ColorParticleOptions> type) {
         return Codec.INT.fieldOf("color").xmap(
@@ -28,5 +24,10 @@ public record ColorParticleOptions(ParticleType<ColorParticleOptions> particleTy
                 ColorParticleOptions::color,
                 color -> new ColorParticleOptions(type, color)
         );
+    }
+
+    @Override
+    public ParticleType<?> getType() {
+        return this.particleType;
     }
 }

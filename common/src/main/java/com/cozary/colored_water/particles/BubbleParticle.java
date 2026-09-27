@@ -15,23 +15,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class BubbleParticle extends SingleQuadParticle {
 
-    public BubbleParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double dx,
-            double dy,
-            double dz,
-            TextureAtlasSprite sprite
-    ) {
+    public BubbleParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, TextureAtlasSprite sprite) {
         super(level, x, y, z, sprite);
         this.setSize(0.02F, 0.02F);
         this.quadSize = this.quadSize * (this.random.nextFloat() * 0.6F + 0.2F);
         this.xd = dx * 0.2F + (this.random.nextFloat() * 2.0F - 1.0F) * 0.02F;
         this.yd = dy * 0.2F + (this.random.nextFloat() * 2.0F - 1.0F) * 0.02F;
         this.zd = dz * 0.2F + (this.random.nextFloat() * 2.0F - 1.0F) * 0.02F;
-        this.lifetime = (int)(8.0 / (this.random.nextFloat() * 0.8 + 0.2));
+        this.lifetime = (int) (8.0 / (this.random.nextFloat() * 0.8 + 0.2));
     }
 
     public void setColor(int hex) {
@@ -78,17 +69,7 @@ public class BubbleParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             BubbleParticle particle = new BubbleParticle(level, x, y, z, dx, dy, dz, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;

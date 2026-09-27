@@ -74,17 +74,7 @@ public class WaterCurrentDownParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             WaterCurrentDownParticle particle = new WaterCurrentDownParticle(level, x, y, z, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;

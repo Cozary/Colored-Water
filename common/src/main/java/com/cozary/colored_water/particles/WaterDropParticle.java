@@ -20,7 +20,7 @@ public class WaterDropParticle extends SingleQuadParticle {
         this.zd *= 0.3F;
         this.setSize(0.01F, 0.01F);
         this.gravity = 0.06F;
-        this.lifetime = (int)(8.0 / (this.random.nextFloat() * 0.8 + 0.2));
+        this.lifetime = (int) (8.0 / (this.random.nextFloat() * 0.8 + 0.2));
     }
 
     public void setColor(int hex) {
@@ -61,11 +61,11 @@ public class WaterDropParticle extends SingleQuadParticle {
 
             BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
             double d0 = Math.max(
-                this.level
-                    .getBlockState(blockpos)
-                    .getCollisionShape(this.level, blockpos)
-                    .max(Direction.Axis.Y, this.x - blockpos.getX(), this.z - blockpos.getZ()),
-                (double)this.level.getFluidState(blockpos).getHeight(this.level, blockpos)
+                    this.level
+                            .getBlockState(blockpos)
+                            .getCollisionShape(this.level, blockpos)
+                            .max(Direction.Axis.Y, this.x - blockpos.getX(), this.z - blockpos.getZ()),
+                    (double) this.level.getFluidState(blockpos).getHeight(this.level, blockpos)
             );
             if (d0 > 0.0 && this.y < blockpos.getY() + d0) {
                 this.remove();
@@ -82,17 +82,7 @@ public class WaterDropParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             WaterDropParticle particle = new WaterDropParticle(level, x, y, z, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;

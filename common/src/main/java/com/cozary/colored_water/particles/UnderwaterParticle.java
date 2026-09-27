@@ -44,17 +44,7 @@ public class UnderwaterParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             UnderwaterParticle particle = new UnderwaterParticle(level, x, y, z, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;

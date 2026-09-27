@@ -15,16 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BubbleColumnUpParticle extends SingleQuadParticle {
 
-    public BubbleColumnUpParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double dx,
-            double dy,
-            double dz,
-            TextureAtlasSprite sprite
-    ) {
+    public BubbleColumnUpParticle(ClientLevel level, double x, double y, double z, double dx, double dy, double dz, TextureAtlasSprite sprite) {
         super(level, x, y, z, sprite);
         this.gravity = -0.125F;
         this.friction = 0.85F;
@@ -70,17 +61,7 @@ public class BubbleColumnUpParticle extends SingleQuadParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(
-                ColorParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double dx,
-                double dy,
-                double dz,
-                RandomSource random
-        ) {
+        public Particle createParticle(ColorParticleOptions options, ClientLevel level, double x, double y, double z, double dx, double dy, double dz, RandomSource random) {
             BubbleColumnUpParticle particle = new BubbleColumnUpParticle(level, x, y, z, dx, dy, dz, this.sprite.get(random));
             particle.setColor(options.color());
             return particle;
