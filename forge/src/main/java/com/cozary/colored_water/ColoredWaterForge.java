@@ -3,15 +3,15 @@ package com.cozary.colored_water;
 import com.cozary.colored_water.client.ColoredWaterClient;
 import com.cozary.colored_water.init.ModFluidTypes;
 import com.cozary.colored_water.init.ModTabs;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(ColoredWater.MOD_ID)
-@Mod.EventBusSubscriber(modid = ColoredWater.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ColoredWaterForge {
 
     public ColoredWaterForge(FMLJavaModLoadingContext context) {
@@ -23,18 +23,16 @@ public class ColoredWaterForge {
 
         RegisterCommandsEvent.BUS.addListener(this::registerCommands);
 
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             ColoredWaterClient.init();
+            FMLClientSetupEvent.getBus(eventBus).addListener(ColoredWaterClient::onClientSetup);
         }
+
+        FMLCommonSetupEvent.getBus(eventBus).addListener(event -> event.enqueueWork(ColoredWater::postInit));
     }
 
-    @SubscribeEvent
-    public static void commonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(ColoredWater::postInit);
-    }
-
-    @SubscribeEvent
     private void registerCommands(RegisterCommandsEvent event) {
         ColoredWater.registerCommands(event.getDispatcher());
     }
 }
+

@@ -9,16 +9,24 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public record SparkleParticleOptions(int color) implements ParticleOptions {
+    private static final Map<Integer, SparkleParticleOptions> CACHE = new ConcurrentHashMap<>();
+
+    public static SparkleParticleOptions of(int color) {
+        return CACHE.computeIfAbsent(color, SparkleParticleOptions::new);
+    }
+
     public static final MapCodec<SparkleParticleOptions> CODEC =
-            Codec.INT.fieldOf("color").xmap(SparkleParticleOptions::new, o -> o.color);
+            Codec.INT.fieldOf("color").xmap(SparkleParticleOptions::of, o -> o.color);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SparkleParticleOptions> STREAM_CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.INT,
                     SparkleParticleOptions::color,
-                    SparkleParticleOptions::new
+                    SparkleParticleOptions::of
             );
 
     @Override

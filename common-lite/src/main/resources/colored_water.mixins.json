@@ -3,12 +3,42 @@
   "minVersion": "0.8",
   "package": "com.cozary.colored_water.mixin",
   "refmap": "${mod_id}.refmap.json",
-  "compatibilityLevel": "JAVA_18",
-  "mixins": [],
-  "client": [],
-  "server": [],
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockEntityTypeMixin",
+    "BlockItemMixin",
+    "BlockLightEngineMixin",
+    "BubbleColumnBlockMixin",
+    "BucketItemMixin",
+    "EntityMixin",
+    "FishingHookMixin",
+    "FlowingFluidMixin",
+    "IceBlockMixin",
+    "ItemInvoker",
+    "LayeredCauldronBlockMixin",
+    "LevelChunkMixin",
+    "LevelMixin",
+    "LiquidBlockMixin",
+    "LivingEntityMixin",
+    "MagmaBlockMixin",
+    "MatchingBlocksPredicateMixin",
+    "MatchingFluidsPredicateMixin",
+    "PointedDripstoneMixin",
+    "SoulSandBlockMixin",
+    "WaterFluidMixin"
+  ],
+  "client": [
+    "ItemBlockRenderTypesMixin",
+    "LiquidBlockRendererMixin",
+    "ModelBlockRendererMixin",
+    "ScreenEffectRendererMixin",
+    "WeatherEffectRendererMixin",
+    "ClientLevelMixin"
+  ],
+  "server": [
+    "ServerLevelMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
 }
-

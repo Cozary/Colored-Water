@@ -21,10 +21,10 @@ public class ColoredWaterForge {
         ModTabs.CREATIVE_MODE_TABS.register(eventBus);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            FMLClientSetupEvent.getBus(eventBus).addListener(ColoredWaterClient::doClientStuff);
+            ColoredWaterClient.init();
+            FMLClientSetupEvent.getBus(eventBus).addListener(ColoredWaterClient::onClientSetup);
         }
 
-        FMLCommonSetupEvent.getBus(eventBus).addListener(ColoredWaterClient::setup);
-
+        FMLCommonSetupEvent.getBus(eventBus).addListener(event -> event.enqueueWork(ColoredWater::postInit));
     }
 }

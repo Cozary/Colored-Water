@@ -1,5 +1,7 @@
 package com.cozary.colored_water.fluids;
 
+
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -10,7 +12,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,26 +23,17 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.Optional;
 
 public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
-    public void animateTick(Level level, BlockPos blockPos, FluidState fluidState, RandomSource random) {
-        if (!fluidState.isSource() && !(Boolean) fluidState.getValue(FlowingFluid.FALLING)) {
-            if (random.nextInt(64) == 0) {
-                level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
-            }
-        } else if (random.nextInt(10) == 0) {
-            level.addParticle(ParticleTypes.UNDERWATER, (double) blockPos.getX() + random.nextDouble(), (double) blockPos.getY() + random.nextDouble(), (double) blockPos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
-        }
-    }
+    public abstract void animateTick(Level level, BlockPos blockPos, FluidState fluidState, RandomSource random);
 
     @Override
-    public ParticleOptions getDripParticle() {
-        return ParticleTypes.DRIPPING_WATER;
-    }
+    public abstract ParticleOptions getDripParticle();
 
     @Override
     protected boolean canConvertToSource(ServerLevel level) {
@@ -57,7 +53,7 @@ public abstract class BaseColorWater extends FlowingFluid {
 
     @Override
     public boolean isSame(Fluid pFluid) {
-        return pFluid == getSource() || pFluid == getFlowing();
+        return pFluid == getSource() || pFluid == getFlowing() || pFluid == Fluids.WATER || pFluid == Fluids.FLOWING_WATER;
     }
 
     @Override

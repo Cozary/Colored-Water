@@ -319,5 +319,13 @@
   "block.colored_water.luminous_condense_light_blue_water_block": "Luminous Condense Light Blue Water",
   "block.colored_water.luminous_condense_orange_water_block": "Luminous Condense Orange Water",
   "block.colored_water.luminous_condense_white_water_block": "Luminous Condense White Water",
-  "itemGroup.colored_water": "Colored Water"
+  "itemGroup.colored_water": "Colored Water",
+  "tooltip.colored_water.type": "Type: %s",
+  "tooltip.colored_water.type.normal": "Normal",
+  "tooltip.colored_water.type.condense": "Condense",
+  "tooltip.colored_water.type.luminous": "Luminous",
+  "tooltip.colored_water.type.luminous_condense": "Luminous Condense",
+  "tooltip.colored_water.opacity": "Opacity: %s",
+  "tooltip.colored_water.luminosity": "Luminosity: %s",
+  "tooltip.colored_water.color": "Color: %s"
 }

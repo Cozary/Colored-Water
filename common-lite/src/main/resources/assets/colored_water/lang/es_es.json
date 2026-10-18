@@ -319,5 +319,13 @@
   "block.colored_water.luminous_condense_light_blue_water_block": "Agua azul claro condensada luminosa",
   "block.colored_water.luminous_condense_orange_water_block": "Agua naranja condensada luminosa",
   "block.colored_water.luminous_condense_white_water_block": "Agua blanca condensada luminosa",
-  "itemGroup.colored_water": "Agua coloreada"
+  "itemGroup.colored_water": "Agua coloreada",
+  "tooltip.colored_water.type": "Tipo: %s",
+  "tooltip.colored_water.type.normal": "Normal",
+  "tooltip.colored_water.type.condense": "Condensada",
+  "tooltip.colored_water.type.luminous": "Luminosa",
+  "tooltip.colored_water.type.luminous_condense": "Condensada luminosa",
+  "tooltip.colored_water.opacity": "Opacidad: %s",
+  "tooltip.colored_water.luminosity": "Luminosidad: %s",
+  "tooltip.colored_water.color": "Color: %s"
 }

@@ -86,7 +86,10 @@ public class ModCauldrons {
     public static final Supplier<Block> LUMINOUS_CONDENSE_ORANGE_WATER_CAULDRON = BLOCKS.register("luminous_condense_orange_water_cauldron", () -> new LayeredCauldronBlock(Biome.Precipitation.RAIN, LuminousCondenseCauldronBehavior.LUMINOUS_CONDENSE_ORANGE_CAULDRON_BEHAVIOR, BlockBehaviour.Properties.ofFullCopy(CAULDRON).lightLevel(state -> 15).setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "luminous_condense_orange_water_cauldron")))));
     public static final Supplier<Block> LUMINOUS_CONDENSE_WHITE_WATER_CAULDRON = BLOCKS.register("luminous_condense_white_water_cauldron", () -> new LayeredCauldronBlock(Biome.Precipitation.RAIN, LuminousCondenseCauldronBehavior.LUMINOUS_CONDENSE_WHITE_CAULDRON_BEHAVIOR, BlockBehaviour.Properties.ofFullCopy(CAULDRON).lightLevel(state -> 15).setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "luminous_condense_white_water_cauldron")))));
 
-    public static void loadClass() {
+    public static Block[] getAllCauldronBlocks() {
+        return BLOCKS.getEntries().stream().map(RegistryObject::get).toArray(Block[]::new);
     }
 
+    public static void loadClass() {
+    }
 }

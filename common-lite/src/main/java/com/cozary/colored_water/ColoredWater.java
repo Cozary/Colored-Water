@@ -1,5 +1,7 @@
 package com.cozary.colored_water;
 
+import com.cozary.colored_water.cauldrons.behaviour.CauldronBehaviorHelper;
+import com.cozary.colored_water.dispenser.ColoredWaterDispenserBehavior;
 import com.cozary.colored_water.init.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +13,17 @@ public class ColoredWater {
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
     public static void init() {
-
         ModBlocks.loadClass();
         ModCauldrons.loadClass();
         ModFluids.loadClass();
         ModItems.loadClass();
-        ModItems.loadClass();
         ModRecipe.loadClass();
         ModParticles.loadClass();
+        ModBlockEntities.loadClass();
+    }
+
+    public static void postInit() {
+        CauldronBehaviorHelper.init();
+        ColoredWaterDispenserBehavior.register();
     }
 }

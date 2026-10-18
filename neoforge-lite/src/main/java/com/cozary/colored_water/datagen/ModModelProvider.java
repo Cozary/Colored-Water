@@ -229,12 +229,8 @@ public class ModModelProvider extends ModelProvider {
             throw new IllegalStateException("Block not registered: " + block);
         }
 
-        String name = id.getPath();
-        String color = extractColorFromName(name);
-        String fluid = color + "_water_still";
-
         TextureMapping textures = TextureMapping.cauldron(
-                Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/" + fluid)
+                Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still")
         );
 
         blockModels.blockStateOutput.accept(
