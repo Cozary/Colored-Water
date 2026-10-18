@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Matches colored water fluid sources in world generation and block predicates checking for water.
+ */
 @Mixin(targets = "net.minecraft.world.level.levelgen.blockpredicates.MatchingFluidsPredicate")
 public abstract class MatchingFluidsPredicateMixin {
 

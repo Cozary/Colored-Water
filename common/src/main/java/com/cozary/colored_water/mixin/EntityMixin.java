@@ -1,6 +1,7 @@
 package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
+import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.util.ColoredWaterUtil;
@@ -34,6 +35,9 @@ public abstract class EntityMixin {
         if (particle == ParticleTypes.SPLASH || particle == ParticleTypes.BUBBLE) {
             BlockPos pos = BlockPos.containing(x, y - 0.5, z);
             int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
+            if (color == -1) {
+                color = ColoredWaterUtil.getColoredWaterAt(level, pos.below());
+            }
             if (color != -1) {
                 var pType = (particle == ParticleTypes.SPLASH) ? ModParticles.SPLASH.get() : ModParticles.BUBBLE.get();
                 return level.sendParticles(new ColorParticleOptions(pType, color), x, y, z, count, dx, dy, dz, speed);
@@ -54,7 +58,24 @@ public abstract class EntityMixin {
         if (level != null) {
             BlockPos pos = entity.blockPosition();
             BlockState state = level.getBlockState(pos);
-            if (state.getBlock() instanceof ColoredWaterCauldronBlock) {
+            if (state.getBlock() instanceof ColoredWaterCauldronBlock || level.getFluidState(pos).getType() instanceof BaseColorWater) {
+                cir.setReturnValue(true);
+            }
+        }
+    }
+
+    @Inject(method = "isInWater", at = @At("RETURN"), cancellable = true)
+    private void colored_water$isInWater(CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValue()) {
+            return;
+        }
+
+        Entity entity = (Entity) (Object) this;
+        Level level = entity.level();
+        if (level != null) {
+            BlockPos pos = entity.blockPosition();
+            BlockState state = level.getBlockState(pos);
+            if (state.getBlock() instanceof ColoredWaterCauldronBlock || level.getFluidState(pos).getType() instanceof BaseColorWater) {
                 cir.setReturnValue(true);
             }
         }
@@ -70,7 +91,13 @@ public abstract class EntityMixin {
             BlockPos pos = BlockPos.containing(x, y - 0.5, z);
             int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
             if (color == -1) {
+                color = ColoredWaterUtil.getColoredWaterAt(level, pos.below());
+            }
+            if (color == -1) {
                 color = ColoredWaterUtil.getColoredWaterAt(level, entity.blockPosition());
+            }
+            if (color == -1) {
+                color = ColoredWaterUtil.getColoredWaterAt(level, entity.blockPosition().below());
             }
 
             if (color != -1) {

@@ -72,7 +72,10 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
             level.scheduleTick(pos, state.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
         }
         if (state.getValue(LEVEL) == 0) {
-            BubbleColumnBlock.updateColumn(level, pos, state);
+            BlockState below = level.getBlockState(pos.below());
+            if (below.is(Blocks.SOUL_SAND) || below.is(Blocks.MAGMA_BLOCK) || below.is(Blocks.BUBBLE_COLUMN)) {
+                BubbleColumnBlock.updateColumn(level, pos, below);
+            }
         }
     }
 
@@ -84,7 +87,10 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
             level.scheduleTick(blockPos, blockState.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
         }
         if (blockState.getValue(LEVEL) == 0) {
-            BubbleColumnBlock.updateColumn(level, blockPos, blockState);
+            BlockState below = level.getBlockState(blockPos.below());
+            if (below.is(Blocks.SOUL_SAND) || below.is(Blocks.MAGMA_BLOCK) || below.is(Blocks.BUBBLE_COLUMN)) {
+                BubbleColumnBlock.updateColumn(level, blockPos, below);
+            }
         }
     }
 

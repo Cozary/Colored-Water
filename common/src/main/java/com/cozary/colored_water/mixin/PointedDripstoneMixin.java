@@ -177,7 +177,7 @@ public abstract class PointedDripstoneMixin {
         return current;
     }
 
-    @Inject(method = "animateTick", at = @At("HEAD"))
+    @Inject(method = "animateTick", at = @At("HEAD"), cancellable = true)
     private void colored_water$animateTick(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) != Direction.DOWN) {
             return;
@@ -188,12 +188,13 @@ public abstract class PointedDripstoneMixin {
 
         BlockPos sourcePos = findColoredWaterSourcePos(level, pos);
         if (sourcePos != null) {
+            ci.cancel();
             if (random.nextFloat() < 0.12F) {
                 double x = (double) pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
                 double y = (double) pos.getY() + 0.1D;
                 double z = (double) pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
 
-                int color = 0x3F76E4;
+                int color = ColoredWaterUtil.DEFAULT_COLOR;
                 int luminosity = 0;
                 if (level.getBlockEntity(sourcePos) instanceof ColoredWaterBlockEntity sourceBlockEntity) {
                     int c = sourceBlockEntity.getColor();

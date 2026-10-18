@@ -33,10 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FlowingFluid.class)
 public abstract class FlowingFluidMixin {
 
-    @Shadow
-    protected static int getLegacyLevel(FluidState fluidState) {
-        throw new AssertionError();
-    }
 
     @Shadow
     protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);

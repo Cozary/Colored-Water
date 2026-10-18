@@ -53,6 +53,10 @@ public abstract class BubbleColumnBlockMixin {
                         .setValue(ColoredWaterBlock.LIGHT_LEVEL, coloredWaterBlockEntity.getLuminosity());
                 return level.setBlock(pos, coloredState, flags);
             }
+            BlockState current = level.getBlockState(pos);
+            if (current.getBlock() instanceof ColoredWaterBlock) {
+                return level.setBlock(pos, current, flags);
+            }
         }
         return level.setBlock(pos, state, flags);
     }
@@ -75,6 +79,9 @@ public abstract class BubbleColumnBlockMixin {
         if (particle == ParticleTypes.BUBBLE_COLUMN_UP || particle == ParticleTypes.CURRENT_DOWN) {
             BlockPos pos = BlockPos.containing(x, y, z);
             int color = ColoredWaterUtil.getColoredWaterAt(level, pos);
+            if (color == -1) {
+                color = ColoredWaterUtil.getColoredWaterAt(level, pos.below());
+            }
             if (color != -1) {
                 var pType = (particle == ParticleTypes.BUBBLE_COLUMN_UP)
                         ? ModParticles.BUBBLE_COLUMN_UP.get()

@@ -7,6 +7,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MagmaBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +23,7 @@ public abstract class MagmaBlockMixin {
 
     @Inject(method = "updateShape", at = @At("HEAD"))
     private void coloredWater$onUpdateShape(BlockState state, LevelReader level, ScheduledTickAccess scheduledTicks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random, CallbackInfoReturnable<BlockState> cir) {
-        if (direction == Direction.UP && neighborState.getBlock() instanceof ColoredWaterBlock) {
+        if (direction == Direction.UP && (neighborState.getBlock() instanceof ColoredWaterBlock || neighborState.is(Blocks.BUBBLE_COLUMN))) {
             scheduledTicks.scheduleTick(pos, (Block) (Object) this, 20);
         }
     }

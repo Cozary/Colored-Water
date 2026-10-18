@@ -1,6 +1,5 @@
 package com.cozary.colored_water.mixin;
 
-import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -28,9 +27,6 @@ public abstract class BlockLightEngineMixin extends LightEngine {
 
     @Inject(method = "getEmission", at = @At("HEAD"), cancellable = true)
     private void coloredWater$getWaterloggedEmission(long blockPos, BlockState state, CallbackInfoReturnable<Integer> cir) {
-        if (!ColoredWater.isInitialized) {
-            return;
-        }
         boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
         boolean isBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
         if (isWaterlogged || isBubbleColumn) {
