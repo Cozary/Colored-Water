@@ -24,7 +24,7 @@ public class ModelBlockRendererMixin {
     @Redirect(method = "putQuadData", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFFF[II)V"))
     private void coloredWater$applyAlphaToCauldronQuad(VertexConsumer instance, PoseStack.Pose pose, BakedQuad quad, float[] brightnesses, float red, float green, float blue, float alpha, int[] packedLight, int packedOverlay, BlockAndTintGetter level, BlockState state, BlockPos pos) {
         float targetAlpha = alpha;
-        if (state.getBlock() instanceof ColoredWaterCauldronBlock && level != null && pos != null && quad.isTinted()) {
+        if (state != null && state.getBlock() instanceof ColoredWaterCauldronBlock && level != null && pos != null && quad.isTinted()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
                 int a = cauldronBlockEntity.getAlpha();

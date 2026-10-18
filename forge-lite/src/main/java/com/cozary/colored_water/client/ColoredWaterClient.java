@@ -1,108 +1,46 @@
 package com.cozary.colored_water.client;
 
-import com.cozary.colored_water.cauldrons.behaviour.ColorCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.CondenseCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.LuminousCauldronBehavior;
-import com.cozary.colored_water.cauldrons.behaviour.LuminousCondenseCauldronBehavior;
+import com.cozary.colored_water.init.ModBlocks;
+import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
-import com.google.common.collect.Maps;
+import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.util.Util;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-
-import java.util.Map;
 
 public class ColoredWaterClient {
 
-    public static void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-
-            ColorCauldronBehavior.init();
-            CondenseCauldronBehavior.init();
-            LuminousCauldronBehavior.init();
-            LuminousCondenseCauldronBehavior.init();
-
-        });
-
+    public static void init() {
+        RegisterColorHandlersEvent.Block.BUS.addListener(ColoredWaterClient::registerBlockColors);
+        RegisterParticleProvidersEvent.BUS.addListener(ParticleRegister::registerFactories);
     }
 
-    public static void doClientStuff(final FMLClientSetupEvent event) {
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state, view, pos, tintIndex) -> {
+            if (tintIndex == 0) {
+                return ColoredWaterUtil.getCauldronColor(state.getBlock());
+            }
+            return -1;
+        }, ModCauldrons.getAllCauldronBlocks());
+    }
 
-        final Map<Fluid, ChunkSectionLayer> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (map) -> {
-            final ChunkSectionLayer translucent = ChunkSectionLayer.TRANSLUCENT;
-
-            map.put(ModFluids.STILL_MAGENTA_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_MAGENTA_WATER.get(), translucent);
-            map.put(ModFluids.STILL_PURPLE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_PURPLE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_GREEN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_GREEN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_YELLOW_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_YELLOW_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LIME_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LIME_WATER.get(), translucent);
-            map.put(ModFluids.STILL_PINK_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_PINK_WATER.get(), translucent);
-            map.put(ModFluids.STILL_RED_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_RED_WATER.get(), translucent);
-            map.put(ModFluids.STILL_BLACK_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_BLACK_WATER.get(), translucent);
-            map.put(ModFluids.STILL_BROWN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_BROWN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_CYAN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_CYAN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LIGHT_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LIGHT_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.STILL_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LIGHT_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LIGHT_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_ORANGE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_ORANGE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_WHITE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_WHITE_WATER.get(), translucent);
-
-            map.put(ModFluids.STILL_LUMINOUS_MAGENTA_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_MAGENTA_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_PURPLE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_PURPLE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_GREEN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_GREEN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_YELLOW_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_YELLOW_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_LIME_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_LIME_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_PINK_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_PINK_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_RED_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_RED_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_BLACK_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_BLACK_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_BROWN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_BROWN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_CYAN_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_CYAN_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_LIGHT_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_LIGHT_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_GRAY_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_LIGHT_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_LIGHT_BLUE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_ORANGE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_ORANGE_WATER.get(), translucent);
-            map.put(ModFluids.STILL_LUMINOUS_WHITE_WATER.get(), translucent);
-            map.put(ModFluids.FLOWING_LUMINOUS_WHITE_WATER.get(), translucent);
-
+    public static void onClientSetup(final FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (var fluid : ModFluids.FLUIDS.getEntries()) {
+                ChunkSectionLayer layer = ColoredWaterUtil.isCondensedFluid(fluid.get()) ? ChunkSectionLayer.SOLID : ChunkSectionLayer.TRANSLUCENT;
+                ItemBlockRenderTypes.setRenderLayer(fluid.get(), layer);
+            }
+            for (var block : ModBlocks.BLOCKS.getEntries()) {
+                ChunkSectionLayer layer = ColoredWaterUtil.isCondensedBlock(block.get()) ? ChunkSectionLayer.SOLID : ChunkSectionLayer.TRANSLUCENT;
+                ItemBlockRenderTypes.setRenderLayer(block.get(), layer);
+            }
+            for (Block cauldron : ModCauldrons.getAllCauldronBlocks()) {
+                ChunkSectionLayer layer = ColoredWaterUtil.isCondensedCauldron(cauldron) ? ChunkSectionLayer.SOLID : ChunkSectionLayer.TRANSLUCENT;
+                ItemBlockRenderTypes.setRenderLayer(cauldron, layer);
+            }
         });
-
-        TYPE_BY_FLUID.forEach(ItemBlockRenderTypes::setRenderLayer);
-
     }
 }
