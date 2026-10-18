@@ -5,7 +5,7 @@ license = "${license}" # Review your options at https://choosealicense.com/.
 #clientSideOnly=true #optional
 [[mods]] #mandatory
 modId = "${mod_id}" #mandatory
-version = "${version_forge}" #mandatory
+version = "${version_forge_lite}" #mandatory
 displayName = "${mod_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional (see https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/)
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional (displayed in the mod UI)
