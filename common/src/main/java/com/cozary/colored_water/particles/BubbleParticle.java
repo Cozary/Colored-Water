@@ -55,7 +55,12 @@ public class BubbleParticle extends SingleQuadParticle {
             BlockPos pos = BlockPos.containing(this.x, this.y, this.z);
             FluidState fluid = this.level.getFluidState(pos);
             if (!fluid.is(FluidTags.WATER) && !(fluid.getType() instanceof BaseColorWater)) {
-                this.remove();
+                BlockPos below = pos.below();
+                FluidState fluidBelow = this.level.getFluidState(below);
+                double surfaceY = below.getY() + fluidBelow.getHeight(this.level, below);
+                if (this.y > surfaceY + 0.1 || (!fluidBelow.is(FluidTags.WATER) && !(fluidBelow.getType() instanceof BaseColorWater))) {
+                    this.remove();
+                }
             }
         }
     }

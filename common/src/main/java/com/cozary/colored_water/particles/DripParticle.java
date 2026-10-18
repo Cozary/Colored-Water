@@ -1,6 +1,8 @@
 package com.cozary.colored_water.particles;
 
+import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
@@ -69,7 +71,9 @@ public class DripParticle extends SingleQuadParticle {
                 if (this.type != Fluids.EMPTY) {
                     BlockPos blockpos = BlockPos.containing(this.x, this.y, this.z);
                     FluidState fluidstate = this.level.getFluidState(blockpos);
-                    if (fluidstate.getType() == this.type && this.y < (double) ((float) blockpos.getY() + fluidstate.getHeight(this.level, blockpos))) {
+                    boolean isMatchingFluid = fluidstate.getType() == this.type
+                            || (this.type == Fluids.WATER && (fluidstate.is(FluidTags.WATER) || fluidstate.getType() instanceof BaseColorWater));
+                    if (isMatchingFluid && this.y < (double) ((float) blockpos.getY() + fluidstate.getHeight(this.level, blockpos))) {
                         this.remove();
                     }
                 }

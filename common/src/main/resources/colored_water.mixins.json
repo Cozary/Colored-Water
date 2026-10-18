@@ -30,7 +30,8 @@
     "ModelBlockRendererMixin",
     "LiquidBlockRendererMixin",
     "WeatherEffectRendererMixin",
-    "ScreenEffectRendererMixin"
+    "ScreenEffectRendererMixin",
+    "ClientLevelMixin"
   ],
   "server": [
     "ServerLevelMixin"
