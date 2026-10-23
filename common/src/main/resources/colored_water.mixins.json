@@ -23,7 +23,9 @@
     "LivingEntityMixin",
     "BubbleColumnBlockMixin",
     "MagmaBlockMixin",
-    "SoulSandBlockMixin"
+    "SoulSandBlockMixin",
+    "FrogspawnBlockMixin",
+    "WaterlilyBlockMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",

@@ -25,7 +25,9 @@
     "MatchingFluidsPredicateMixin",
     "PointedDripstoneMixin",
     "SoulSandBlockMixin",
-    "WaterFluidMixin"
+    "WaterFluidMixin",
+    "FrogspawnBlockMixin",
+    "WaterlilyBlockMixin"
   ],
   "client": [
     "ItemBlockRenderTypesMixin",

@@ -2,149 +2,54 @@ package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.init.ModFluids;
+import com.cozary.colored_water.init.RegistryObject;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ModFluidTagProvider extends FluidTagsProvider {
+
     public ModFluidTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider, ColoredWater.MOD_ID);
     }
 
+    private static TagKey<Fluid> minecraftTag(String name) {
+        return TagKey.create(Registries.FLUID, Identifier.fromNamespaceAndPath("minecraft", name));
+    }
+
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        tag(FluidTags.WATER)
-                .add(ModFluids.STILL_WHITE_WATER.get())
-                .add(ModFluids.FLOWING_WHITE_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_WHITE_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_WHITE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_WHITE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_WHITE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_WHITE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_WHITE_WATER.get())
-                .add(ModFluids.STILL_ORANGE_WATER.get())
-                .add(ModFluids.FLOWING_ORANGE_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_ORANGE_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_ORANGE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_ORANGE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_ORANGE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_ORANGE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_ORANGE_WATER.get())
-                .add(ModFluids.STILL_MAGENTA_WATER.get())
-                .add(ModFluids.FLOWING_MAGENTA_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_MAGENTA_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_MAGENTA_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_MAGENTA_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_MAGENTA_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_MAGENTA_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_MAGENTA_WATER.get())
-                .add(ModFluids.STILL_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_LIGHT_BLUE_WATER.get())
-                .add(ModFluids.STILL_YELLOW_WATER.get())
-                .add(ModFluids.FLOWING_YELLOW_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_YELLOW_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_YELLOW_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_YELLOW_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_YELLOW_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_YELLOW_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_YELLOW_WATER.get())
-                .add(ModFluids.STILL_LIME_WATER.get())
-                .add(ModFluids.FLOWING_LIME_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_LIME_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_LIME_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_LIME_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_LIME_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_LIME_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_LIME_WATER.get())
-                .add(ModFluids.STILL_PINK_WATER.get())
-                .add(ModFluids.FLOWING_PINK_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_PINK_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_PINK_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_PINK_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_PINK_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_PINK_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_PINK_WATER.get())
-                .add(ModFluids.STILL_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_GRAY_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_GRAY_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_GRAY_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_GRAY_WATER.get())
-                .add(ModFluids.STILL_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_LIGHT_GRAY_WATER.get())
-                .add(ModFluids.STILL_CYAN_WATER.get())
-                .add(ModFluids.FLOWING_CYAN_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_CYAN_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_CYAN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CYAN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CYAN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_CYAN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_CYAN_WATER.get())
-                .add(ModFluids.STILL_PURPLE_WATER.get())
-                .add(ModFluids.FLOWING_PURPLE_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_PURPLE_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_PURPLE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_PURPLE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_PURPLE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_PURPLE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_PURPLE_WATER.get())
-                .add(ModFluids.STILL_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_BLUE_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_BLUE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_BLUE_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_BLUE_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_BLUE_WATER.get())
-                .add(ModFluids.STILL_BROWN_WATER.get())
-                .add(ModFluids.FLOWING_BROWN_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_BROWN_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_BROWN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_BROWN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_BROWN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_BROWN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_BROWN_WATER.get())
-                .add(ModFluids.STILL_GREEN_WATER.get())
-                .add(ModFluids.FLOWING_GREEN_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_GREEN_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_GREEN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_GREEN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_GREEN_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_GREEN_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_GREEN_WATER.get())
-                .add(ModFluids.STILL_RED_WATER.get())
-                .add(ModFluids.FLOWING_RED_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_RED_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_RED_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_RED_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_RED_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_RED_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_RED_WATER.get())
-                .add(ModFluids.STILL_BLACK_WATER.get())
-                .add(ModFluids.FLOWING_BLACK_WATER.get())
-                .add(ModFluids.STILL_CONDENSE_BLACK_WATER.get())
-                .add(ModFluids.FLOWING_CONDENSE_BLACK_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_BLACK_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_BLACK_WATER.get())
-                .add(ModFluids.STILL_LUMINOUS_CONDENSE_BLACK_WATER.get())
-                .add(ModFluids.FLOWING_LUMINOUS_CONDENSE_BLACK_WATER.get()
-                );
+        TagKey<Fluid> waterTag = FluidTags.WATER;
+        TagKey<Fluid> entityFloatableTag = minecraftTag("entity_floatable");
+        TagKey<Fluid> sugarCaneTag = minecraftTag("supports_sugar_cane_adjacently");
+        TagKey<Fluid> axolotlTag = minecraftTag("axolotl_tries_to_find");
+        TagKey<Fluid> bubbleTag = minecraftTag("bubble_column_can_occupy");
+        TagKey<Fluid> dolphinTag = minecraftTag("dolphin_tries_to_find");
+        TagKey<Fluid> frogLandTag = minecraftTag("frog_tries_to_find_land_near");
+        TagKey<Fluid> frogspawnTag = minecraftTag("supports_frogspawn");
+        TagKey<Fluid> lilyPadTag = minecraftTag("supports_lily_pad");
+
+        for (RegistryObject<Fluid> entry : ModFluids.FLUIDS.getEntries()) {
+            Fluid fluid = entry.get();
+            tag(waterTag).add(fluid);
+            tag(entityFloatableTag).add(fluid);
+            tag(sugarCaneTag).add(fluid);
+
+            if (!entry.getId().getPath().startsWith("flowing_")) {
+                tag(axolotlTag).add(fluid);
+                tag(bubbleTag).add(fluid);
+                tag(dolphinTag).add(fluid);
+                tag(frogLandTag).add(fluid);
+                tag(frogspawnTag).add(fluid);
+                tag(lilyPadTag).add(fluid);
+            }
+        }
     }
 }
