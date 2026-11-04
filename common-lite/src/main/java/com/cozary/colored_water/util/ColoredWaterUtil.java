@@ -144,7 +144,7 @@ public final class ColoredWaterUtil {
     }
 
     public static int getColoredWaterAt(@Nullable Level level, @Nullable BlockPos pos) {
-        if (level == null || pos == null) return -1;
+        if (level == null || pos == null || !level.hasChunkAt(pos)) return -1;
         FluidState fluid = level.getFluidState(pos);
         if (fluid.getType() instanceof ColorWaterFluid cwf) {
             return cwf.getTintColor();

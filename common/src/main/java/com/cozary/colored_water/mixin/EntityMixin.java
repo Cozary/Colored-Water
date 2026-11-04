@@ -1,7 +1,6 @@
 package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.block.ColoredWaterCauldronBlock;
-import com.cozary.colored_water.fluids.BaseColorWater;
 import com.cozary.colored_water.init.ModParticles;
 import com.cozary.colored_water.particles.ColorParticleOptions;
 import com.cozary.colored_water.util.ColoredWaterUtil;
@@ -57,26 +56,11 @@ public abstract class EntityMixin {
         Level level = entity.level();
         if (level != null) {
             BlockPos pos = entity.blockPosition();
-            BlockState state = level.getBlockState(pos);
-            if (state.getBlock() instanceof ColoredWaterCauldronBlock || level.getFluidState(pos).getType() instanceof BaseColorWater) {
-                cir.setReturnValue(true);
-            }
-        }
-    }
-
-    @Inject(method = "isInWater", at = @At("RETURN"), cancellable = true)
-    private void colored_water$isInWater(CallbackInfoReturnable<Boolean> cir) {
-        if (cir.getReturnValue()) {
-            return;
-        }
-
-        Entity entity = (Entity) (Object) this;
-        Level level = entity.level();
-        if (level != null) {
-            BlockPos pos = entity.blockPosition();
-            BlockState state = level.getBlockState(pos);
-            if (state.getBlock() instanceof ColoredWaterCauldronBlock || level.getFluidState(pos).getType() instanceof BaseColorWater) {
-                cir.setReturnValue(true);
+            if (level.hasChunkAt(pos)) {
+                BlockState state = level.getBlockState(pos);
+                if (state.getBlock() instanceof ColoredWaterCauldronBlock) {
+                    cir.setReturnValue(true);
+                }
             }
         }
     }

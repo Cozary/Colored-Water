@@ -255,7 +255,7 @@ public final class ColoredWaterUtil {
     }
 
     public static int getColoredWaterAt(@Nullable Level level, @Nullable BlockPos pos) {
-        if (level == null || pos == null) return -1;
+        if (level == null || pos == null || !level.hasChunkAt(pos)) return -1;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
             int c = coloredWaterBlockEntity.getColor();
