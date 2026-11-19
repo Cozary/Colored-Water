@@ -14,10 +14,6 @@ neoForge {
     if (at.exists()) {
         accessTransformers.from(at.absolutePath)
     }
-    parchment {
-        minecraftVersion = parchment_minecraft
-        mappingsVersion = parchment_version
-    }
     runs {
         configureEach {
             systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
@@ -25,9 +21,11 @@ neoForge {
         }
         client {
             client()
+            gameDirectory = this.mkdir(this.file('runs/client'))
         }
         data {
             clientData()
+            gameDirectory = this.mkdir(this.file('runs/data'))
             // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
@@ -35,6 +33,8 @@ neoForge {
         }
         server {
             server()
+            this.file('runs/server').createParentDirectories()
+            gameDirectory = this.mkdir(this.file('runs/server'))
         }
     }
     mods {
@@ -49,7 +49,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
 ['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
-    configurations.named("$variant") {
+    configurations.named(variant) {
         attributes {
             attribute(loaderAttribute, 'neoforge')
         }
@@ -57,7 +57,7 @@ def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', Strin
 }
 sourceSets.configureEach {
     [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
-        configurations.named("$variant") {
+        configurations.named(variant) {
             attributes {
                 attribute(loaderAttribute, 'neoforge')
             }
@@ -66,7 +66,7 @@ sourceSets.configureEach {
 }
 
 publishMods {
-    file = jar.archiveFile
+    file = tasks.named('jar').flatMap { it.archiveFile }
     changelog = getLatestChangelog()
     type = BETA
     modLoaders.add("neoforge")
@@ -84,7 +84,7 @@ publishMods {
 
 
     modrinth {
-        accessToken = accessToken = providers.environmentVariable("MODRINTH_API_KEY")
+        accessToken = providers.environmentVariable("MODRINTH_API_KEY")
         projectId = modrinth_project_id
         minecraftVersions.add(minecraft_version)
     }
@@ -95,6 +95,7 @@ tasks.register('moveGeneratedResources', Copy) {
     group = mod_id
     description = "Moves generated resources to common module, overwriting duplicates."
     from 'src/generated'
+    exclude '.cache/**'
     into rootProject.project(':common').file('src/main/resources')
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 

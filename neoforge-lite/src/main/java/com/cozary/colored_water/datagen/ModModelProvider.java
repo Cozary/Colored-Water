@@ -1,7 +1,6 @@
 package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
-import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModItems;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -16,6 +15,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+
+import net.minecraft.client.resources.model.sprite.Material;
 
 import static net.minecraft.client.data.models.BlockModelGenerators.plainVariant;
 
@@ -91,70 +92,7 @@ public class ModModelProvider extends ModelProvider {
         generateLayeredCauldronModels(blockModels, ModCauldrons.LUMINOUS_CONDENSE_ORANGE_WATER_CAULDRON.get());
         generateLayeredCauldronModels(blockModels, ModCauldrons.LUMINOUS_CONDENSE_WHITE_WATER_CAULDRON.get());
 
-        blockModels.createTrivialCube(ModBlocks.WHITE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_WHITE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_WHITE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_WHITE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.ORANGE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_ORANGE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_ORANGE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_ORANGE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.MAGENTA_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_MAGENTA_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_MAGENTA_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_MAGENTA_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LIGHT_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_LIGHT_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_LIGHT_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_LIGHT_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.YELLOW_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_YELLOW_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_YELLOW_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_YELLOW_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LIME_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_LIME_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_LIME_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_LIME_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.PINK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_PINK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_PINK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_PINK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LIGHT_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_LIGHT_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_LIGHT_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_LIGHT_GRAY_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CYAN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_CYAN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CYAN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_CYAN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_BLUE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.PURPLE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_PURPLE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_PURPLE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_PURPLE_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.BLACK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_BLACK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_BLACK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_BLACK_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.GREEN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_GREEN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_GREEN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_GREEN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.RED_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_RED_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_RED_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_RED_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.BROWN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.CONDENSE_BROWN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_BROWN_WATER_BLOCK.get());
-        blockModels.createTrivialCube(ModBlocks.LUMINOUS_CONDENSE_BROWN_WATER_BLOCK.get());
+        // Water blocks are omitted from cube model generation so they retain the particle-only model format (colored_water:block/water_still)
 
         itemModels.generateFlatItem(ModItems.WHITE_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ModItems.CONDENSE_WHITE_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
@@ -224,13 +162,13 @@ public class ModModelProvider extends ModelProvider {
 
 
     public void generateLayeredCauldronModels(BlockModelGenerators blockModels, Block block) {
-        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
-        if (id == null) {
+        Identifier blockIdentifier = BuiltInRegistries.BLOCK.getKey(block);
+        if (blockIdentifier == null) {
             throw new IllegalStateException("Block not registered: " + block);
         }
 
         TextureMapping textures = TextureMapping.cauldron(
-                Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still")
+                new Material(Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still"), true)
         );
 
         blockModels.blockStateOutput.accept(

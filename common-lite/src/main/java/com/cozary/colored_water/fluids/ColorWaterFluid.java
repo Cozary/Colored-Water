@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -29,12 +30,12 @@ public abstract class ColorWaterFluid extends BaseColorWater {
     protected final Supplier<? extends Fluid> flowingSupplier;
     protected final Supplier<? extends Item> bucketSupplier;
     protected final Supplier<? extends Block> blockSupplier;
-    protected final net.minecraft.world.item.DyeColor dyeColor;
+    protected final DyeColor dyeColor;
     protected final int tintColor;
     protected final int sparkleColor;
     protected final boolean condensed;
 
-    public ColorWaterFluid(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, net.minecraft.world.item.DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
+    public ColorWaterFluid(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
         this.sourceSupplier = sourceSupplier;
         this.flowingSupplier = flowingSupplier;
         this.bucketSupplier = bucketSupplier;
@@ -61,7 +62,7 @@ public abstract class ColorWaterFluid extends BaseColorWater {
     }
 
     @Override
-    protected BlockState createLegacyBlock(FluidState state) {
+    public BlockState createLegacyBlock(FluidState state) {
         return this.blockSupplier.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
     }
 
@@ -74,7 +75,9 @@ public abstract class ColorWaterFluid extends BaseColorWater {
     public void animateTick(Level level, BlockPos blockPos, FluidState fluidState, RandomSource random) {
         if (!fluidState.isSource() && !fluidState.getValue(FALLING)) {
             if (random.nextInt(64) == 0) {
-                level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
+                level.playLocalSound((double) blockPos.getX() + 0.5, (double) blockPos.getY() + 0.5, (double) blockPos.getZ() + 0.5,
+                        SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS,
+                        random.nextFloat() * 0.25F + 0.75F, random.nextFloat() + 0.5F, false);
             }
         } else if (random.nextInt(10) == 0) {
             level.addParticle(new ColorParticleOptions(ModParticles.UNDERWATER.get(), this.tintColor),
@@ -84,7 +87,7 @@ public abstract class ColorWaterFluid extends BaseColorWater {
                     0.0, 0.0, 0.0);
         }
 
-        if (this.sparkleColor != -1 && level.random.nextFloat() < 0.4F) {
+        if (this.sparkleColor != -1 && random.nextFloat() < 0.4F) {
             level.addParticle(SparkleParticleOptions.of(this.sparkleColor),
                     (double) blockPos.getX() + random.nextDouble(),
                     (double) blockPos.getY() + random.nextDouble(),
@@ -93,7 +96,7 @@ public abstract class ColorWaterFluid extends BaseColorWater {
         }
     }
 
-    public net.minecraft.world.item.DyeColor getDyeColor() {
+    public DyeColor getDyeColor() {
         return this.dyeColor;
     }
 
@@ -114,25 +117,25 @@ public abstract class ColorWaterFluid extends BaseColorWater {
     }
 
     @Override
-    protected void spreadTo(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState) {
-        FluidState targetFluidState = level.getFluidState(pos);
+    protected void spreadTo(LevelAccessor level, BlockPos blockPosition, BlockState blockState, Direction direction, FluidState fluidState) {
+        FluidState targetFluidState = level.getFluidState(blockPosition);
         if (targetFluidState.is(FluidTags.LAVA)) {
             if (blockState.getBlock() instanceof LiquidBlock) {
                 if (targetFluidState.isSource()) {
-                    level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                    level.setBlock(blockPosition, Blocks.OBSIDIAN.defaultBlockState(), 3);
                 } else {
-                    level.setBlock(pos, Blocks.COBBLESTONE.defaultBlockState(), 3);
+                    level.setBlock(blockPosition, Blocks.COBBLESTONE.defaultBlockState(), 3);
                 }
             }
-            level.levelEvent(1501, pos, 0);
+            level.levelEvent(1501, blockPosition, 0);
             return;
         }
 
-        super.spreadTo(level, pos, blockState, direction, fluidState);
+        super.spreadTo(level, blockPosition, blockState, direction, fluidState);
     }
 
     public static class Source extends ColorWaterFluid {
-        public Source(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, net.minecraft.world.item.DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
+        public Source(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
             super(sourceSupplier, flowingSupplier, bucketSupplier, blockSupplier, dyeColor, tintColor, sparkleColor, condensed);
         }
 
@@ -148,7 +151,7 @@ public abstract class ColorWaterFluid extends BaseColorWater {
     }
 
     public static class Flowing extends ColorWaterFluid {
-        public Flowing(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, net.minecraft.world.item.DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
+        public Flowing(Supplier<? extends Fluid> sourceSupplier, Supplier<? extends Fluid> flowingSupplier, Supplier<? extends Item> bucketSupplier, Supplier<? extends Block> blockSupplier, DyeColor dyeColor, int tintColor, int sparkleColor, boolean condensed) {
             super(sourceSupplier, flowingSupplier, bucketSupplier, blockSupplier, dyeColor, tintColor, sparkleColor, condensed);
         }
 

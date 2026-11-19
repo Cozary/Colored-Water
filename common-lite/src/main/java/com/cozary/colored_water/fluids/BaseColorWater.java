@@ -52,8 +52,8 @@ public abstract class BaseColorWater extends FlowingFluid {
     }
 
     @Override
-    public boolean isSame(Fluid pFluid) {
-        return pFluid == getSource() || pFluid == getFlowing() || pFluid == Fluids.WATER || pFluid == Fluids.FLOWING_WATER;
+    public boolean isSame(Fluid fluid) {
+        return fluid == getSource() || fluid == getFlowing() || fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER || fluid instanceof BaseColorWater;
     }
 
     @Override

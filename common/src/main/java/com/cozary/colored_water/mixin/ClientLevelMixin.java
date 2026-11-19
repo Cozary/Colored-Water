@@ -53,8 +53,8 @@ public abstract class ClientLevelMixin {
             }
 
             if (luminosity > 0) {
-                double particleX = Mth.lerp(clientLevel.random.nextDouble(), xStart, xEnd);
-                double particleZ = Mth.lerp(clientLevel.random.nextDouble(), zStart, zEnd);
+                double particleX = Mth.lerp(clientLevel.getRandom().nextDouble(), xStart, xEnd);
+                double particleZ = Mth.lerp(clientLevel.getRandom().nextDouble(), zStart, zEnd);
                 clientLevel.addParticle(new SparkleParticleOptions(colorParticleOptions.color()), particleX, y, particleZ, 0.01, -0.02, 0.01);
             }
         }

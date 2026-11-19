@@ -1,16 +1,19 @@
 package com.cozary.colored_water.mixin;
 
 import com.cozary.colored_water.util.ColoredWaterUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.QuadInstance;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Applies custom opacity (alpha) to tinted cauldron water quads during model rendering.
@@ -18,13 +21,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ModelBlockRenderer.class)
 public class ModelBlockRendererMixin {
 
-    @Redirect(method = "putQuadData", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;putBulkData(Lcom/mojang/blaze3d/vertex/PoseStack$Pose;Lnet/minecraft/client/renderer/block/model/BakedQuad;[FFFFF[II)V"))
-    private void coloredWater$applyAlphaToCauldronQuad(VertexConsumer instance, PoseStack.Pose pose, BakedQuad quad, float[] brightnesses, float red, float green, float blue, float alpha, int[] packedLight, int packedOverlay, BlockAndTintGetter level, BlockState state, BlockPos pos) {
-        float targetAlpha = alpha;
-        if (state != null && quad.isTinted() && ColoredWaterUtil.isModCauldron(state.getBlock())) {
-            float ratio = ColoredWaterUtil.isCondensedCauldron(state.getBlock()) ? 1.0F : ((float) ColoredWaterUtil.DEFAULT_ALPHA / 255.0F);
-            targetAlpha = alpha * ratio;
+    @Shadow
+    private QuadInstance quadInstance;
+
+    @Inject(method = "putQuadWithTint", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockQuadOutput;put(FFFLnet/minecraft/client/resources/model/geometry/BakedQuad;Lcom/mojang/blaze3d/vertex/QuadInstance;)V"))
+    private void coloredWater$applyAlphaToCauldronQuad(BlockQuadOutput output, float x, float y, float z, BlockAndTintGetter level, BlockState state, BlockPos blockPosition, BakedQuad quad, CallbackInfo callbackInfo) {
+        if (state != null && quad.materialInfo().tintIndex() != -1 && ColoredWaterUtil.isModCauldron(state.getBlock())) {
+            int a = ColoredWaterUtil.isCondensedCauldron(state.getBlock()) ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+            for (int i = 0; i < 4; i++) {
+                int c = this.quadInstance.getColor(i);
+                this.quadInstance.setColor(i, ARGB.color(a, ARGB.red(c), ARGB.green(c), ARGB.blue(c)));
+            }
         }
-        instance.putBulkData(pose, quad, brightnesses, red, green, blue, targetAlpha, packedLight, packedOverlay);
     }
 }

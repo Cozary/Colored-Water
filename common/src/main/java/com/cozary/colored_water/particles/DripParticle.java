@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.material.Fluid;
@@ -50,8 +51,8 @@ public class DripParticle extends SingleQuadParticle {
     }
 
     @Override
-    public int getLightColor(float partialTick) {
-        return this.isGlowing ? 240 : super.getLightColor(partialTick);
+    public int getLightCoords(float partialTick) {
+        return this.isGlowing ? LightCoordsUtil.FULL_BRIGHT : super.getLightCoords(partialTick);
     }
 
     @Override

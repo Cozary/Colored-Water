@@ -35,4 +35,3 @@ public class ColoredWaterForge {
         ColoredWater.registerCommands(event.getDispatcher());
     }
 }
-

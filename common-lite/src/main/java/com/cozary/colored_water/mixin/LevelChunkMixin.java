@@ -19,58 +19,58 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LevelChunkMixin {
 
     @Shadow
-    public abstract BlockState getBlockState(BlockPos pos);
+    public abstract BlockState getBlockState(BlockPos blockPosition);
 
     @Inject(method = "getBlockEntity(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk$EntityCreationType;)Lnet/minecraft/world/level/block/entity/BlockEntity;", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$getWaterloggedBlockEntity(BlockPos pos, LevelChunk.EntityCreationType creationType, CallbackInfoReturnable<BlockEntity> cir) {
+    private void coloredWater$getWaterloggedBlockEntity(BlockPos blockPosition, LevelChunk.EntityCreationType creationType, CallbackInfoReturnable<BlockEntity> callbackInfoReturnable) {
         LevelChunk chunk = (LevelChunk) (Object) this;
-        BlockPos immutablePos = pos.immutable();
-        BlockEntity existingBe = chunk.getBlockEntities().get(immutablePos);
-        if (existingBe != null) {
-            if (!existingBe.isRemoved()) {
-                cir.setReturnValue(existingBe);
+        BlockPos immutablePosition = blockPosition.immutable();
+        BlockEntity existingBlockEntity = chunk.getBlockEntities().get(immutablePosition);
+        if (existingBlockEntity != null) {
+            if (!existingBlockEntity.isRemoved()) {
+                callbackInfoReturnable.setReturnValue(existingBlockEntity);
                 return;
             } else {
-                chunk.getBlockEntities().remove(immutablePos);
+                chunk.getBlockEntities().remove(immutablePosition);
             }
         }
     }
 
     @Inject(method = "createBlockEntity", at = @At("RETURN"), cancellable = true)
-    private void coloredWater$createWaterloggedBlockEntity(BlockPos pos, CallbackInfoReturnable<BlockEntity> cir) {
-        if (cir.getReturnValue() == null) {
-            BlockState state = this.getBlockState(pos);
+    private void coloredWater$createWaterloggedBlockEntity(BlockPos blockPosition, CallbackInfoReturnable<BlockEntity> callbackInfoReturnable) {
+        if (callbackInfoReturnable.getReturnValue() == null) {
+            BlockState state = this.getBlockState(blockPosition);
             boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
             if (isWaterlogged || state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.FROSTED_ICE)) {
-                cir.setReturnValue(new WaterloggedColorBlockEntity(pos.immutable(), state));
+                callbackInfoReturnable.setReturnValue(new WaterloggedColorBlockEntity(blockPosition.immutable(), state));
             }
         }
     }
 
     @Inject(method = "setBlockEntity", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$allowWaterloggedBlockEntity(BlockEntity blockEntity, CallbackInfo ci) {
+    private void coloredWater$allowWaterloggedBlockEntity(BlockEntity blockEntity, CallbackInfo callbackInfo) {
         if (blockEntity instanceof WaterloggedColorBlockEntity) {
-            BlockPos pos = blockEntity.getBlockPos().immutable();
-            BlockState state = this.getBlockState(pos);
+            BlockPos blockPosition = blockEntity.getBlockPos().immutable();
+            BlockState state = this.getBlockState(blockPosition);
             boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
             if (isWaterlogged || state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.FROSTED_ICE)) {
                 LevelChunk chunk = (LevelChunk) (Object) this;
                 blockEntity.setLevel(chunk.getLevel());
-                BlockEntity oldBlockEntity = chunk.getBlockEntities().put(pos, blockEntity);
+                BlockEntity oldBlockEntity = chunk.getBlockEntities().put(blockPosition, blockEntity);
                 if (oldBlockEntity != null && oldBlockEntity != blockEntity) {
                     oldBlockEntity.setRemoved();
                 }
-                ci.cancel();
+                callbackInfo.cancel();
             }
         }
     }
 
     @Inject(method = "setBlockState", at = @At("HEAD"))
-    private void coloredWater$onSetBlockState(BlockPos pos, BlockState state, int flags,
-                                              CallbackInfoReturnable<BlockState> cir) {
-        BlockPos immutablePos = pos.immutable();
+    private void coloredWater$onSetBlockState(BlockPos blockPosition, BlockState state, int flags,
+                                              CallbackInfoReturnable<BlockState> callbackInfoReturnable) {
+        BlockPos immutablePosition = blockPosition.immutable();
         LevelChunk chunk = (LevelChunk) (Object) this;
-        BlockEntity existingBlockEntity = chunk.getBlockEntities().get(immutablePos);
+        BlockEntity existingBlockEntity = chunk.getBlockEntities().get(immutablePosition);
 
         if (existingBlockEntity instanceof WaterloggedColorBlockEntity) {
             boolean isNewWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
@@ -80,29 +80,29 @@ public abstract class LevelChunkMixin {
                 existingBlockEntity.setBlockState(state);
                 return;
             }
-            chunk.getBlockEntities().remove(immutablePos);
+            chunk.getBlockEntities().remove(immutablePosition);
             existingBlockEntity.setRemoved();
         } else {
             boolean isNewWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
             if (isNewWaterlogged || state.is(Blocks.FROSTED_ICE) || state.is(Blocks.BUBBLE_COLUMN)) {
-                BlockState oldState = chunk.getBlockState(immutablePos);
-                if (oldState.getFluidState().getType() instanceof ColorWaterFluid cwf) {
-                    WaterloggedColorBlockEntity newBe = new WaterloggedColorBlockEntity(immutablePos, state);
-                    newBe.setLevel(chunk.getLevel());
-                    newBe.setFluid((ColorWaterFluid) cwf.getSource());
-                    chunk.getBlockEntities().put(immutablePos, newBe);
+                BlockState oldState = chunk.getBlockState(immutablePosition);
+                if (oldState.getFluidState().getType() instanceof ColorWaterFluid colorWaterFluid) {
+                    WaterloggedColorBlockEntity newBlockEntity = new WaterloggedColorBlockEntity(immutablePosition, state);
+                    newBlockEntity.setLevel(chunk.getLevel());
+                    newBlockEntity.setFluid((ColorWaterFluid) colorWaterFluid.getSource());
+                    chunk.getBlockEntities().put(immutablePosition, newBlockEntity);
                 }
             }
         }
     }
 
     @Inject(method = "removeBlockEntity", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$preventRemovalOnPreservedBlocks(BlockPos pos, CallbackInfo ci) {
-        BlockState state = this.getBlockState(pos);
+    private void coloredWater$preventRemovalOnPreservedBlocks(BlockPos blockPosition, CallbackInfo callbackInfo) {
+        BlockState state = this.getBlockState(blockPosition);
         if (state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.FROSTED_ICE) || (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED))) {
-            BlockEntity existingBlockEntity = ((LevelChunk) (Object) this).getBlockEntities().get(pos.immutable());
+            BlockEntity existingBlockEntity = ((LevelChunk) (Object) this).getBlockEntities().get(blockPosition.immutable());
             if (existingBlockEntity instanceof WaterloggedColorBlockEntity) {
-                ci.cancel();
+                callbackInfo.cancel();
             }
         }
     }

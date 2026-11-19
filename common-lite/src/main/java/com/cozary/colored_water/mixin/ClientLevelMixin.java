@@ -37,8 +37,8 @@ public abstract class ClientLevelMixin {
             BlockPos fluidPos = BlockPos.containing(xStart, y + 1.05, zStart);
             FluidState fluidState = clientLevel.getFluidState(fluidPos);
             if (fluidState.getType() instanceof ColorWaterFluid colorWaterFluid && colorWaterFluid.isLuminous()) {
-                double particleX = Mth.lerp(clientLevel.random.nextDouble(), xStart, xEnd);
-                double particleZ = Mth.lerp(clientLevel.random.nextDouble(), zStart, zEnd);
+                double particleX = Mth.lerp(clientLevel.getRandom().nextDouble(), xStart, xEnd);
+                double particleZ = Mth.lerp(clientLevel.getRandom().nextDouble(), zStart, zEnd);
                 clientLevel.addParticle(SparkleParticleOptions.of(colorWaterFluid.getSparkleColor()), particleX, y, particleZ, 0.01, -0.02, 0.01);
             }
         }

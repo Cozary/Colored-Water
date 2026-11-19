@@ -5,7 +5,7 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -32,9 +32,9 @@ public final class ColoredWaterFog {
         }
 
         if (color != -1) {
-            BlockEntity be = level.getBlockEntity(activePos);
-            int luminosity = be instanceof ColoredWaterBlockEntity cwbe ? cwbe.getLuminosity() : 0;
-            float ambientLight = LightTexture.getBrightness(level.dimensionType(), level.getMaxLocalRawBrightness(activePos));
+            BlockEntity blockEntity = level.getBlockEntity(activePos);
+            int luminosity = blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity ? coloredWaterBlockEntity.getLuminosity() : 0;
+            float ambientLight = Lightmap.getBrightness(level.dimensionType(), level.getMaxLocalRawBrightness(activePos));
             float lumFactor = (float) Mth.clamp(luminosity, 0, 15) / 15.0F;
             float effectiveLight = Math.max(ambientLight, lumFactor);
             float waterVision = 1.0F;
@@ -83,9 +83,9 @@ public final class ColoredWaterFog {
             return false;
         }
 
-        BlockEntity be = level.getBlockEntity(activePos);
-        int luminosity = be instanceof ColoredWaterBlockEntity cwbe ? cwbe.getLuminosity() : 0;
-        boolean condensed = be instanceof ColoredWaterBlockEntity cwbe && cwbe.isCondensed();
+        BlockEntity blockEntity = level.getBlockEntity(activePos);
+        int luminosity = blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity ? coloredWaterBlockEntity.getLuminosity() : 0;
+        boolean condensed = blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.isCondensed();
         int alpha = ColoredWaterUtil.getAlpha(color);
         if (alpha == 0) {
             alpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;

@@ -17,16 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class LevelMixin {
 
     @Shadow
-    public abstract BlockEntity getBlockEntity(BlockPos pos);
+    public abstract BlockEntity getBlockEntity(BlockPos blockPosition);
 
     @Inject(method = "getFluidState", at = @At("RETURN"), cancellable = true)
-    private void coloredWater$getWaterloggedFluidState(BlockPos pos, CallbackInfoReturnable<FluidState> cir) {
-        FluidState original = cir.getReturnValue();
+    private void coloredWater$getWaterloggedFluidState(BlockPos blockPosition, CallbackInfoReturnable<FluidState> callbackInfoReturnable) {
+        FluidState original = callbackInfoReturnable.getReturnValue();
         if (original != null && original.is(Fluids.WATER)) {
-            BlockEntity blockEntity = this.getBlockEntity(pos);
-            if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-                ColorWaterFluid fluid = waterloggedBe.getFluid();
-                cir.setReturnValue(fluid.getSource(false));
+            BlockEntity blockEntity = this.getBlockEntity(blockPosition);
+            if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+                ColorWaterFluid fluid = waterloggedBlockEntity.getFluid();
+                callbackInfoReturnable.setReturnValue(fluid.getSource(false));
             }
         }
     }

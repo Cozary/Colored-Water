@@ -1,7 +1,7 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,7 +22,7 @@ public class ModTabs {
     private static final ResourceKey<CreativeModeTab> ITEM_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, ColoredWater.MOD_ID + "_tab"));
 
     public static void loadClass() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ITEM_GROUP, FabricItemGroup.builder()
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ITEM_GROUP, FabricCreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.colored_water"))
                 .icon(() -> {
                     ItemStack stack = new ItemStack(ModItems.COLORED_WATER_BUCKET.get());

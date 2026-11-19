@@ -1,7 +1,6 @@
 package com.cozary.colored_water.datagen;
 
 import com.cozary.colored_water.ColoredWater;
-import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModItems;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -16,7 +15,7 @@ public class ModModelProvider extends ModelProvider {
 
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        blockModels.createTrivialCube(ModBlocks.COLORED_WATER_BLOCK.get());
+        // Water blocks are omitted from cube model generation so they retain the particle-only model format (colored_water:block/water_still)
         itemModels.generateFlatItem(ModItems.COLORED_WATER_BUCKET.get(), ModelTemplates.FLAT_ITEM);
     }
 }

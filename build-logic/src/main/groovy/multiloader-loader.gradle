@@ -15,16 +15,13 @@ def commonProjectName = project.name.endsWith('-lite') ? ':common-lite' : ':comm
 
 dependencies {
     compileOnly(project(commonProjectName)) {
-        capabilities {
-            requireCapability "$group:$mod_id"
-        }
         def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
         attributes {
             attribute(loaderAttribute, 'common')
         }
     }
-    commonJava project(path: commonProjectName, configuration: 'commonJava')
-    commonResources project(path: commonProjectName, configuration: 'commonResources')
+    commonJava(project(path: commonProjectName, configuration: 'commonJava'))
+    commonResources(project(path: commonProjectName, configuration: 'commonResources'))
 }
 
 tasks.named('compileJava', JavaCompile) {

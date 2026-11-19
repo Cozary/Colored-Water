@@ -55,7 +55,7 @@ public class ModTabs {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("Condensed", condensed);
         tag.putInt("Luminosity", luminosity);
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, t -> t.merge(tag));
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, customDataTag -> customDataTag.merge(tag));
         return stack;
     }
 }

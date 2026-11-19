@@ -41,11 +41,11 @@ public class ColoredWaterCommand {
         dispatcher.register(Commands.literal("coloredwater")
                 .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(Commands.argument("hexcolor", StringArgumentType.string())
-                        .executes(ctx -> executeCommand(ctx, false, false))
+                        .executes(commandContext -> executeCommand(commandContext, false, false))
                         .then(Commands.argument("luminosity", IntegerArgumentType.integer(0, 15))
-                                .executes(ctx -> executeCommand(ctx, true, false))
+                                .executes(commandContext -> executeCommand(commandContext, true, false))
                                 .then(Commands.argument("opacity", IntegerArgumentType.integer(0, 255))
-                                        .executes(ctx -> executeCommand(ctx, true, true))))));
+                                        .executes(commandContext -> executeCommand(commandContext, true, true))))));
     }
 
     private static int executeCommand(CommandContext<CommandSourceStack> context, boolean hasLuminosityArg, boolean hasOpacityArg) throws CommandSyntaxException {
@@ -104,9 +104,10 @@ public class ColoredWaterCommand {
                 BlockPos targetPos = hitResult.getBlockPos();
                 BlockEntity blockEntity = serverPlayer.level().getBlockEntity(targetPos);
                 if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
-                    coloredWaterBlockEntity.setColor(argbColor, null, true);
                     coloredWaterBlockEntity.setCondensed(isCondensed);
+                    coloredWaterBlockEntity.setColor(argbColor, null, true);
                     coloredWaterBlockEntity.setLuminosity(luminosity);
+                    coloredWaterBlockEntity.setBaseProperties(argbColor, isCondensed, luminosity);
                 } else if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
                     cauldronBlockEntity.setProperties(argbColor, isCondensed, luminosity);
                     serverPlayer.level().setBlock(targetPos, serverPlayer.level().getBlockState(targetPos)

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FabricWaterFogEnvironmentMixin {
 
     @Inject(method = "setupFog", at = @At("RETURN"))
-    private void coloredWater$setupFog(FogData fogData, Camera camera, ClientLevel level, float renderDistance, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void coloredWater$setupFog(FogData fogData, Camera camera, ClientLevel level, float renderDistance, DeltaTracker deltaTracker, CallbackInfo callbackInfo) {
         ColoredWaterFog.modifyFogRender(camera, level, renderDistance, fogData);
     }
 }

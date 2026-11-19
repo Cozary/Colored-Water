@@ -9,7 +9,7 @@ public class ModRecipe {
 
     public static final RegistrationProvider<RecipeSerializer<?>> RECIPES = RegistrationProvider.get(Registries.RECIPE_SERIALIZER, ColoredWater.MOD_ID);
 
-    public static final RegistryObject<RecipeSerializer<?>> CONTAINER_CRAFTING_RECIPE = RECIPES.register("container_shapeless_recipe_cw", ContainerCraftingRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<?>> CONTAINER_CRAFTING_RECIPE = RECIPES.register("container_shapeless_recipe_cw", () -> ContainerCraftingRecipe.SERIALIZER);
 
     public static void loadClass() {
     }

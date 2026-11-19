@@ -56,9 +56,9 @@ public class ColoredWaterDispenserBehavior {
                 Level level = source.level();
                 BlockState blockstate = level.getBlockState(blockpos);
                 if (blockstate.hasProperty(BlockStateProperties.WATERLOGGED) && blockstate.getValue(BlockStateProperties.WATERLOGGED)) {
-                    BlockEntity be = level.getBlockEntity(blockpos);
-                    if (be instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-                        ItemStack filledStack = new ItemStack(waterloggedBe.getFluid().getBucket());
+                    BlockEntity blockEntity = level.getBlockEntity(blockpos);
+                    if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+                        ItemStack filledStack = new ItemStack(waterloggedBlockEntity.getFluid().getBucket());
                         level.setBlock(blockpos, blockstate.setValue(BlockStateProperties.WATERLOGGED, false), 3);
                         level.gameEvent(null, GameEvent.FLUID_PICKUP, blockpos);
                         return this.consumeWithRemainder(source, stack, filledStack);

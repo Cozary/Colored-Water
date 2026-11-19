@@ -2,9 +2,11 @@ package com.cozary.colored_water.cauldrons.behaviour;
 
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModItems;
+import com.cozary.colored_water.mixin.CauldronInteractionDispatcherInvoker;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
@@ -16,12 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -31,12 +32,36 @@ import static net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL;
 
 public final class CauldronBehaviorHelper {
 
-    public record CauldronGroup(DyeColor dyeColor, Supplier<Block> normalCauldron, Supplier<Block> condenseCauldron, Supplier<Block> luminousCauldron, Supplier<Block> luminousCondenseCauldron, Supplier<Item> normalBucket, Supplier<Item> condenseBucket, Supplier<Item> luminousBucket, Supplier<Item> luminousCondenseBucket, CauldronInteraction.InteractionMap normalMap, CauldronInteraction.InteractionMap condenseMap, CauldronInteraction.InteractionMap luminousMap, CauldronInteraction.InteractionMap luminousCondenseMap) { }
+    public record CauldronGroup(
+            DyeColor dyeColor,
+            Supplier<Block> normalCauldron, Supplier<Block> condenseCauldron,
+            Supplier<Block> luminousCauldron, Supplier<Block> luminousCondenseCauldron,
+            Supplier<Item> normalBucket, Supplier<Item> condenseBucket,
+            Supplier<Item> luminousBucket, Supplier<Item> luminousCondenseBucket,
+            CauldronInteraction.Dispatcher normalMap, CauldronInteraction.Dispatcher condenseMap,
+            CauldronInteraction.Dispatcher luminousMap, CauldronInteraction.Dispatcher luminousCondenseMap
+    ) { }
 
     private static final Map<DyeColor, CauldronGroup> GROUPS_BY_COLOR = new EnumMap<>(DyeColor.class);
     private static final List<CauldronGroup> ALL_GROUPS = new ArrayList<>();
 
-    private static void registerGroup(DyeColor color, Supplier<Block> normalCauldron, Supplier<Block> condenseCauldron, Supplier<Block> luminousCauldron, Supplier<Block> luminousCondenseCauldron, Supplier<Item> normalBucket, Supplier<Item> condenseBucket, Supplier<Item> luminousBucket, Supplier<Item> luminousCondenseBucket, CauldronInteraction.InteractionMap normalMap, CauldronInteraction.InteractionMap condenseMap, CauldronInteraction.InteractionMap luminousMap, CauldronInteraction.InteractionMap luminousCondenseMap) {
+    public static CauldronGroup getGroup(DyeColor color) {
+        return GROUPS_BY_COLOR.get(color);
+    }
+
+    private static void put(CauldronInteraction.Dispatcher dispatcher, Item item, CauldronInteraction interaction) {
+        ((CauldronInteractionDispatcherInvoker) dispatcher).coloredWater$put(item, interaction);
+    }
+
+    private static void registerGroup(
+            DyeColor color,
+            Supplier<Block> normalCauldron, Supplier<Block> condenseCauldron,
+            Supplier<Block> luminousCauldron, Supplier<Block> luminousCondenseCauldron,
+            Supplier<Item> normalBucket, Supplier<Item> condenseBucket,
+            Supplier<Item> luminousBucket, Supplier<Item> luminousCondenseBucket,
+            CauldronInteraction.Dispatcher normalMap, CauldronInteraction.Dispatcher condenseMap,
+            CauldronInteraction.Dispatcher luminousMap, CauldronInteraction.Dispatcher luminousCondenseMap
+    ) {
         CauldronGroup group = new CauldronGroup(color, normalCauldron, condenseCauldron, luminousCauldron, luminousCondenseCauldron, normalBucket, condenseBucket, luminousBucket, luminousCondenseBucket, normalMap, condenseMap, luminousMap, luminousCondenseMap);
         GROUPS_BY_COLOR.put(color, group);
         ALL_GROUPS.add(group);
@@ -172,11 +197,7 @@ public final class CauldronBehaviorHelper {
                 LuminousCauldronBehavior.LUMINOUS_BLACK_CAULDRON_BEHAVIOR, LuminousCondenseCauldronBehavior.LUMINOUS_CONDENSE_BLACK_CAULDRON_BEHAVIOR);
     }
 
-    public static CauldronGroup getGroup(DyeColor color) {
-        return GROUPS_BY_COLOR.get(color);
-    }
-
-    public static synchronized void init() {
+    public static void init() {
         for (CauldronGroup group : ALL_GROUPS) {
             setupBucketFillOnEmpty(group);
             setupGroup(group, group.normalMap(), group.normalBucket(), group.normalCauldron(), Variant.NORMAL);
@@ -185,23 +206,33 @@ public final class CauldronBehaviorHelper {
             setupGroup(group, group.luminousCondenseMap(), group.luminousCondenseBucket(), group.luminousCondenseCauldron(), Variant.LUMINOUS_CONDENSED);
         }
 
-        // Vanilla Water Cauldron dyed with DyeItem -> becomes normal colored cauldron
+        // Vanilla Water Cauldron dyed with Dye item -> becomes normal colored cauldron
+        CauldronInteraction dyeWaterVanilla = (state, level, blockPosition, player, hand, stack) -> {
+            DyeColor dyeColor = stack.get(DataComponents.DYE);
+            if (dyeColor == null) return InteractionResult.PASS;
+            CauldronGroup targetGroup = GROUPS_BY_COLOR.get(dyeColor);
+            if (targetGroup == null) return InteractionResult.PASS;
+            if (!level.isClientSide()) {
+                int currentLevel = state.getValue(LEVEL);
+                level.setBlock(blockPosition, targetGroup.normalCauldron().get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
+                if (!player.isCreative()) {
+                    stack.shrink(1);
+                }
+                player.awardStat(Stats.USE_CAULDRON);
+                level.playSound(null, blockPosition, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return InteractionResult.SUCCESS;
+        };
+
+        for (DyeColor color : DyeColor.values()) {
+            put(CauldronInteractions.WATER, getDyeItem(color), dyeWaterVanilla);
+        }
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item instanceof DyeItem dye) {
-                CauldronInteraction.WATER.map().put(item, (state, level, pos, player, hand, stack) -> {
-                    CauldronGroup targetGroup = GROUPS_BY_COLOR.get(dye.getDyeColor());
-                    if (targetGroup == null) return InteractionResult.PASS;
-                    if (!level.isClientSide()) {
-                        int currentLevel = state.getValue(LEVEL);
-                        level.setBlock(pos, targetGroup.normalCauldron().get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
-                        if (!player.isCreative()) {
-                            stack.shrink(1);
-                        }
-                        player.awardStat(Stats.USE_CAULDRON);
-                        level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    }
-                    return InteractionResult.SUCCESS;
-                });
+            try {
+                if (item.components().has(DataComponents.DYE)) {
+                    put(CauldronInteractions.WATER, item, dyeWaterVanilla);
+                }
+            } catch (Exception ignored) {
             }
         }
     }
@@ -218,14 +249,14 @@ public final class CauldronBehaviorHelper {
     }
 
     private static void registerBucketToEmpty(Item bucket, Supplier<Block> targetCauldron) {
-        CauldronInteraction.EMPTY.map().put(bucket, (state, level, pos, player, hand, stack) -> {
+        put(CauldronInteractions.EMPTY, bucket, (state, level, blockPosition, player, hand, stack) -> {
             if (!level.isClientSide()) {
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(bucket));
-                level.setBlockAndUpdate(pos, targetCauldron.get().defaultBlockState().setValue(LEVEL, 1));
-                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.gameEvent(null, net.minecraft.world.level.gameevent.GameEvent.FLUID_PLACE, pos);
+                level.setBlockAndUpdate(blockPosition, targetCauldron.get().defaultBlockState().setValue(LEVEL, 1));
+                level.playSound(null, blockPosition, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.gameEvent(null, GameEvent.FLUID_PLACE, blockPosition);
             }
             return InteractionResult.SUCCESS;
         });
@@ -233,15 +264,13 @@ public final class CauldronBehaviorHelper {
 
     private static void setupGroup(
             CauldronGroup group,
-            CauldronInteraction.InteractionMap map,
+            CauldronInteraction.Dispatcher map,
             Supplier<Item> selfBucket,
             Supplier<Block> selfCauldron,
             Variant variant
     ) {
-        var interactionMap = map.map();
-
         // 1. Take bucket - empties the cauldron completely in lite
-        interactionMap.put(Items.BUCKET, (state, level, pos, player, hand, stack) -> {
+        put(map, Items.BUCKET, (state, level, blockPosition, player, hand, stack) -> {
             if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel <= 0) return InteractionResult.PASS;
@@ -252,14 +281,14 @@ public final class CauldronBehaviorHelper {
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(Items.BUCKET));
 
-                level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
-                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.setBlock(blockPosition, Blocks.CAULDRON.defaultBlockState(), 3);
+                level.playSound(null, blockPosition, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         });
 
         // 2. Same bucket adds 1 level up to level 3
-        interactionMap.put(selfBucket.get(), (state, level, pos, player, hand, stack) -> {
+        put(map, selfBucket.get(), (state, level, blockPosition, player, hand, stack) -> {
             if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel >= 3) return InteractionResult.PASS;
@@ -268,14 +297,14 @@ public final class CauldronBehaviorHelper {
                 player.setItemInHand(hand, getEmptySuccessItem(stack, player));
                 player.awardStat(Stats.USE_CAULDRON);
                 player.awardStat(Stats.ITEM_USED.get(selfBucket.get()));
-                level.setBlockAndUpdate(pos, state.setValue(LEVEL, currentLevel + 1));
-                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.setBlockAndUpdate(blockPosition, state.setValue(LEVEL, currentLevel + 1));
+                level.playSound(null, blockPosition, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         });
 
         // 3. Dyeable items (leather armor, wolf armor, horse armor)
-        CauldronInteraction dyeableInteraction = (state, level, pos, player, hand, stack) -> {
+        CauldronInteraction dyeableInteraction = (state, level, blockPosition, player, hand, stack) -> {
             if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel <= 0) return InteractionResult.PASS;
@@ -300,26 +329,26 @@ public final class CauldronBehaviorHelper {
                 player.awardStat(Stats.USE_CAULDRON);
                 int newLevel = currentLevel - 1;
                 if (newLevel <= 0) {
-                    level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
+                    level.setBlock(blockPosition, Blocks.CAULDRON.defaultBlockState(), 3);
                 } else {
-                    level.setBlock(pos, state.setValue(LEVEL, newLevel), 3);
+                    level.setBlock(blockPosition, state.setValue(LEVEL, newLevel), 3);
                 }
-                level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, blockPosition, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         };
 
-        interactionMap.put(Items.LEATHER_HELMET, dyeableInteraction);
-        interactionMap.put(Items.LEATHER_CHESTPLATE, dyeableInteraction);
-        interactionMap.put(Items.LEATHER_LEGGINGS, dyeableInteraction);
-        interactionMap.put(Items.LEATHER_BOOTS, dyeableInteraction);
-        interactionMap.put(Items.LEATHER_HORSE_ARMOR, dyeableInteraction);
-        interactionMap.put(Items.WOLF_ARMOR, dyeableInteraction);
+        put(map, Items.LEATHER_HELMET, dyeableInteraction);
+        put(map, Items.LEATHER_CHESTPLATE, dyeableInteraction);
+        put(map, Items.LEATHER_LEGGINGS, dyeableInteraction);
+        put(map, Items.LEATHER_BOOTS, dyeableInteraction);
+        put(map, Items.LEATHER_HORSE_ARMOR, dyeableInteraction);
+        put(map, Items.WOLF_ARMOR, dyeableInteraction);
 
         // 4. Shulker Boxes
         DyeColor dyeColor = group.dyeColor();
-        Item targetShulker = ShulkerBoxBlock.getBlockByColor(dyeColor).asItem();
-        CauldronInteraction shulkerInteraction = (state, level, pos, player, hand, stack) -> {
+        Item targetShulker = getShulkerBoxItem(dyeColor);
+        CauldronInteraction shulkerInteraction = (state, level, blockPosition, player, hand, stack) -> {
             if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel <= 0 || stack.is(targetShulker)) return InteractionResult.PASS;
@@ -330,22 +359,22 @@ public final class CauldronBehaviorHelper {
                 player.awardStat(Stats.USE_CAULDRON);
                 int newLevel = currentLevel - 1;
                 if (newLevel <= 0) {
-                    level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
+                    level.setBlock(blockPosition, Blocks.CAULDRON.defaultBlockState(), 3);
                 } else {
-                    level.setBlock(pos, state.setValue(LEVEL, newLevel), 3);
+                    level.setBlock(blockPosition, state.setValue(LEVEL, newLevel), 3);
                 }
-                level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, blockPosition, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         };
-        interactionMap.put(Items.SHULKER_BOX, shulkerInteraction);
+        put(map, Items.SHULKER_BOX, shulkerInteraction);
         for (DyeColor col : DyeColor.values()) {
-            interactionMap.put(ShulkerBoxBlock.getBlockByColor(col).asItem(), shulkerInteraction);
+            put(map, getShulkerBoxItem(col), shulkerInteraction);
         }
 
         // 5. Banners
-        Item targetBanner = BannerBlock.byColor(dyeColor).asItem();
-        CauldronInteraction bannerInteraction = (state, level, pos, player, hand, stack) -> {
+        Item targetBanner = getBannerItem(dyeColor);
+        CauldronInteraction bannerInteraction = (state, level, blockPosition, player, hand, stack) -> {
             if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
             int currentLevel = state.getValue(LEVEL);
             if (currentLevel <= 0 || stack.is(targetBanner)) return InteractionResult.PASS;
@@ -356,29 +385,29 @@ public final class CauldronBehaviorHelper {
                 player.awardStat(Stats.USE_CAULDRON);
                 int newLevel = currentLevel - 1;
                 if (newLevel <= 0) {
-                    level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
+                    level.setBlock(blockPosition, Blocks.CAULDRON.defaultBlockState(), 3);
                 } else {
-                    level.setBlock(pos, state.setValue(LEVEL, newLevel), 3);
+                    level.setBlock(blockPosition, state.setValue(LEVEL, newLevel), 3);
                 }
-                level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, blockPosition, SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         };
         for (DyeColor col : DyeColor.values()) {
-            interactionMap.put(BannerBlock.byColor(col).asItem(), bannerInteraction);
+            put(map, getBannerItem(col), bannerInteraction);
         }
 
         // 6. Redstone (Condense)
         if (variant == Variant.NORMAL || variant == Variant.LUMINOUS) {
             Supplier<Block> targetCauldron = variant == Variant.NORMAL ? group.condenseCauldron() : group.luminousCondenseCauldron();
-            interactionMap.put(Items.REDSTONE, (state, level, pos, player, hand, stack) -> {
+            put(map, Items.REDSTONE, (state, level, blockPosition, player, hand, stack) -> {
                 if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
                 if (!level.isClientSide()) {
                     int currentLevel = state.getValue(LEVEL);
-                    level.setBlock(pos, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
+                    level.setBlock(blockPosition, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
                     if (!player.isCreative()) stack.shrink(1);
                     player.awardStat(Stats.USE_CAULDRON);
-                    level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, blockPosition, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
                 return InteractionResult.SUCCESS;
             });
@@ -387,24 +416,25 @@ public final class CauldronBehaviorHelper {
         // 7. Glowstone Dust (Luminous)
         if (variant == Variant.NORMAL || variant == Variant.CONDENSED) {
             Supplier<Block> targetCauldron = variant == Variant.NORMAL ? group.luminousCauldron() : group.luminousCondenseCauldron();
-            interactionMap.put(Items.GLOWSTONE_DUST, (state, level, pos, player, hand, stack) -> {
+            put(map, Items.GLOWSTONE_DUST, (state, level, blockPosition, player, hand, stack) -> {
                 if (!state.hasProperty(LEVEL)) return InteractionResult.PASS;
                 if (!level.isClientSide()) {
                     int currentLevel = state.getValue(LEVEL);
-                    level.setBlock(pos, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
+                    level.setBlock(blockPosition, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
                     if (!player.isCreative()) stack.shrink(1);
                     player.awardStat(Stats.USE_CAULDRON);
-                    level.playSound(null, pos, SoundEvents.GLOW_INK_SAC_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, blockPosition, SoundEvents.GLOW_INK_SAC_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
                 return InteractionResult.SUCCESS;
             });
         }
 
         // 8. Dye items (switch color of cauldron)
-        CauldronInteraction dyeWater = (state, level, pos, player, hand, stack) -> {
-            if (!(stack.getItem() instanceof DyeItem dye)) return InteractionResult.PASS;
-            if (dye.getDyeColor() == group.dyeColor()) return InteractionResult.PASS;
-            CauldronGroup targetGroup = GROUPS_BY_COLOR.get(dye.getDyeColor());
+        CauldronInteraction dyeWater = (state, level, blockPosition, player, hand, stack) -> {
+            DyeColor inputDye = stack.get(DataComponents.DYE);
+            if (inputDye == null) return InteractionResult.PASS;
+            if (inputDye == group.dyeColor()) return InteractionResult.PASS;
+            CauldronGroup targetGroup = GROUPS_BY_COLOR.get(inputDye);
             if (targetGroup == null) return InteractionResult.PASS;
 
             Supplier<Block> targetCauldron = switch (variant) {
@@ -416,18 +446,87 @@ public final class CauldronBehaviorHelper {
 
             if (!level.isClientSide()) {
                 int currentLevel = state.getValue(LEVEL);
-                level.setBlock(pos, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
+                level.setBlock(blockPosition, targetCauldron.get().defaultBlockState().setValue(LEVEL, currentLevel), 3);
                 if (!player.isCreative()) stack.shrink(1);
                 player.awardStat(Stats.USE_CAULDRON);
-                level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, blockPosition, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         };
 
+        for (DyeColor color : DyeColor.values()) {
+            put(map, getDyeItem(color), dyeWater);
+        }
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item instanceof DyeItem) {
-                interactionMap.put(item, dyeWater);
+            try {
+                if (item.components().has(DataComponents.DYE)) {
+                    put(map, item, dyeWater);
+                }
+            } catch (Exception ignored) {
             }
         }
+    }
+
+    public static Item getDyeItem(DyeColor color) {
+        return switch (color) {
+            case WHITE -> Items.WHITE_DYE;
+            case ORANGE -> Items.ORANGE_DYE;
+            case MAGENTA -> Items.MAGENTA_DYE;
+            case LIGHT_BLUE -> Items.LIGHT_BLUE_DYE;
+            case YELLOW -> Items.YELLOW_DYE;
+            case LIME -> Items.LIME_DYE;
+            case PINK -> Items.PINK_DYE;
+            case GRAY -> Items.GRAY_DYE;
+            case LIGHT_GRAY -> Items.LIGHT_GRAY_DYE;
+            case CYAN -> Items.CYAN_DYE;
+            case PURPLE -> Items.PURPLE_DYE;
+            case BLUE -> Items.BLUE_DYE;
+            case BROWN -> Items.BROWN_DYE;
+            case GREEN -> Items.GREEN_DYE;
+            case RED -> Items.RED_DYE;
+            case BLACK -> Items.BLACK_DYE;
+        };
+    }
+
+    public static Item getShulkerBoxItem(DyeColor color) {
+        return switch (color) {
+            case WHITE -> Items.WHITE_SHULKER_BOX;
+            case ORANGE -> Items.ORANGE_SHULKER_BOX;
+            case MAGENTA -> Items.MAGENTA_SHULKER_BOX;
+            case LIGHT_BLUE -> Items.LIGHT_BLUE_SHULKER_BOX;
+            case YELLOW -> Items.YELLOW_SHULKER_BOX;
+            case LIME -> Items.LIME_SHULKER_BOX;
+            case PINK -> Items.PINK_SHULKER_BOX;
+            case GRAY -> Items.GRAY_SHULKER_BOX;
+            case LIGHT_GRAY -> Items.LIGHT_GRAY_SHULKER_BOX;
+            case CYAN -> Items.CYAN_SHULKER_BOX;
+            case PURPLE -> Items.PURPLE_SHULKER_BOX;
+            case BLUE -> Items.BLUE_SHULKER_BOX;
+            case BROWN -> Items.BROWN_SHULKER_BOX;
+            case GREEN -> Items.GREEN_SHULKER_BOX;
+            case RED -> Items.RED_SHULKER_BOX;
+            case BLACK -> Items.BLACK_SHULKER_BOX;
+        };
+    }
+
+    public static Item getBannerItem(DyeColor color) {
+        return switch (color) {
+            case WHITE -> Items.WHITE_BANNER;
+            case ORANGE -> Items.ORANGE_BANNER;
+            case MAGENTA -> Items.MAGENTA_BANNER;
+            case LIGHT_BLUE -> Items.LIGHT_BLUE_BANNER;
+            case YELLOW -> Items.YELLOW_BANNER;
+            case LIME -> Items.LIME_BANNER;
+            case PINK -> Items.PINK_BANNER;
+            case GRAY -> Items.GRAY_BANNER;
+            case LIGHT_GRAY -> Items.LIGHT_GRAY_BANNER;
+            case CYAN -> Items.CYAN_BANNER;
+            case PURPLE -> Items.PURPLE_BANNER;
+            case BLUE -> Items.BLUE_BANNER;
+            case BROWN -> Items.BROWN_BANNER;
+            case GREEN -> Items.GREEN_BANNER;
+            case RED -> Items.RED_BANNER;
+            case BLACK -> Items.BLACK_BANNER;
+        };
     }
 }

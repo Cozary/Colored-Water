@@ -38,20 +38,20 @@ public abstract class BucketItemMixin {
     private Fluid content;
 
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$useEmptyBucketOnWaterlogged(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    private void coloredWater$useEmptyBucketOnWaterlogged(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
         if (this.content == Fluids.EMPTY) {
             ItemStack heldStack = player.getItemInHand(hand);
             BlockHitResult hitResult = ItemInvoker.invokeGetPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
             if (hitResult.getType() == HitResult.Type.BLOCK) {
-                BlockPos pos = hitResult.getBlockPos();
-                BlockState state = level.getBlockState(pos);
+                BlockPos blockPosition = hitResult.getBlockPos();
+                BlockState state = level.getBlockState(blockPosition);
                 if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-                    BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-                        ColorWaterFluid fluid = waterloggedBe.getFluid();
-                        level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
+                    BlockEntity blockEntity = level.getBlockEntity(blockPosition);
+                    if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+                        ColorWaterFluid fluid = waterloggedBlockEntity.getFluid();
+                        level.setBlock(blockPosition, state.setValue(BlockStateProperties.WATERLOGGED, false), 3);
                         player.playSound(SoundEvents.BUCKET_FILL, 1.0F, 1.0F);
-                        level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+                        level.gameEvent(player, GameEvent.FLUID_PICKUP, blockPosition);
 
                         ItemStack filledBucket = new ItemStack(fluid.getBucket());
 
@@ -61,10 +61,10 @@ public abstract class BucketItemMixin {
                         }
 
                         if (player.hasInfiniteMaterials()) {
-                            cir.setReturnValue(InteractionResult.SUCCESS.heldItemTransformedTo(heldStack));
+                            callbackInfoReturnable.setReturnValue(InteractionResult.SUCCESS.heldItemTransformedTo(heldStack));
                         } else {
                             ItemStack resultStack = ItemUtils.createFilledResult(heldStack, player, filledBucket, false);
-                            cir.setReturnValue(InteractionResult.SUCCESS.heldItemTransformedTo(resultStack));
+                            callbackInfoReturnable.setReturnValue(InteractionResult.SUCCESS.heldItemTransformedTo(resultStack));
                         }
                     }
                 }

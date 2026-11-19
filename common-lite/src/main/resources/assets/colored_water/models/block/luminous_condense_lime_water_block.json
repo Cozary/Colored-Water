@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "colored_water:block/luminous_condense_lime_water_block"
+    "particle": "colored_water:block/water_still"
   }
 }

@@ -24,35 +24,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class FlowingFluidMixin {
 
     @Shadow
-    protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state);
+    protected abstract void beforeDestroyingBlock(LevelAccessor level, BlockPos blockPosition, BlockState state);
 
     @Inject(method = "spreadTo", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$interceptWaterloggedSpread(LevelAccessor level, BlockPos pos, BlockState blockState, Direction direction, FluidState fluidState, CallbackInfo ci) {
+    private void coloredWater$interceptWaterloggedSpread(LevelAccessor level, BlockPos blockPosition, BlockState blockState, Direction direction, FluidState fluidState, CallbackInfo callbackInfo) {
         if (!(level instanceof ServerLevel serverLevel)) return;
 
-        BlockPos sourcePos = pos.relative(direction.getOpposite());
-        BlockEntity sourceBlockEntity = serverLevel.getBlockEntity(sourcePos);
+        BlockPos sourcePosition = blockPosition.relative(direction.getOpposite());
+        BlockEntity sourceBlockEntity = serverLevel.getBlockEntity(sourcePosition);
 
-        if (sourceBlockEntity instanceof WaterloggedColorBlockEntity sourceBe && sourceBe.hasFluid()) {
-            ColorWaterFluid fluid = sourceBe.getFluid();
+        if (sourceBlockEntity instanceof WaterloggedColorBlockEntity sourceWaterloggedBlockEntity && sourceWaterloggedBlockEntity.hasFluid()) {
+            ColorWaterFluid fluid = sourceWaterloggedBlockEntity.getFluid();
 
-            FluidState targetFluidState = level.getFluidState(pos);
+            FluidState targetFluidState = level.getFluidState(blockPosition);
             if (targetFluidState.is(FluidTags.LAVA)) {
                 if (blockState.getBlock() instanceof LiquidBlock) {
                     if (targetFluidState.isSource()) {
-                        level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                        level.setBlock(blockPosition, Blocks.OBSIDIAN.defaultBlockState(), 3);
                     } else {
-                        level.setBlock(pos, Blocks.COBBLESTONE.defaultBlockState(), 3);
+                        level.setBlock(blockPosition, Blocks.COBBLESTONE.defaultBlockState(), 3);
                     }
                 }
-                level.levelEvent(1501, pos, 0);
-                ci.cancel();
+                level.levelEvent(1501, blockPosition, 0);
+                callbackInfo.cancel();
                 return;
             }
 
             if (fluidState.isEmpty()) {
-                serverLevel.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                ci.cancel();
+                serverLevel.setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 3);
+                callbackInfo.cancel();
                 return;
             }
 
@@ -60,14 +60,14 @@ public abstract class FlowingFluidMixin {
                 FluidState customFluidState = fluidState.isSource()
                         ? fluid.getSource(false)
                         : ((FlowingFluid) fluid.getFlowing()).getFlowing(fluidState.getAmount(), fluidState.hasProperty(FlowingFluid.FALLING) && fluidState.getValue(FlowingFluid.FALLING));
-                liquidblockcontainer.placeLiquid(level, pos, blockState, customFluidState);
-                WaterloggedColorBlockEntity targetBe = WaterloggedColorBlockEntity.getOrCreate(serverLevel, pos, serverLevel.getBlockState(pos));
-                if (targetBe != null) {
-                    targetBe.setFluid(fluid);
+                liquidblockcontainer.placeLiquid(level, blockPosition, blockState, customFluidState);
+                WaterloggedColorBlockEntity targetBlockEntity = WaterloggedColorBlockEntity.getOrCreate(serverLevel, blockPosition, serverLevel.getBlockState(blockPosition));
+                if (targetBlockEntity != null) {
+                    targetBlockEntity.setFluid(fluid);
                 }
             } else {
                 if (!blockState.isAir()) {
-                    this.beforeDestroyingBlock(level, pos, blockState);
+                    this.beforeDestroyingBlock(level, blockPosition, blockState);
                 }
 
                 int legacyLevel;
@@ -79,10 +79,10 @@ public abstract class FlowingFluidMixin {
                 }
 
                 BlockState targetState = fluid.defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, legacyLevel);
-                serverLevel.setBlock(pos, targetState, 3);
+                serverLevel.setBlock(blockPosition, targetState, 3);
             }
 
-            ci.cancel();
+            callbackInfo.cancel();
         }
     }
 }

@@ -33,8 +33,7 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
 
     public static final BooleanProperty CONDENSED = ColoredWaterBlock.CONDENSED;
     public static final IntegerProperty LIGHT_LEVEL = ColoredWaterBlock.LIGHT_LEVEL;
-    public static final CauldronInteraction.InteractionMap COLORED_WATER_CAULDRON_BEHAVIOR = CauldronInteraction
-            .newInteractionMap("colored_water_cauldron_behavior");
+    public static final CauldronInteraction.Dispatcher COLORED_WATER_CAULDRON_BEHAVIOR = new CauldronInteraction.Dispatcher();
 
     public ColoredWaterCauldronBlock(Properties properties) {
         super(Biome.Precipitation.RAIN, COLORED_WATER_CAULDRON_BEHAVIOR, properties);
@@ -52,8 +51,8 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ColoredWaterCauldronBlockEntity(pos, state);
+    public BlockEntity newBlockEntity(BlockPos blockPosition, BlockState state) {
+        return new ColoredWaterCauldronBlockEntity(blockPosition, state);
     }
 
     /**
@@ -61,9 +60,9 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
      * opacity, and luminosity.
      */
     @Override
-    public void receiveStalactiteDrip(BlockState state, Level level, BlockPos pos, Fluid fluid) {
+    public void receiveStalactiteDrip(BlockState state, Level level, BlockPos blockPosition, Fluid fluid) {
         if (fluid == Fluids.WATER) {
-            if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+            if (level.getBlockEntity(blockPosition) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
                 int currentLevel = state.getValue(LEVEL);
                 int newLevel = Math.min(3, currentLevel + 1);
 
@@ -82,26 +81,26 @@ public class ColoredWaterCauldronBlock extends LayeredCauldronBlock implements E
 
                 cauldronBlockEntity.setProperties(mixedColor, mixedCondensed, mixedLuminosity);
 
-                level.setBlock(pos, state.setValue(LEVEL, newLevel)
+                level.setBlock(blockPosition, state.setValue(LEVEL, newLevel)
                         .setValue(CONDENSED, mixedCondensed)
                         .setValue(LIGHT_LEVEL, mixedLuminosity), 3);
 
-                level.levelEvent(1047, pos, 0);
+                level.levelEvent(1047, blockPosition, 0);
             }
         }
     }
 
     @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (level.getBlockEntity(pos) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+    public void animateTick(BlockState state, Level level, BlockPos blockPosition, RandomSource random) {
+        if (level.getBlockEntity(blockPosition) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
             int luminosity = cauldronBlockEntity.getLuminosity();
             if (luminosity > 0) {
                 float chance = (luminosity / 15.0F) * 0.4F;
                 if (random.nextFloat() < chance) {
                     int color = cauldronBlockEntity.getColor();
-                    double x = (double) pos.getX() + 0.125D + random.nextDouble() * 0.75D;
-                    double y = (double) pos.getY() + 0.35D + (state.getValue(LEVEL) * 0.2D);
-                    double z = (double) pos.getZ() + 0.125D + random.nextDouble() * 0.75D;
+                    double x = (double) blockPosition.getX() + 0.125D + random.nextDouble() * 0.75D;
+                    double y = (double) blockPosition.getY() + 0.35D + (state.getValue(LEVEL) * 0.2D);
+                    double z = (double) blockPosition.getZ() + 0.125D + random.nextDouble() * 0.75D;
                     level.addParticle(new SparkleParticleOptions(color), x, y, z, 0.01, 0.01, 0.01);
                 }
             }

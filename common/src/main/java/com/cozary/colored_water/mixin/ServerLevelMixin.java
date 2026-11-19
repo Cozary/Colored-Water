@@ -22,19 +22,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ServerLevelMixin {
 
     @Inject(method = "sendBlockUpdated", at = @At("HEAD"))
-    private void coloredWater$sendBlockEntityUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
+    private void coloredWater$sendBlockEntityUpdate(BlockPos blockPosition, BlockState oldState, BlockState newState, int flags, CallbackInfo callbackInfo) {
         if ((flags & Block.UPDATE_CLIENTS) == 0) {
             return;
         }
 
         ServerLevel level = (ServerLevel) (Object) this;
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
         if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
             boolean stateChanged = oldState != newState;
             if (coloredWaterBlockEntity.hasChangedSinceLastSync() || stateChanged) {
                 Packet<ClientGamePacketListener> packet = blockEntity.getUpdatePacket();
                 if (packet != null) {
-                    level.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(player -> {
+                    level.getChunkSource().chunkMap.getPlayers(ChunkPos.containing(blockPosition), false).forEach(player -> {
                         player.connection.send(packet);
                     });
                 }
@@ -45,7 +45,7 @@ public abstract class ServerLevelMixin {
             if (cauldronBlockEntity.hasChangedSinceLastSync() || stateChanged) {
                 Packet<ClientGamePacketListener> packet = blockEntity.getUpdatePacket();
                 if (packet != null) {
-                    level.getChunkSource().chunkMap.getPlayers(new ChunkPos(pos), false).forEach(player -> {
+                    level.getChunkSource().chunkMap.getPlayers(ChunkPos.containing(blockPosition), false).forEach(player -> {
                         player.connection.send(packet);
                     });
                 }
@@ -54,4 +54,3 @@ public abstract class ServerLevelMixin {
         }
     }
 }
-

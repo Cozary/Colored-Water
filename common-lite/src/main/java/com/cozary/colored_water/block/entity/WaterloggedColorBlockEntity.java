@@ -30,24 +30,24 @@ public class WaterloggedColorBlockEntity extends BlockEntity {
     @Nullable
     private ColorWaterFluid lastClientFluid;
 
-    public WaterloggedColorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.WATERLOGGED_BE.get(), pos, state);
+    public WaterloggedColorBlockEntity(BlockPos blockPosition, BlockState state) {
+        super(ModBlockEntities.WATERLOGGED_BE.get(), blockPosition, state);
     }
 
     @Nullable
-    public static WaterloggedColorBlockEntity getOrCreate(Level level, BlockPos pos, BlockState state) {
+    public static WaterloggedColorBlockEntity getOrCreate(Level level, BlockPos blockPosition, BlockState state) {
         if (state.isAir()) {
             return null;
         }
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe) {
-            return waterloggedBe;
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
+        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity) {
+            return waterloggedBlockEntity;
         }
         boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
         if (!isWaterlogged && !state.is(Blocks.BUBBLE_COLUMN) && !state.is(Blocks.FROSTED_ICE)) {
             return null;
         }
-        WaterloggedColorBlockEntity newBlockEntity = new WaterloggedColorBlockEntity(pos, state);
+        WaterloggedColorBlockEntity newBlockEntity = new WaterloggedColorBlockEntity(blockPosition, state);
         level.setBlockEntity(newBlockEntity);
         return newBlockEntity;
     }
@@ -81,9 +81,9 @@ public class WaterloggedColorBlockEntity extends BlockEntity {
         if (!fluidId.isEmpty()) {
             Identifier id = Identifier.tryParse(fluidId);
             if (id != null) {
-                Optional<Holder.Reference<Fluid>> ref = BuiltInRegistries.FLUID.get(id);
-                if (ref.isPresent() && ref.get().value() instanceof ColorWaterFluid cwf) {
-                    this.fluid = cwf;
+                Optional<Holder.Reference<Fluid>> fluidHolder = BuiltInRegistries.FLUID.get(id);
+                if (fluidHolder.isPresent() && fluidHolder.get().value() instanceof ColorWaterFluid colorWaterFluid) {
+                    this.fluid = colorWaterFluid;
                 } else {
                     this.fluid = null;
                 }

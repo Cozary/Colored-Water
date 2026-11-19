@@ -39,6 +39,5 @@ public class DataGenerators {
 
         generator.addProvider(true, new ModRecipeProvider.Runner(packOutput, lookupProvider));
         generator.addProvider(true, new ModFluidTagProvider(packOutput, lookupProvider));
-        generator.addProvider(true, new ModModelProvider(packOutput));
     }
 }

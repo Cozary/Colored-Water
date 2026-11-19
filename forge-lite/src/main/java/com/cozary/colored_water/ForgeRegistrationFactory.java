@@ -1,12 +1,11 @@
 package com.cozary.colored_water;
 
-
 import com.cozary.colored_water.init.RegistrationProvider;
 import com.cozary.colored_water.init.RegistryObject;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.DeferredRegister;
@@ -20,11 +19,12 @@ public class ForgeRegistrationFactory implements RegistrationProvider.Factory {
 
     @Override
     public <T> RegistrationProvider<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
-        final var containerOpt = ModList.get().getModContainerById(modId);
-        if (containerOpt.isEmpty())
+        final var containerOptional = ModList.getModContainerById(modId);
+        if (containerOptional.isEmpty()) {
             throw new NullPointerException("Cannot find mod container for id " + modId);
-        final var cont = containerOpt.get();
-        if (cont instanceof FMLModContainer fmlModContainer) {
+        }
+        final var modContainer = containerOptional.get();
+        if (modContainer instanceof FMLModContainer fmlModContainer) {
             final var register = DeferredRegister.create(resourceKey, modId);
             register.register(fmlModContainer.getModBusGroup());
             return new Provider<>(modId, register);
@@ -53,31 +53,31 @@ public class ForgeRegistrationFactory implements RegistrationProvider.Factory {
         @Override
         @SuppressWarnings("unchecked")
         public <I extends T> RegistryObject<I> register(String name, Supplier<? extends I> supplier) {
-            final var obj = registry.<I>register(name, supplier);
-            final var ro = new RegistryObject<I>() {
+            final var registeredObject = registry.<I>register(name, supplier);
+            final var registryObject = new RegistryObject<I>() {
 
                 @Override
                 public ResourceKey<I> getResourceKey() {
-                    return obj.getKey();
+                    return registeredObject.getKey();
                 }
 
                 @Override
                 public Identifier getId() {
-                    return obj.getId();
+                    return registeredObject.getId();
                 }
 
                 @Override
                 public I get() {
-                    return obj.get();
+                    return registeredObject.get();
                 }
 
                 @Override
                 public Holder<I> asHolder() {
-                    return obj.getHolder().orElseThrow();
+                    return registeredObject.getHolder().orElseThrow();
                 }
             };
-            entries.add((RegistryObject<T>) ro);
-            return ro;
+            entries.add((RegistryObject<T>) registryObject);
+            return registryObject;
         }
 
         @Override

@@ -115,13 +115,13 @@ public final class ColoredWaterUtil {
     }
 
     public static boolean isCondensedFluid(Fluid fluid) {
-        return fluid instanceof ColorWaterFluid cwf && cwf.isCondensed();
+        return fluid instanceof ColorWaterFluid colorWaterFluid && colorWaterFluid.isCondensed();
     }
 
     public static boolean isCondensedBlock(Block block) {
         if (isCondensedCauldron(block)) return true;
-        if (block instanceof LiquidBlock liquidBlock && liquidBlock.defaultBlockState().getFluidState().getType() instanceof ColorWaterFluid cwf) {
-            return cwf.isCondensed();
+        if (block instanceof LiquidBlock liquidBlock && liquidBlock.defaultBlockState().getFluidState().getType() instanceof ColorWaterFluid colorWaterFluid) {
+            return colorWaterFluid.isCondensed();
         }
         return false;
     }
@@ -146,22 +146,22 @@ public final class ColoredWaterUtil {
     public static int getColoredWaterAt(@Nullable Level level, @Nullable BlockPos pos) {
         if (level == null || pos == null || !level.hasChunkAt(pos)) return -1;
         FluidState fluid = level.getFluidState(pos);
-        if (fluid.getType() instanceof ColorWaterFluid cwf) {
-            return cwf.getTintColor();
+        if (fluid.getType() instanceof ColorWaterFluid colorWaterFluid) {
+            return colorWaterFluid.getTintColor();
         }
         if (fluid.getType() instanceof BaseColorWater) {
             return DEFAULT_COLOR;
         }
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-            return waterloggedBe.getFluid().getTintColor();
+        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+            return waterloggedBlockEntity.getFluid().getTintColor();
         }
 
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
-        if (block instanceof LiquidBlock liquidBlock && liquidBlock.defaultBlockState().getFluidState().getType() instanceof ColorWaterFluid cwf) {
-            return cwf.getTintColor();
+        if (block instanceof LiquidBlock liquidBlock && liquidBlock.defaultBlockState().getFluidState().getType() instanceof ColorWaterFluid colorWaterFluid) {
+            return colorWaterFluid.getTintColor();
         }
         return getCauldronColor(block);
     }

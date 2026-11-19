@@ -24,13 +24,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class BlockItemMixin {
 
     @Inject(method = "place", at = @At("HEAD"))
-    private void coloredWater$captureFluidBeforePlacement(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir) {
+    private void coloredWater$captureFluidBeforePlacement(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
         Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        FluidState fluidState = level.getFluidState(pos);
+        BlockPos blockPosition = context.getClickedPos();
+        FluidState fluidState = level.getFluidState(blockPosition);
 
         if (fluidState.getType() instanceof BaseColorWater) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(blockPosition);
             int color = -1;
             boolean condensed = false;
             int luminosity = 0;
@@ -48,21 +48,21 @@ public abstract class BlockItemMixin {
     }
 
     @Inject(method = "place", at = @At("RETURN"))
-    private void coloredWater$applyFluidAfterPlacement(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        if (cir.getReturnValue() == InteractionResult.SUCCESS || cir.getReturnValue().consumesAction()) {
+    private void coloredWater$applyFluidAfterPlacement(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> callbackInfoReturnable) {
+        if (callbackInfoReturnable.getReturnValue() == InteractionResult.SUCCESS || callbackInfoReturnable.getReturnValue().consumesAction()) {
             if (CapturedFluidInfo.hasInfo()) {
                 CapturedFluidInfo.Info info = CapturedFluidInfo.get();
                 if (info != null) {
                     Level level = context.getLevel();
-                    BlockPos pos = context.getClickedPos();
-                    BlockState state = level.getBlockState(pos);
+                    BlockPos blockPosition = context.getClickedPos();
+                    BlockState state = level.getBlockState(blockPosition);
 
                     if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
                         if (!state.getValue(BlockStateProperties.WATERLOGGED)) {
                             state = state.setValue(BlockStateProperties.WATERLOGGED, true);
-                            level.setBlock(pos, state, 3);
+                            level.setBlock(blockPosition, state, 3);
                         }
-                        ColoredWaterBlockEntity coloredWaterBlockEntity = ColoredWaterBlockEntity.getOrCreate(level, pos, state);
+                        ColoredWaterBlockEntity coloredWaterBlockEntity = ColoredWaterBlockEntity.getOrCreate(level, blockPosition, state);
                         if (coloredWaterBlockEntity != null) {
                             coloredWaterBlockEntity.markAsPlacedByBucket();
                             coloredWaterBlockEntity.setCondensed(info.condensed());

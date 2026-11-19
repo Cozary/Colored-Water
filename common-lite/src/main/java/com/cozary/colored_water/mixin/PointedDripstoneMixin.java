@@ -31,65 +31,66 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PointedDripstoneMixin {
 
     @Inject(method = "maybeTransferFluid", at = @At("HEAD"), cancellable = true)
-    private static void colored_water$maybeTransferFluid(BlockState state, ServerLevel level, BlockPos pos, float randChance, CallbackInfo ci) {
+    private static void colored_water$maybeTransferFluid(BlockState state, ServerLevel level, BlockPos blockPosition, float randChance, CallbackInfo callbackInfo) {
         if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) != Direction.DOWN) {
             return;
         }
 
-        BlockPos sourcePos = findColoredWaterSourcePos(level, pos);
-        if (sourcePos == null) {
+        BlockPos sourcePosition = findColoredWaterSourcePosition(level, blockPosition);
+        if (sourcePosition == null) {
             return;
         }
 
-        ci.cancel();
+        callbackInfo.cancel();
 
         if (randChance < 0.17578125F) {
-            BlockPos tipPos = findStalactiteTipPos(level, pos);
-            ColorWaterFluid cwf = getColoredWaterAt(level, sourcePos);
-            if (cwf == null) return;
+            BlockPos tipPosition = findStalactiteTipPosition(level, blockPosition);
+            ColorWaterFluid colorWaterFluid = getColoredWaterAt(level, sourcePosition);
+            if (colorWaterFluid == null) return;
 
-            DyeColor dyeColor = cwf.getDyeColor();
+            DyeColor dyeColor = colorWaterFluid.getDyeColor();
             CauldronBehaviorHelper.CauldronGroup group = CauldronBehaviorHelper.getGroup(dyeColor);
             if (group == null) return;
 
-            Block targetCauldron = cwf.isCondensed() && cwf.isLuminous() ? group.luminousCondenseCauldron().get()
-                    : cwf.isCondensed() ? group.condenseCauldron().get()
-                    : cwf.isLuminous() ? group.luminousCauldron().get()
+            Block targetCauldron = colorWaterFluid.isCondensed() && colorWaterFluid.isLuminous() ? group.luminousCondenseCauldron().get()
+                    : colorWaterFluid.isCondensed() ? group.condenseCauldron().get()
+                    : colorWaterFluid.isLuminous() ? group.luminousCauldron().get()
                     : group.normalCauldron().get();
 
             for (int i = 1; i <= 11; i++) {
-                BlockPos cauldronPos = tipPos.below(i);
-                BlockState cauldronState = level.getBlockState(cauldronPos);
+                BlockPos cauldronPosition = tipPosition.below(i);
+                BlockState cauldronState = level.getBlockState(cauldronPosition);
 
                 if (cauldronState.getBlock() instanceof AbstractCauldronBlock) {
                     if (cauldronState.is(Blocks.CAULDRON)) {
-                        level.setBlock(cauldronPos, targetCauldron.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1), 3);
-                        level.levelEvent(1047, cauldronPos, 0);
+                        level.setBlock(cauldronPosition, targetCauldron.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 1), 3);
+                        level.levelEvent(1047, cauldronPosition, 0);
                     } else if (cauldronState.is(targetCauldron)) {
                         int currentLevel = cauldronState.getValue(LayeredCauldronBlock.LEVEL);
                         if (currentLevel < 3) {
-                            level.setBlock(cauldronPos, cauldronState.setValue(LayeredCauldronBlock.LEVEL, currentLevel + 1), 3);
-                            level.levelEvent(1047, cauldronPos, 0);
+                            level.setBlock(cauldronPosition, cauldronState.setValue(LayeredCauldronBlock.LEVEL, currentLevel + 1), 3);
+                            level.levelEvent(1047, cauldronPosition, 0);
                         }
                     }
                     break;
-                }
-
-                if (!cauldronState.isAir() && !(cauldronState.getBlock() instanceof PointedDripstoneBlock)) {
+                } else if (!cauldronState.isAir() && !(cauldronState.getBlock() instanceof PointedDripstoneBlock)) {
                     break;
                 }
             }
         }
     }
 
-    private static BlockPos findColoredWaterSourcePos(Level level, BlockPos pos) {
-        BlockPos current = pos;
+    private static BlockPos findColoredWaterSourcePosition(Level level, BlockPos blockPosition) {
+        BlockPos current = blockPosition;
         while (level.getBlockState(current).is(Blocks.POINTED_DRIPSTONE)) {
             current = current.above();
         }
-        if (isColoredWaterAt(level, current)) {
-            return current;
+
+        BlockState rootState = level.getBlockState(current);
+        if (rootState.is(Blocks.POINTED_DRIPSTONE) || !rootState.isCollisionShapeFullBlock(level, current)) {
+            return null;
         }
+
         BlockPos above = current.above();
         if (isColoredWaterAt(level, above)) {
             return above;
@@ -97,24 +98,24 @@ public abstract class PointedDripstoneMixin {
         return null;
     }
 
-    private static boolean isColoredWaterAt(Level level, BlockPos pos) {
-        return getColoredWaterAt(level, pos) != null;
+    private static boolean isColoredWaterAt(Level level, BlockPos blockPosition) {
+        return getColoredWaterAt(level, blockPosition) != null;
     }
 
-    private static ColorWaterFluid getColoredWaterAt(Level level, BlockPos pos) {
-        FluidState fluid = level.getFluidState(pos);
-        if (fluid.getType() instanceof ColorWaterFluid cwf) {
-            return cwf;
+    private static ColorWaterFluid getColoredWaterAt(Level level, BlockPos blockPosition) {
+        FluidState fluid = level.getFluidState(blockPosition);
+        if (fluid.getType() instanceof ColorWaterFluid colorWaterFluid) {
+            return colorWaterFluid;
         }
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-            return waterloggedBe.getFluid();
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
+        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+            return waterloggedBlockEntity.getFluid();
         }
         return null;
     }
 
-    private static BlockPos findStalactiteTipPos(Level level, BlockPos pos) {
-        BlockPos current = pos;
+    private static BlockPos findStalactiteTipPosition(Level level, BlockPos blockPosition) {
+        BlockPos current = blockPosition;
         while (level.getBlockState(current).is(Blocks.POINTED_DRIPSTONE)) {
             BlockState state = level.getBlockState(current);
             if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) == Direction.DOWN &&
@@ -130,8 +131,8 @@ public abstract class PointedDripstoneMixin {
         return current;
     }
 
-    @Inject(method = "animateTick", at = @At("HEAD"))
-    private void colored_water$animateTick(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    @Inject(method = "animateTick", at = @At("HEAD"), cancellable = true)
+    private void colored_water$animateTick(BlockState state, Level level, BlockPos blockPosition, RandomSource random, CallbackInfo callbackInfo) {
         if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) != Direction.DOWN) {
             return;
         }
@@ -139,16 +140,16 @@ public abstract class PointedDripstoneMixin {
             return;
         }
 
-        BlockPos sourcePos = findColoredWaterSourcePos(level, pos);
-        if (sourcePos != null) {
+        BlockPos sourcePosition = findColoredWaterSourcePosition(level, blockPosition);
+        if (sourcePosition != null) {
             if (random.nextFloat() < 0.12F) {
-                double x = (double) pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
-                double y = (double) pos.getY() + 0.1D;
-                double z = (double) pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
+                double x = (double) blockPosition.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
+                double y = (double) blockPosition.getY() + 0.1D;
+                double z = (double) blockPosition.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
 
-                ColorWaterFluid cwf = getColoredWaterAt(level, sourcePos);
-                int color = cwf != null ? cwf.getTintColor() : 0x3F76E4;
-                boolean isLuminous = cwf != null && cwf.isLuminous();
+                ColorWaterFluid colorWaterFluid = getColoredWaterAt(level, sourcePosition);
+                int color = colorWaterFluid != null ? colorWaterFluid.getTintColor() : 0x3F76E4;
+                boolean isLuminous = colorWaterFluid != null && colorWaterFluid.isLuminous();
 
                 level.addParticle(new ColorParticleOptions(ModParticles.DRIPPING_DRIPSTONE_WATER.get(), color), x, y, z, 0.0, 0.0, 0.0);
 
@@ -156,6 +157,7 @@ public abstract class PointedDripstoneMixin {
                     level.addParticle(SparkleParticleOptions.of(color), x, y, z, 0.01, -0.02, 0.01);
                 }
             }
+            callbackInfo.cancel();
         }
     }
 }

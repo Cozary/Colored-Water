@@ -1,22 +1,18 @@
 package com.cozary.colored_water.recipe;
 
 import com.cozary.colored_water.init.ModItems;
-import com.cozary.colored_water.init.ModRecipe;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -34,9 +30,13 @@ import java.util.List;
  * - Applies Glowstone Dust as the Luminous modifier.
  */
 public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
+    public static final ColoredWaterBucketDyeRecipe INSTANCE = new ColoredWaterBucketDyeRecipe();
+    public static final MapCodec<ColoredWaterBucketDyeRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ColoredWaterBucketDyeRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<ColoredWaterBucketDyeRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
-    public ColoredWaterBucketDyeRecipe(CraftingBookCategory category) {
-        super(category);
+    public ColoredWaterBucketDyeRecipe() {
+        super();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
                 if (stack.is(Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
                     if (!bucket.isEmpty()) return false;
                     bucket = stack;
-                } else if (stack.getItem() instanceof DyeItem || stack.is(Items.REDSTONE) || stack.is(Items.GLOWSTONE_DUST)) {
+                } else if (stack.has(DataComponents.DYE) || stack.is(Items.REDSTONE) || stack.is(Items.GLOWSTONE_DUST)) {
                     hasModifierOrDye = true;
                 } else {
                     return false;
@@ -62,9 +62,9 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull CraftingInput input, HolderLookup.@NotNull Provider registries) {
+    public @NotNull ItemStack assemble(@NotNull CraftingInput input) {
         ItemStack bucketInput = ItemStack.EMPTY;
-        List<DyeItem> dyes = new ArrayList<>();
+        List<DyeColor> dyes = new ArrayList<>();
         boolean addRedstone = false;
         boolean addGlowstone = false;
 
@@ -74,8 +74,11 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
                 if (stack.is(Items.WATER_BUCKET) || stack.is(ModItems.COLORED_WATER_BUCKET.get())) {
                     if (!bucketInput.isEmpty()) return ItemStack.EMPTY;
                     bucketInput = stack;
-                } else if (stack.getItem() instanceof DyeItem dye) {
-                    dyes.add(dye);
+                } else if (stack.has(DataComponents.DYE)) {
+                    DyeColor dyeColor = stack.get(DataComponents.DYE);
+                    if (dyeColor != null) {
+                        dyes.add(dyeColor);
+                    }
                 } else if (stack.is(Items.REDSTONE)) {
                     if (addRedstone) return ItemStack.EMPTY;
                     addRedstone = true;
@@ -108,7 +111,10 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         int luminosity = ColoredWaterUtil.getBucketLuminosity(resultStack);
         int alpha = ColoredWaterUtil.getBucketAlpha(resultStack);
 
-        if (addRedstone) isCondensed = true;
+        if (addRedstone) {
+            isCondensed = true;
+            alpha = ColoredWaterUtil.CONDENSED_ALPHA;
+        }
         if (addGlowstone) luminosity = ColoredWaterUtil.MAX_LUMINOSITY;
 
         if (alpha == 0) {
@@ -125,39 +131,13 @@ public class ColoredWaterBucketDyeRecipe extends CustomRecipe {
         return resultStack;
     }
 
-
     @Override
     public @NotNull NonNullList<ItemStack> getRemainingItems(@NotNull CraftingInput input) {
         return NonNullList.withSize(input.size(), ItemStack.EMPTY);
     }
 
     @Override
-    public @NotNull RecipeSerializer<CustomRecipe> getSerializer() {
-        return (RecipeSerializer<CustomRecipe>) (Object) ModRecipe.COLORED_WATER_BUCKET_DYE.get();
-    }
-
-    public static class Serializer implements RecipeSerializer<ColoredWaterBucketDyeRecipe> {
-        public static final StreamCodec<RegistryFriendlyByteBuf, ColoredWaterBucketDyeRecipe> STREAM_CODEC = StreamCodec.composite(
-                CraftingBookCategory.STREAM_CODEC, ColoredWaterBucketDyeRecipe::category,
-                ColoredWaterBucketDyeRecipe::new
-        );
-        private static final MapCodec<ColoredWaterBucketDyeRecipe> CODEC = RecordCodecBuilder.mapCodec((instance) -> {
-            return instance.group(
-                    CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ColoredWaterBucketDyeRecipe::category)
-            ).apply(instance, ColoredWaterBucketDyeRecipe::new);
-        });
-
-        public Serializer() {
-        }
-
-        @Override
-        public @NotNull MapCodec<ColoredWaterBucketDyeRecipe> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, ColoredWaterBucketDyeRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+    public @NotNull RecipeSerializer<ColoredWaterBucketDyeRecipe> getSerializer() {
+        return SERIALIZER;
     }
 }

@@ -23,18 +23,18 @@ public abstract class BlockLightEngineMixin extends LightEngine {
     }
 
     @Inject(method = "getEmission", at = @At("HEAD"), cancellable = true)
-    private void coloredWater$getWaterloggedEmission(long blockPos, BlockState state, CallbackInfoReturnable<Integer> cir) {
+    private void coloredWater$getWaterloggedEmission(long blockPos, BlockState state, CallbackInfoReturnable<Integer> callbackInfoReturnable) {
         boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
         boolean isBubbleColumn = state.is(Blocks.BUBBLE_COLUMN);
         if (isWaterlogged || isBubbleColumn) {
-            BlockPos pos = BlockPos.of(blockPos);
+            BlockPos blockPosition = BlockPos.of(blockPos);
             if (this.chunkSource != null) {
-                BlockGetter chunk = this.chunkSource.getChunkForLighting(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+                BlockGetter chunk = this.chunkSource.getChunkForLighting(SectionPos.blockToSectionCoord(blockPosition.getX()), SectionPos.blockToSectionCoord(blockPosition.getZ()));
                 if (chunk != null) {
-                    BlockEntity blockEntity = chunk.getBlockEntity(pos);
-                    if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-                        if (waterloggedBe.getFluid().isLuminous()) {
-                            cir.setReturnValue(15);
+                    BlockEntity blockEntity = chunk.getBlockEntity(blockPosition);
+                    if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+                        if (waterloggedBlockEntity.getFluid().isLuminous()) {
+                            callbackInfoReturnable.setReturnValue(15);
                         }
                     }
                 }

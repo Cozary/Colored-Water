@@ -1,6 +1,5 @@
 package com.cozary.colored_water;
 
-
 import com.cozary.colored_water.init.RegistrationProvider;
 import com.cozary.colored_water.init.RegistryObject;
 import net.minecraft.core.Holder;
@@ -38,11 +37,11 @@ public class FabricRegistrationFactory implements RegistrationProvider.Factory {
         private Provider(String modId, ResourceKey<? extends Registry<T>> key) {
             this.modId = modId;
 
-            final var reg = BuiltInRegistries.REGISTRY.get(key.identifier()).get().value();
-            if (reg == null) {
+            final var builtInRegistry = BuiltInRegistries.REGISTRY.get(key.identifier()).get().value();
+            if (builtInRegistry == null) {
                 throw new RuntimeException("Registry with name " + key.identifier() + " was not found!");
             }
-            registry = (Registry<T>) reg;
+            registry = (Registry<T>) builtInRegistry;
         }
 
         private Provider(String modId, Registry<T> registry) {
@@ -53,10 +52,10 @@ public class FabricRegistrationFactory implements RegistrationProvider.Factory {
         @Override
         @SuppressWarnings("unchecked")
         public <I extends T> RegistryObject<I> register(String name, Supplier<? extends I> supplier) {
-            final var rl = Identifier.fromNamespaceAndPath(modId, name);
-            final var obj = Registry.register(registry, rl, supplier.get());
-            final var ro = new RegistryObject<I>() {
-                final ResourceKey<I> key = ResourceKey.create((ResourceKey<? extends Registry<I>>) registry.key(), rl);
+            final var resourceLocation = Identifier.fromNamespaceAndPath(modId, name);
+            final var registeredObject = Registry.register(registry, resourceLocation, supplier.get());
+            final var registryObject = new RegistryObject<I>() {
+                final ResourceKey<I> key = ResourceKey.create((ResourceKey<? extends Registry<I>>) registry.key(), resourceLocation);
 
                 @Override
                 public ResourceKey<I> getResourceKey() {
@@ -65,12 +64,12 @@ public class FabricRegistrationFactory implements RegistrationProvider.Factory {
 
                 @Override
                 public Identifier getId() {
-                    return rl;
+                    return resourceLocation;
                 }
 
                 @Override
                 public I get() {
-                    return obj;
+                    return registeredObject;
                 }
 
                 @Override
@@ -78,8 +77,8 @@ public class FabricRegistrationFactory implements RegistrationProvider.Factory {
                     return (Holder<I>) registry.getOrThrow((ResourceKey<T>) this.key);
                 }
             };
-            entries.add((RegistryObject<T>) ro);
-            return ro;
+            entries.add((RegistryObject<T>) registryObject);
+            return registryObject;
         }
 
         @Override

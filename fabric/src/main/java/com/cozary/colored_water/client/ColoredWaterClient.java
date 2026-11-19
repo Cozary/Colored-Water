@@ -3,67 +3,74 @@ package com.cozary.colored_water.client;
 import com.cozary.colored_water.ColoredWater;
 import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.block.entity.ColoredWaterCauldronBlockEntity;
-import com.cozary.colored_water.init.ModBlocks;
 import com.cozary.colored_water.init.ModCauldrons;
 import com.cozary.colored_water.init.ModFluids;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
-import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderingRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.block.state.BlockState;
 
 @Environment(EnvType.CLIENT)
 public class ColoredWaterClient implements ClientModInitializer {
 
     private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still");
     private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_flowing");
+    private static final Identifier OVERLAY_TEXTURE = Identifier.withDefaultNamespace("block/water_overlay");
 
     @Override
     public void onInitializeClient() {
-        FluidRenderHandlerRegistry.INSTANCE.register(
+        FluidRenderingRegistry.register(
                 ModFluids.STILL_COLORED_WATER.get(),
                 ModFluids.FLOWING_COLORED_WATER.get(),
-                new SimpleFluidRenderHandler(STILL_TEXTURE, FLOWING_TEXTURE, ColoredWaterUtil.DEFAULT_COLOR) {
-                    @Override
-                    public int getFluidColor(@Nullable BlockAndTintGetter view, @Nullable BlockPos pos, FluidState state) {
-                        if (view != null && pos != null) {
-                            BlockEntity blockEntity = view.getBlockEntity(pos);
-                            if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
-                                int color = coloredWaterBlockEntity.getColor();
-                                int alpha = ColoredWaterUtil.getAlpha(color);
-                                if (alpha == 0) {
-                                    alpha = coloredWaterBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
-                                    color = ColoredWaterUtil.withAlpha(color, alpha);
+                new FluidModel.Unbaked(
+                        new Material(STILL_TEXTURE, true),
+                        new Material(FLOWING_TEXTURE, true),
+                        new Material(OVERLAY_TEXTURE, true),
+                        new BlockTintSource() {
+                            @Override
+                            public int color(BlockState blockState) {
+                                return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
+                            }
+
+                            @Override
+                            public int colorInWorld(BlockState blockState, BlockAndTintGetter blockAndTintGetter, BlockPos blockPosition) {
+                                if (blockAndTintGetter != null && blockPosition != null) {
+                                    BlockEntity blockEntity = blockAndTintGetter.getBlockEntity(blockPosition);
+                                    if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
+                                        int color = coloredWaterBlockEntity.getColor();
+                                        int alpha = ColoredWaterUtil.getAlpha(color);
+                                        if (alpha == 0) {
+                                            alpha = coloredWaterBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
+                                            color = ColoredWaterUtil.withAlpha(color, alpha);
+                                        }
+                                        return color;
+                                    }
                                 }
-                                return color;
+                                return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
                             }
                         }
-                        return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
-                    }
-                }
+                )
         );
 
-        BlockRenderLayerMap.putBlocks(ChunkSectionLayer.TRANSLUCENT, ModBlocks.COLORED_WATER_BLOCK.get(), ModCauldrons.COLORED_WATER_CAULDRON.get());
-        BlockRenderLayerMap.putFluids(ChunkSectionLayer.TRANSLUCENT, ModFluids.STILL_COLORED_WATER.get(), ModFluids.FLOWING_COLORED_WATER.get());
-
-        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if (view != null && pos != null) {
-                BlockEntity blockEntity = view.getBlockEntity(pos);
+        BlockColorRegistry.register((blockState, blockAndTintGetter, blockPosition, colorCollector) -> {
+            if (blockAndTintGetter != null && blockPosition != null) {
+                BlockEntity blockEntity = blockAndTintGetter.getBlockEntity(blockPosition);
                 if (blockEntity instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
-                    return cauldronBlockEntity.getColor();
+                    colorCollector.add(cauldronBlockEntity.getColor());
+                    return;
                 }
             }
-            return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
+            colorCollector.add(ColoredWaterUtil.DEFAULT_ARGB_NORMAL);
         }, ModCauldrons.COLORED_WATER_CAULDRON.get());
     }
 }

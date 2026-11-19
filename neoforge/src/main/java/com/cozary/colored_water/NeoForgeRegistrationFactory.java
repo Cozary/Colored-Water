@@ -19,11 +19,11 @@ public class NeoForgeRegistrationFactory implements RegistrationProvider.Factory
 
     @Override
     public <T> RegistrationProvider<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {
-        final var containerOpt = ModList.get().getModContainerById(modId);
-        if (containerOpt.isEmpty())
+        final var containerOptional = ModList.get().getModContainerById(modId);
+        if (containerOptional.isEmpty())
             throw new NullPointerException("Cannot find mod container for id " + modId);
-        final var cont = containerOpt.get();
-        if (cont instanceof FMLModContainer fmlModContainer) {
+        final var modContainer = containerOptional.get();
+        if (modContainer instanceof FMLModContainer fmlModContainer) {
             final var register = DeferredRegister.create(resourceKey, modId);
             register.register(fmlModContainer.getEventBus());
             return new Provider<>(modId, register);
@@ -52,31 +52,31 @@ public class NeoForgeRegistrationFactory implements RegistrationProvider.Factory
         @Override
         @SuppressWarnings("unchecked")
         public <I extends T> RegistryObject<I> register(String name, Supplier<? extends I> supplier) {
-            final var obj = registry.<I>register(name, supplier);
-            final var ro = new RegistryObject<I>() {
+            final var registeredObject = registry.<I>register(name, supplier);
+            final var registryObject = new RegistryObject<I>() {
 
                 @Override
                 public ResourceKey<I> getResourceKey() {
-                    return (ResourceKey<I>) obj.getKey();
+                    return (ResourceKey<I>) registeredObject.getKey();
                 }
 
                 @Override
                 public Identifier getId() {
-                    return obj.getId();
+                    return registeredObject.getId();
                 }
 
                 @Override
                 public I get() {
-                    return obj.get();
+                    return registeredObject.get();
                 }
 
                 @Override
                 public Holder<I> asHolder() {
-                    return (Holder<I>) obj;
+                    return (Holder<I>) registeredObject;
                 }
             };
-            entries.add((RegistryObject<T>) ro);
-            return ro;
+            entries.add((RegistryObject<T>) registryObject);
+            return registryObject;
         }
 
         @Override

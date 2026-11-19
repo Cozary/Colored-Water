@@ -1,27 +1,12 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
-import com.cozary.colored_water.block.entity.WaterloggedColorBlockEntity;
-import com.cozary.colored_water.client.ColoredWaterFog;
-import com.cozary.colored_water.client.ColoredWaterOverlayRenderer;
+import com.cozary.colored_water.client.ColoredWaterClient;
 import com.cozary.colored_water.fluids.BaseColorWater;
-import com.cozary.colored_water.fluids.ColorWaterFluid;
-import com.cozary.colored_water.util.ColoredWaterUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.fog.FogData;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.SoundActions;
@@ -29,8 +14,6 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -117,69 +100,7 @@ public class ModFluidTypes {
 
             @Override
             public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-                consumer.accept(new IClientFluidTypeExtensions() {
-                    private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still");
-                    private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_flowing");
-
-                    @Override
-                    public Identifier getStillTexture() {
-                        return STILL_TEXTURE;
-                    }
-
-                    @Override
-                    public Identifier getFlowingTexture() {
-                        return FLOWING_TEXTURE;
-                    }
-
-                    @Override
-                    public int getTintColor() {
-                        return color;
-                    }
-
-                    @Override
-                    public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                        if (getter != null && pos != null) {
-                            BlockEntity blockEntity = getter.getBlockEntity(pos);
-                            if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBe && waterloggedBe.hasFluid()) {
-                                int rgb = waterloggedBe.getFluid().getTintColor();
-                                int alpha = waterloggedBe.getFluid().isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
-                                return ColoredWaterUtil.withAlpha(rgb, alpha);
-                            }
-                        }
-                        if (state != null && state.getType() instanceof ColorWaterFluid cwf) {
-                            int rgb = cwf.getTintColor();
-                            int alpha = cwf.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
-                            return ColoredWaterUtil.withAlpha(rgb, alpha);
-                        }
-                        return color;
-                    }
-
-                    @Override
-                    public void renderOverlay(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-                        ColoredWaterOverlayRenderer.renderOverlay(mc, poseStack, buffer);
-                    }
-
-                    @Override
-                    public void modifyFogRender(Camera camera, FogType type, float partialTick, FogData data, Vector4f color) {
-                        ClientLevel level = (ClientLevel) camera.entity().level();
-                        float renderDistance = Minecraft.getInstance().options.getEffectiveRenderDistance();
-                        if (ColoredWaterFog.modifyFogRender(camera, level, renderDistance, data)) {
-                            Vector4f customColor = ColoredWaterFog.getFogColor(camera, partialTick, level, color);
-                            if (customColor != null) {
-                                color.set(customColor.x, customColor.y, customColor.z, color.w);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
-                        Vector4f customColor = ColoredWaterFog.getFogColor(camera, partialTick, level, new Vector4f(fluidFogColor.x(), fluidFogColor.y(), fluidFogColor.z(), 1.0F));
-                        if (customColor != null) {
-                            return new Vector3f(customColor.x, customColor.y, customColor.z);
-                        }
-                        return fluidFogColor;
-                    }
-                });
+                consumer.accept(ColoredWaterClient.createFluidClientExtensions(color));
             }
         });
     }
@@ -196,6 +117,7 @@ public class ModFluidTypes {
                 .canSwim(true)
                 .canDrown(true)
                 .pathType(PathType.WATER)
+                .adjacentPathType(PathType.WATER_BORDER)
                 .density(1024)
                 .viscosity(1024);
     }
@@ -357,7 +279,7 @@ public class ModFluidTypes {
         if (key != null) {
             return key.getNamespace().equals(ColoredWater.MOD_ID);
         }
-        if (ALL_TYPES == null || ALL_TYPES.size() < 48) {
+        if (ALL_TYPES == null || ALL_TYPES.size() < 64) {
             Set<FluidType> set = new HashSet<>();
             for (RegistryObject<FluidType> entry : FLUID_TYPES.getEntries()) {
                 try {

@@ -6,7 +6,7 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
@@ -41,21 +41,21 @@ public class ColoredWaterOverlayRenderer {
             return false;
         }
 
-        float brightness = LightTexture.getBrightness(minecraft.player.level().dimensionType(), minecraft.player.level().getMaxLocalRawBrightness(eyePos));
+        float brightness = Lightmap.getBrightness(minecraft.player.level().dimensionType(), minecraft.player.level().getMaxLocalRawBrightness(eyePos));
 
-        BlockEntity be = minecraft.player.level().getBlockEntity(eyePos);
-        if (be == null) {
-            be = minecraft.player.level().getBlockEntity(BlockPos.containing(minecraft.player.getX(), minecraft.player.getEyeY() - 0.1111111, minecraft.player.getZ()));
+        BlockEntity blockEntity = minecraft.player.level().getBlockEntity(eyePos);
+        if (blockEntity == null) {
+            blockEntity = minecraft.player.level().getBlockEntity(BlockPos.containing(minecraft.player.getX(), minecraft.player.getEyeY() - 0.1111111, minecraft.player.getZ()));
         }
 
         int r = ColoredWaterUtil.getRed(color);
         int g = ColoredWaterUtil.getGreen(color);
         int b = ColoredWaterUtil.getBlue(color);
         int alpha = ColoredWaterUtil.getAlpha(color);
-        int luminosity = be instanceof ColoredWaterBlockEntity cwbe ? cwbe.getLuminosity() : 0;
+        int luminosity = blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity ? coloredWaterBlockEntity.getLuminosity() : 0;
 
         if (alpha == 0) {
-            boolean condensed = be instanceof ColoredWaterBlockEntity cwbe && cwbe.isCondensed();
+            boolean condensed = blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.isCondensed();
             alpha = condensed ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
         }
 

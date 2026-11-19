@@ -74,7 +74,7 @@ public class ColorWaterBucketItem extends BucketItem {
                     ItemStack itemstack3 = bucketpickup.pickupBlock(player, level, blockpos, blockstate1);
                     if (!itemstack3.isEmpty()) {
                         player.awardStat(Stats.ITEM_USED.get(this));
-                        bucketpickup.getPickupSound().ifPresent(p_150709_ -> player.playSound(p_150709_, 1.0F, 1.0F));
+                        bucketpickup.getPickupSound().ifPresent(pickupSound -> player.playSound(pickupSound, 1.0F, 1.0F));
                         level.gameEvent(player, GameEvent.FLUID_PICKUP, blockpos);
                         ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, player, itemstack3);
                         if (!level.isClientSide()) {
@@ -113,13 +113,13 @@ public class ColorWaterBucketItem extends BucketItem {
     }
 
     @Override
-    public boolean emptyContents(@Nullable LivingEntity player, Level level, BlockPos pos, @Nullable BlockHitResult result) {
+    public boolean emptyContents(@Nullable LivingEntity player, Level level, BlockPos blockPosition, @Nullable BlockHitResult result) {
         Fluid fluid = this.getContent();
         if (!(fluid instanceof FlowingFluid)) {
             return false;
         }
 
-        BlockState blockstate = level.getBlockState(pos);
+        BlockState blockstate = level.getBlockState(blockPosition);
 
         ItemStack bucketStack = ItemStack.EMPTY;
         if (player instanceof Player p) {
@@ -129,98 +129,98 @@ public class ColorWaterBucketItem extends BucketItem {
             }
         }
 
-        if (tryRepaintSource(level, pos, blockstate, fluid, bucketStack)) {
+        if (tryRepaintSource(level, blockPosition, blockstate, fluid, bucketStack)) {
             return true;
         }
 
         Block block = blockstate.getBlock();
         boolean isWaterloggable = blockstate.hasProperty(BlockStateProperties.WATERLOGGED) && !blockstate.getValue(BlockStateProperties.WATERLOGGED);
         boolean canReplace = blockstate.canBeReplaced(fluid);
-        boolean canPlace = blockstate.isAir() || isWaterloggable || canReplace || (block instanceof LiquidBlockContainer && ((LiquidBlockContainer) block).canPlaceLiquid(player, level, pos, blockstate, fluid));
+        boolean canPlace = blockstate.isAir() || isWaterloggable || canReplace || (block instanceof LiquidBlockContainer && ((LiquidBlockContainer) block).canPlaceLiquid(player, level, blockPosition, blockstate, fluid));
 
         if (!canPlace) {
             return result != null && this.emptyContents(player, level, result.getBlockPos().relative(result.getDirection()), null);
         }
 
-        if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos) && fluid.is(FluidTags.WATER)) {
-            playEvaporationEffects(level, pos, player);
+        if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, blockPosition) && fluid.is(FluidTags.WATER)) {
+            playEvaporationEffects(level, blockPosition, player);
             return true;
         }
 
         if (isWaterloggable) {
-            level.setBlock(pos, blockstate.setValue(BlockStateProperties.WATERLOGGED, true), 3);
+            level.setBlock(blockPosition, blockstate.setValue(BlockStateProperties.WATERLOGGED, true), 3);
             if (!level.isClientSide()) {
-                level.scheduleTick(pos, fluid, fluid.getTickDelay(level));
+                level.scheduleTick(blockPosition, fluid, fluid.getTickDelay(level));
             }
-            applyPropertiesToBlockEntity(bucketStack, level, pos);
-            this.playEmptySound(player, level, pos);
+            applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+            this.playEmptySound(player, level, blockPosition);
             return true;
         }
 
-        if (block instanceof LiquidBlockContainer container && container.canPlaceLiquid(player, level, pos, blockstate, fluid)) {
-            container.placeLiquid(level, pos, blockstate, fluid.defaultFluidState());
-            applyPropertiesToBlockEntity(bucketStack, level, pos);
-            this.playEmptySound(player, level, pos);
+        if (block instanceof LiquidBlockContainer container && container.canPlaceLiquid(player, level, blockPosition, blockstate, fluid)) {
+            container.placeLiquid(level, blockPosition, blockstate, fluid.defaultFluidState());
+            applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+            this.playEmptySound(player, level, blockPosition);
             return true;
         }
 
         if (!level.isClientSide() && canReplace && !blockstate.liquid()) {
-            level.destroyBlock(pos, true);
+            level.destroyBlock(blockPosition, true);
         }
 
-        if (!level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), 11) && !blockstate.getFluidState().isSource()) {
+        if (!level.setBlock(blockPosition, fluid.defaultFluidState().createLegacyBlock(), 11) && !blockstate.getFluidState().isSource()) {
             return false;
         }
 
-        applyPropertiesToBlockEntity(bucketStack, level, pos);
-        this.playEmptySound(player, level, pos);
+        applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+        this.playEmptySound(player, level, blockPosition);
 
         return true;
     }
 
     @Override
-    public void checkExtraContent(@Nullable LivingEntity player, Level level, ItemStack stack, BlockPos pos) {
-        applyPropertiesToBlockEntity(stack, level, pos);
+    public void checkExtraContent(@Nullable LivingEntity player, Level level, ItemStack stack, BlockPos blockPosition) {
+        applyPropertiesToBlockEntity(stack, level, blockPosition);
     }
 
-    private boolean tryRepaintSource(Level level, BlockPos pos, BlockState state, Fluid fluid, ItemStack bucketStack) {
+    private boolean tryRepaintSource(Level level, BlockPos blockPosition, BlockState state, Fluid fluid, ItemStack bucketStack) {
         if (state.getBlock() instanceof LiquidBlock && (state.getFluidState().is(FluidTags.WATER) || state.getFluidState().getType() instanceof BaseColorWater)) {
             BlockState coloredState = fluid.defaultFluidState().createLegacyBlock();
-            level.setBlock(pos, coloredState, 11);
-            applyPropertiesToBlockEntity(bucketStack, level, pos);
-            this.playEmptySound(null, level, pos);
+            level.setBlock(blockPosition, coloredState, 11);
+            applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+            this.playEmptySound(null, level, blockPosition);
             return true;
         } else if (state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED)) {
-            applyPropertiesToBlockEntity(bucketStack, level, pos);
-            this.playEmptySound(null, level, pos);
+            applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+            this.playEmptySound(null, level, blockPosition);
             return true;
         } else if (state.is(Blocks.BUBBLE_COLUMN)) {
-            applyPropertiesToBlockEntity(bucketStack, level, pos);
-            this.playEmptySound(null, level, pos);
+            applyPropertiesToBlockEntity(bucketStack, level, blockPosition);
+            this.playEmptySound(null, level, blockPosition);
             return true;
         }
         return false;
     }
 
-    private void applyPropertiesToBlockEntity(ItemStack bucketStack, Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
+    private void applyPropertiesToBlockEntity(ItemStack bucketStack, Level level, BlockPos blockPosition) {
+        BlockState state = level.getBlockState(blockPosition);
         boolean isWaterlogged = state.hasProperty(BlockStateProperties.WATERLOGGED) && state.getValue(BlockStateProperties.WATERLOGGED);
         if (isWaterlogged || state.is(Blocks.BUBBLE_COLUMN) || state.is(Blocks.FROSTED_ICE)) {
             Fluid fluid = this.getContent();
-            if (fluid instanceof ColorWaterFluid cwf) {
-                WaterloggedColorBlockEntity be = WaterloggedColorBlockEntity.getOrCreate(level, pos, state);
-                if (be != null) {
-                    be.setFluid(cwf);
+            if (fluid instanceof ColorWaterFluid colorWaterFluid) {
+                WaterloggedColorBlockEntity waterloggedEntity = WaterloggedColorBlockEntity.getOrCreate(level, blockPosition, state);
+                if (waterloggedEntity != null) {
+                    waterloggedEntity.setFluid(colorWaterFluid);
                 }
             }
         }
     }
 
-    private void playEvaporationEffects(Level level, BlockPos pos, @Nullable LivingEntity player) {
-        int i = pos.getX();
-        int j = pos.getY();
-        int k = pos.getZ();
-        level.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+    private void playEvaporationEffects(Level level, BlockPos blockPosition, @Nullable LivingEntity player) {
+        int i = blockPosition.getX();
+        int j = blockPosition.getY();
+        int k = blockPosition.getZ();
+        level.playSound(player, blockPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.8F);
         for (int l = 0; l < 8; ++l) {
             level.addParticle(ParticleTypes.LARGE_SMOKE, (double) i + Math.random(), (double) j + Math.random(), (double) k + Math.random(), 0.0D, 0.0D, 0.0D);
         }

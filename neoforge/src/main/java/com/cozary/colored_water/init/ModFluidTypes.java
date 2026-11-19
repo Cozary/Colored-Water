@@ -1,29 +1,13 @@
 package com.cozary.colored_water.init;
 
 import com.cozary.colored_water.ColoredWater;
-import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
-import com.cozary.colored_water.client.ColoredWaterFog;
-import com.cozary.colored_water.client.ColoredWaterOverlayRenderer;
-import com.cozary.colored_water.util.ColoredWaterUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.fog.FogData;
-import net.minecraft.client.renderer.fog.environment.FogEnvironment;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.joml.Vector4f;
 
 import java.util.function.Supplier;
 
@@ -37,10 +21,17 @@ public class ModFluidTypes {
                     .fallDistanceModifier(0F)
                     .canExtinguish(true)
                     .supportsBoating(true)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                    .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)
                     .canHydrate(true)
                     .canSwim(true)
                     .canDrown(true)
-                    .canConvertToSource(true)) {
+                    .canConvertToSource(true)
+                    .pathType(PathType.WATER)
+                    .adjacentPathType(PathType.WATER_BORDER)
+                    .density(1000)
+                    .viscosity(1000)) {
                 @Override
                 public boolean getIsWaterLike() {
                     return true;
@@ -51,53 +42,4 @@ public class ModFluidTypes {
                     return !entity.canBreatheUnderwater();
                 }
             });
-
-    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerFluidType(new IClientFluidTypeExtensions() {
-            private static final Identifier STILL_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_still");
-            private static final Identifier FLOWING_TEXTURE = Identifier.fromNamespaceAndPath(ColoredWater.MOD_ID, "block/water_flowing");
-
-            @Override
-            public Identifier getStillTexture() {
-                return STILL_TEXTURE;
-            }
-
-            @Override
-            public Identifier getFlowingTexture() {
-                return FLOWING_TEXTURE;
-            }
-
-            @Override
-            public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                if (getter != null && pos != null) {
-                    BlockEntity blockEntity = getter.getBlockEntity(pos);
-                    if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties()) {
-                        int color = coloredWaterBlockEntity.getColor();
-                        int alpha = ColoredWaterUtil.getAlpha(color);
-                        if (alpha == 0) {
-                            alpha = coloredWaterBlockEntity.isCondensed() ? ColoredWaterUtil.CONDENSED_ALPHA : ColoredWaterUtil.DEFAULT_ALPHA;
-                            color = ColoredWaterUtil.withAlpha(color, alpha);
-                        }
-                        return color;
-                    }
-                }
-                return ColoredWaterUtil.DEFAULT_ARGB_NORMAL;
-            }
-
-            @Override
-            public void renderOverlay(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-                ColoredWaterOverlayRenderer.renderOverlay(mc, poseStack, buffer);
-            }
-
-            @Override
-            public Vector4f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistanceChunks, float bossColorModifier, Vector4f defaultColor) {
-                return ColoredWaterFog.getFogColor(camera, partialTick, level, defaultColor);
-            }
-
-            @Override
-            public void modifyFogRender(Camera camera, FogEnvironment fogEnvironment, float renderDistance, float partialTick, FogData fogData) {
-                ColoredWaterFog.modifyFogRender(camera, (ClientLevel) camera.entity().level(), renderDistance, fogData);
-            }
-        }, COLORED_WATER_TYPE.get());
-    }
 }

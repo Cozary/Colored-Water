@@ -35,27 +35,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PointedDripstoneMixin {
 
     @Inject(method = "maybeTransferFluid", at = @At("HEAD"), cancellable = true)
-    private static void colored_water$maybeTransferFluid(BlockState state, ServerLevel level, BlockPos pos, float randChance, CallbackInfo ci) {
+    private static void colored_water$maybeTransferFluid(BlockState state, ServerLevel level, BlockPos blockPosition, float randChance, CallbackInfo callbackInfo) {
         if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) != Direction.DOWN) {
             return;
         }
 
-        BlockPos sourcePos = findColoredWaterSourcePos(level, pos);
-        if (sourcePos == null) {
+        BlockPos sourcePosition = findColoredWaterSourcePosition(level, blockPosition);
+        if (sourcePosition == null) {
             return;
         }
 
-        ci.cancel();
+        callbackInfo.cancel();
 
         if (randChance < 0.17578125F) {
-            BlockPos tipPos = findStalactiteTipPos(level, pos);
+            BlockPos tipPosition = findStalactiteTipPosition(level, blockPosition);
 
             int color = ColoredWaterUtil.DEFAULT_COLOR;
             int luminosity = 0;
             boolean condensed = false;
             int alpha = ColoredWaterUtil.DEFAULT_ALPHA;
 
-            if (level.getBlockEntity(sourcePos) instanceof ColoredWaterBlockEntity sourceBe) {
+            if (level.getBlockEntity(sourcePosition) instanceof ColoredWaterBlockEntity sourceBe) {
                 color = sourceBe.getColor();
                 luminosity = sourceBe.getLuminosity();
                 condensed = sourceBe.isCondensed();
@@ -66,7 +66,7 @@ public abstract class PointedDripstoneMixin {
             int dripFullColor = ColoredWaterUtil.withAlpha(color, alpha);
 
             for (int i = 1; i <= 11; i++) {
-                BlockPos cauldronPos = tipPos.below(i);
+                BlockPos cauldronPos = tipPosition.below(i);
                 BlockState cauldronState = level.getBlockState(cauldronPos);
 
                 if (cauldronState.getBlock() instanceof AbstractCauldronBlock) {
@@ -135,8 +135,8 @@ public abstract class PointedDripstoneMixin {
         }
     }
 
-    private static BlockPos findColoredWaterSourcePos(Level level, BlockPos pos) {
-        BlockPos current = pos;
+    private static BlockPos findColoredWaterSourcePosition(Level level, BlockPos blockPosition) {
+        BlockPos current = blockPosition;
         while (level.getBlockState(current).is(Blocks.POINTED_DRIPSTONE)) {
             current = current.above();
         }
@@ -150,18 +150,18 @@ public abstract class PointedDripstoneMixin {
         return null;
     }
 
-    private static boolean isColoredWaterAt(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        FluidState fluid = level.getFluidState(pos);
+    private static boolean isColoredWaterAt(Level level, BlockPos blockPosition) {
+        BlockState state = level.getBlockState(blockPosition);
+        FluidState fluid = level.getFluidState(blockPosition);
         if (state.getBlock() instanceof ColoredWaterBlock || fluid.getType() instanceof BaseColorWater) {
             return true;
         }
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
         return blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity && coloredWaterBlockEntity.hasCustomProperties();
     }
 
-    private static BlockPos findStalactiteTipPos(Level level, BlockPos pos) {
-        BlockPos current = pos;
+    private static BlockPos findStalactiteTipPosition(Level level, BlockPos blockPosition) {
+        BlockPos current = blockPosition;
         while (level.getBlockState(current).is(Blocks.POINTED_DRIPSTONE)) {
             BlockState state = level.getBlockState(current);
             if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) == Direction.DOWN &&
@@ -178,7 +178,7 @@ public abstract class PointedDripstoneMixin {
     }
 
     @Inject(method = "animateTick", at = @At("HEAD"), cancellable = true)
-    private void colored_water$animateTick(BlockState state, Level level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    private void colored_water$animateTick(BlockState state, Level level, BlockPos blockPosition, RandomSource random, CallbackInfo callbackInfo) {
         if (state.getValue(PointedDripstoneBlock.TIP_DIRECTION) != Direction.DOWN) {
             return;
         }
@@ -186,21 +186,21 @@ public abstract class PointedDripstoneMixin {
             return;
         }
 
-        BlockPos sourcePos = findColoredWaterSourcePos(level, pos);
-        if (sourcePos != null) {
-            ci.cancel();
+        BlockPos sourcePosition = findColoredWaterSourcePosition(level, blockPosition);
+        if (sourcePosition != null) {
+            callbackInfo.cancel();
             if (random.nextFloat() < 0.12F) {
-                double x = (double) pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
-                double y = (double) pos.getY() + 0.1D;
-                double z = (double) pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
+                double x = (double) blockPosition.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
+                double y = (double) blockPosition.getY() + 0.1D;
+                double z = (double) blockPosition.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.2D;
 
                 int color = ColoredWaterUtil.DEFAULT_COLOR;
                 int luminosity = 0;
-                if (level.getBlockEntity(sourcePos) instanceof ColoredWaterBlockEntity sourceBlockEntity) {
+                if (level.getBlockEntity(sourcePosition) instanceof ColoredWaterBlockEntity sourceBlockEntity) {
                     int c = sourceBlockEntity.getColor();
                     if (c != -1) color = c;
                     luminosity = sourceBlockEntity.getLuminosity();
-                } else if (level.getBlockEntity(sourcePos) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
+                } else if (level.getBlockEntity(sourcePosition) instanceof ColoredWaterCauldronBlockEntity cauldronBlockEntity) {
                     color = cauldronBlockEntity.getColor();
                     luminosity = cauldronBlockEntity.getLuminosity();
                 }

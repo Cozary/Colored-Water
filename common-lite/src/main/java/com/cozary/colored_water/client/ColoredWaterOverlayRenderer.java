@@ -7,7 +7,7 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
@@ -43,20 +43,20 @@ public class ColoredWaterOverlayRenderer {
             return false;
         }
 
-        float brightness = LightTexture.getBrightness(minecraft.player.level().dimensionType(), minecraft.player.level().getMaxLocalRawBrightness(eyePos));
+        float brightness = Lightmap.getBrightness(minecraft.player.level().dimensionType(), minecraft.player.level().getMaxLocalRawBrightness(eyePos));
 
         boolean condensed = false;
         int luminosity = 0;
 
         FluidState fluidState = minecraft.level.getFluidState(eyePos);
-        if (fluidState.getType() instanceof ColorWaterFluid cwf) {
-            condensed = cwf.isCondensed();
-            luminosity = cwf.isLuminous() ? 15 : 0;
+        if (fluidState.getType() instanceof ColorWaterFluid colorWaterFluid) {
+            condensed = colorWaterFluid.isCondensed();
+            luminosity = colorWaterFluid.isLuminous() ? 15 : 0;
         } else {
-            BlockEntity be = minecraft.level.getBlockEntity(eyePos);
-            if (be instanceof WaterloggedColorBlockEntity wbe && wbe.hasFluid()) {
-                condensed = wbe.getFluid().isCondensed();
-                luminosity = wbe.getFluid().isLuminous() ? 15 : 0;
+            BlockEntity blockEntity = minecraft.level.getBlockEntity(eyePos);
+            if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+                condensed = waterloggedBlockEntity.getFluid().isCondensed();
+                luminosity = waterloggedBlockEntity.getFluid().isLuminous() ? 15 : 0;
             }
         }
 

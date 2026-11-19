@@ -26,10 +26,11 @@ public class ColoredWaterNeoForge {
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             eventBus.addListener(ColoredWaterClient::onClientSetup);
             eventBus.addListener(ColoredWaterClient::registerBlockColors);
+            eventBus.addListener(ColoredWaterClient::registerFluidModels);
+            eventBus.addListener(ColoredWaterClient::registerClientExtensions);
             eventBus.addListener(ParticleRegister::registerFactories);
         }
 
-        eventBus.addListener(ColoredWaterClient::registerClientExtensions);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
     }
 

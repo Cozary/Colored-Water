@@ -4,6 +4,7 @@ import com.cozary.colored_water.block.entity.ColoredWaterBlockEntity;
 import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -60,79 +61,75 @@ public class ColoredWaterBlock extends LiquidBlock implements EntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ColoredWaterBlockEntity(pos, state);
+    public BlockEntity newBlockEntity(BlockPos blockPosition, BlockState state) {
+        return new ColoredWaterBlockEntity(blockPosition, state);
     }
 
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-        super.onPlace(state, level, pos, oldState, isMoving);
-        checkLavaInteraction(level, pos);
-        if (!level.isClientSide()) {
-            level.scheduleTick(pos, state.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
-        }
-        if (state.getValue(LEVEL) == 0) {
-            BlockState below = level.getBlockState(pos.below());
-            if (below.is(Blocks.SOUL_SAND) || below.is(Blocks.MAGMA_BLOCK) || below.is(Blocks.BUBBLE_COLUMN)) {
-                BubbleColumnBlock.updateColumn(level, pos, below);
-            }
-        }
+    public void onPlace(BlockState state, Level level, BlockPos blockPosition, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, blockPosition, oldState, isMoving);
+        handleFluidPlacementOrNeighborUpdate(state, level, blockPosition);
     }
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bol) {
         super.neighborChanged(blockState, level, blockPos, block, orientation, bol);
-        checkLavaInteraction(level, blockPos);
-        if (!level.isClientSide()) {
-            level.scheduleTick(blockPos, blockState.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
+        handleFluidPlacementOrNeighborUpdate(blockState, level, blockPos);
+    }
+
+    private void handleFluidPlacementOrNeighborUpdate(BlockState state, Level level, BlockPos pos) {
+        checkLavaInteraction(level, pos);
+        if (level.isClientSide()) {
+            return;
         }
-        if (blockState.getValue(LEVEL) == 0) {
-            BlockState below = level.getBlockState(blockPos.below());
-            if (below.is(Blocks.SOUL_SAND) || below.is(Blocks.MAGMA_BLOCK) || below.is(Blocks.BUBBLE_COLUMN)) {
-                BubbleColumnBlock.updateColumn(level, blockPos, below);
+        level.scheduleTick(pos, state.getFluidState().getType(), ColoredWaterUtil.UPDATE_DELAY);
+        if (state.getValue(LEVEL) == 0) {
+            BlockState below = level.getBlockState(pos.below());
+            if (below.is(BlockTags.ENABLES_BUBBLE_COLUMN_PUSH_UP) || below.is(BlockTags.ENABLES_BUBBLE_COLUMN_DRAG_DOWN) || below.is(Blocks.BUBBLE_COLUMN)) {
+                BubbleColumnBlock.updateColumn(Blocks.BUBBLE_COLUMN, level, pos, below);
             }
         }
     }
 
-    private void checkLavaInteraction(Level level, BlockPos pos) {
+    private void checkLavaInteraction(Level level, BlockPos blockPosition) {
         if (level.isClientSide()) return;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(direction);
-            FluidState neighborFluid = level.getFluidState(neighborPos);
+            BlockPos neighborPosition = blockPosition.relative(direction);
+            FluidState neighborFluid = level.getFluidState(neighborPosition);
             if (neighborFluid.is(FluidTags.LAVA)) {
                 if (neighborFluid.isSource()) {
-                    level.setBlockAndUpdate(neighborPos, Blocks.OBSIDIAN.defaultBlockState());
-                    level.levelEvent(1501, neighborPos, 0);
-                } else if (neighborFluid.getHeight(level, neighborPos) >= 0.44444445F) {
-                    level.setBlockAndUpdate(neighborPos, Blocks.COBBLESTONE.defaultBlockState());
-                    level.levelEvent(1501, neighborPos, 0);
+                    level.setBlockAndUpdate(neighborPosition, Blocks.OBSIDIAN.defaultBlockState());
+                    level.levelEvent(1501, neighborPosition, 0);
+                } else if (neighborFluid.getHeight(level, neighborPosition) >= 0.44444445F) {
+                    level.setBlockAndUpdate(neighborPosition, Blocks.COBBLESTONE.defaultBlockState());
+                    level.levelEvent(1501, neighborPosition, 0);
                 }
             }
         }
     }
 
     @Override
-    public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
+    public boolean triggerEvent(BlockState state, Level level, BlockPos blockPosition, int id, int param) {
         if (level.isClientSide() && id == 1) {
-            level.setBlocksDirty(pos, state, state);
+            level.setBlocksDirty(blockPosition, state, state);
             return true;
         }
-        return super.triggerEvent(state, level, pos, id, param);
+        return super.triggerEvent(state, level, blockPosition, id, param);
     }
 
     @Override
-    public ItemStack pickupBlock(@Nullable LivingEntity player, LevelAccessor level, BlockPos pos, BlockState state) {
+    public ItemStack pickupBlock(@Nullable LivingEntity player, LevelAccessor level, BlockPos blockPosition, BlockState state) {
         if (state.getValue(LEVEL) != 0) {
             return ItemStack.EMPTY;
         }
 
         ItemStack stack = ItemStack.EMPTY;
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
         if (blockEntity instanceof ColoredWaterBlockEntity coloredWaterBlockEntity) {
             stack = ColoredWaterUtil.createBucketStack(coloredWaterBlockEntity);
         }
 
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
+        level.setBlock(blockPosition, Blocks.AIR.defaultBlockState(), 11);
 
         return stack.isEmpty() ? new ItemStack(this.fluidSupplier.get().getBucket()) : stack;
     }

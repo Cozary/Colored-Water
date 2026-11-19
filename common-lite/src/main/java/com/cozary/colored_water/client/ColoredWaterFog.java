@@ -6,7 +6,7 @@ import com.cozary.colored_water.util.ColoredWaterUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -21,13 +21,13 @@ public final class ColoredWaterFog {
         public final int color;
         public final int luminosity;
         public final boolean condensed;
-        public final BlockPos pos;
+        public final BlockPos blockPosition;
 
-        public FluidFogProperties(int color, int luminosity, boolean condensed, BlockPos pos) {
+        public FluidFogProperties(int color, int luminosity, boolean condensed, BlockPos blockPosition) {
             this.color = color;
             this.luminosity = luminosity;
             this.condensed = condensed;
-            this.pos = pos;
+            this.blockPosition = blockPosition;
         }
     }
 
@@ -35,26 +35,26 @@ public final class ColoredWaterFog {
 
     @Nullable
     public static FluidFogProperties getFogProperties(ClientLevel level, Camera camera) {
-        BlockPos pos = camera.blockPosition();
-        FluidFogProperties props = getPropertiesAt(level, pos);
+        BlockPos blockPosition = camera.blockPosition();
+        FluidFogProperties props = getPropertiesAt(level, blockPosition);
         if (props == null) {
-            BlockPos subPos = BlockPos.containing(camera.position().x, camera.position().y - 0.1, camera.position().z);
-            props = getPropertiesAt(level, subPos);
+            BlockPos subBlockPosition = BlockPos.containing(camera.position().x, camera.position().y - 0.1, camera.position().z);
+            props = getPropertiesAt(level, subBlockPosition);
         }
         return props;
     }
 
     @Nullable
-    private static FluidFogProperties getPropertiesAt(ClientLevel level, BlockPos pos) {
-        FluidState fluidState = level.getFluidState(pos);
-        if (fluidState.getType() instanceof ColorWaterFluid cwf) {
-            return new FluidFogProperties(cwf.getTintColor(), cwf.isLuminous() ? 15 : 0, cwf.isCondensed(), pos);
+    private static FluidFogProperties getPropertiesAt(ClientLevel level, BlockPos blockPosition) {
+        FluidState fluidState = level.getFluidState(blockPosition);
+        if (fluidState.getType() instanceof ColorWaterFluid colorWaterFluid) {
+            return new FluidFogProperties(colorWaterFluid.getTintColor(), colorWaterFluid.isLuminous() ? 15 : 0, colorWaterFluid.isCondensed(), blockPosition);
         }
 
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof WaterloggedColorBlockEntity wbe && wbe.hasFluid()) {
-            ColorWaterFluid cwf = wbe.getFluid();
-            return new FluidFogProperties(cwf.getTintColor(), cwf.isLuminous() ? 15 : 0, cwf.isCondensed(), pos);
+        BlockEntity blockEntity = level.getBlockEntity(blockPosition);
+        if (blockEntity instanceof WaterloggedColorBlockEntity waterloggedBlockEntity && waterloggedBlockEntity.hasFluid()) {
+            ColorWaterFluid colorWaterFluid = waterloggedBlockEntity.getFluid();
+            return new FluidFogProperties(colorWaterFluid.getTintColor(), colorWaterFluid.isLuminous() ? 15 : 0, colorWaterFluid.isCondensed(), blockPosition);
         }
 
         return null;
@@ -69,9 +69,9 @@ public final class ColoredWaterFog {
 
         int color = props.color;
         int luminosity = props.luminosity;
-        BlockPos activePos = props.pos;
+        BlockPos activeBlockPosition = props.blockPosition;
 
-        float ambientLight = LightTexture.getBrightness(level.dimensionType(), level.getMaxLocalRawBrightness(activePos));
+        float ambientLight = Lightmap.getBrightness(level.dimensionType(), level.getMaxLocalRawBrightness(activeBlockPosition));
         float lumFactor = (float) Mth.clamp(luminosity, 0, 15) / 15.0F;
         float effectiveLight = Math.max(ambientLight, lumFactor);
         float waterVision = 1.0F;

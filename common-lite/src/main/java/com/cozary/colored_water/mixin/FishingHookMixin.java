@@ -20,12 +20,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(FishingHook.class)
 public abstract class FishingHookMixin {
 
-    @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/world/level/block/Block;)Z"))
-    private boolean colored_water$checkWaterBlock(BlockState state, Block block) {
+    @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Ljava/lang/Object;)Z"))
+    private boolean colored_water$checkWaterBlock(BlockState state, Object block) {
         if (block == Blocks.WATER) {
             return state.is(Blocks.WATER) || state.getFluidState().is(FluidTags.WATER);
         }
-        return state.is(block);
+        if (block instanceof Block b) {
+            return state.is(b);
+        }
+        return false;
     }
 
     @Redirect(method = "catchingFish", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;sendParticles(Lnet/minecraft/core/particles/ParticleOptions;DDDIDDDD)I"))
